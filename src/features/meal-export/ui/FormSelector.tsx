@@ -48,10 +48,8 @@ export function FormSelector() {
             key={option.type}
             onClick={() => setSelectedForm(option.type)}
             className={[
-              "flex w-full items-center gap-4 rounded-xl border p-4 text-left transition-all",
-              isSelected
-                ? "border-blue-500 bg-blue-50 ring-1 ring-blue-500"
-                : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50",
+              "flex w-full items-center gap-4 rounded-xl p-4 text-left transition-all",
+              isSelected ? "bg-blue-50" : "bg-white hover:bg-gray-50",
             ].join(" ")}
           >
             <span

@@ -23,11 +23,21 @@ export function ExportOptions() {
 
   return (
     <div className="flex flex-col gap-2">
-      <Button variant="primary" size="lg" className="w-full justify-center" onClick={handlePdf}>
+      <Button
+        variant="primary"
+        size="lg"
+        className="w-full justify-center shadow-none"
+        onClick={handlePdf}
+      >
         <FileDownIcon size={16} />
         PDF로 내보내기
       </Button>
-      <Button variant="secondary" size="lg" className="w-full justify-center" onClick={handleExcel}>
+      <Button
+        variant="secondary"
+        size="lg"
+        className="w-full justify-center border-0 shadow-none"
+        onClick={handleExcel}
+      >
         <TableIcon size={16} />
         엑셀로 내보내기
       </Button>
