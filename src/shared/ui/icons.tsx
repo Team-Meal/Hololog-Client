@@ -205,3 +205,43 @@ export function MoreHorizontalIcon(props: Omit<IconProps, "children">) {
     </Icon>
   );
 }
+
+export function PlusIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="M12 5v14M5 12h14" />
+    </Icon>
+  );
+}
+
+export function DownloadIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+    </Icon>
+  );
+}
+
+export function SlidersIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6" />
+    </Icon>
+  );
+}
+
+export function XIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="M18 6 6 18M6 6l12 12" />
+    </Icon>
+  );
+}
+
+export function TrashIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+    </Icon>
+  );
+}
