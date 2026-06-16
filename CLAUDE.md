@@ -55,6 +55,7 @@ src/
 
 - Commits follow Conventional Commits with a Korean summary, e.g. `feat: 로그인 폼 추가`. Use `/commit`.
 - PRs use `/pr` (Korean title/body). Confirm branch and base before pushing.
+- When opening a PR, fill in the repo's PR template (`.github/PULL_REQUEST_TEMPLATE.md`) as the PR body — keep its 💡 요약 / 📋 작업 내용 / 🤝 리뷰 참고 sections and delete any you don't use.
 
 ## Claude Code harness (`.claude/`)
 

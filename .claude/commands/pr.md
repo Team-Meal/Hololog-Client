@@ -14,30 +14,21 @@ Create a pull request with `gh`. PR title and body are written in Korean.
 
 1. Push: `git push -u origin <branch>`.
 2. Determine base branch (usually `main`); if unsure, `gh repo view --json defaultBranchRef`.
-3. Create the PR:
+3. Build the body from the repo's PR template `.github/PULL_REQUEST_TEMPLATE.md`:
+   - Keep its sections (💡 PR 요약 / 📋 작업 내용 / 🤝 리뷰 시 참고사항).
+   - Replace the `>` guide lines and `{변경사항}` placeholders with the actual content in Korean.
+   - Delete any section that doesn't apply (the template says so).
+   - Append `🤖 Generated with [Claude Code](https://claude.com/claude-code)` at the end.
+4. Create the PR (write the filled body to a temp file and pass it):
 
 ```bash
-gh pr create --base main --head <branch> --title "<type>: <Korean title>" --body "$(cat <<'EOF'
-## 요약
-- 무엇을 왜 바꿨는지 한국어로 1~3줄.
-
-## 변경 사항
-- 핵심 변경 항목 나열
-
-## 테스트
-- [ ] `npx tsc --noEmit`
-- [ ] `npm run lint`
-- [ ] 로컬 동작 확인
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-EOF
-)"
+gh pr create --base main --head <branch> --title "<type>: <Korean title>" --body-file /tmp/pr-body.md
 ```
 
-4. Show the resulting PR URL to the user.
+5. Show the resulting PR URL to the user.
 
 ## Rules
 
 - Title uses Conventional Commits format with a Korean summary.
-- Body is Korean, based on the template above (요약/변경 사항/테스트).
+- Body is Korean and **based on `.github/PULL_REQUEST_TEMPLATE.md`** — fill its sections, don't invent a different structure.
 - This is outward-facing — double-check head branch and base right before pushing/creating.
