@@ -1,11 +1,18 @@
-// TODO: <AppSidebar /> — 다른 팀원이 구현 예정
-// TODO: <AppTopbar /> — 다른 팀원이 구현 예정
+import { Sidebar } from "@/widgets/sidebar";
+import { TopBar } from "@/widgets/topbar";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: "#f5f5f7" }}>
-      {/* Sidebar slot */}
-      <main className="flex-1 overflow-auto p-6">{children}</main>
+    <div className="flex h-screen overflow-hidden bg-[#f5f5f7]">
+      <Sidebar />
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <TopBar />
+        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+      </div>
     </div>
   );
 }
