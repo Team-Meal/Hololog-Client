@@ -245,3 +245,31 @@ export function TrashIcon(props: Omit<IconProps, "children">) {
     </Icon>
   );
 }
+
+export function WalletIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="M3 7a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v2" />
+      <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2H5a2 2 0 0 1-2-2z" />
+      <path d="M16 13h.01" />
+    </Icon>
+  );
+}
+
+export function FileTextIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <path d="M14 2v6h6M9 13h6M9 17h6" />
+    </Icon>
+  );
+}
+
+export function PencilIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+    </Icon>
+  );
+}
