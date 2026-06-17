@@ -62,37 +62,37 @@ export function MealCalendar() {
     <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
       {/* Controls */}
       <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {/* View mode toggle */}
-          <div className="flex gap-1">
+          <div className="flex gap-1 rounded-xl bg-gray-100 p-1">
             {(["주간", "월간"] as const).map((mode) => (
               <button
                 key={mode}
                 type="button"
                 onClick={() => setViewMode(mode)}
-                className={`rounded-xl px-4 py-1.5 text-sm font-medium transition-all ${
+                className={`rounded-lg px-4 py-1.5 text-sm font-medium transition-all ${
                   viewMode === mode
-                    ? "bg-gray-100 text-gray-800"
+                    ? "bg-white text-gray-800 shadow-sm"
                     : "text-gray-400 hover:text-gray-600"
                 }`}
               >
-                {mode === "주간" ? "주간" : "월간 보기"}
+                {mode}
               </button>
             ))}
           </div>
 
           {/* Week selector — 주간 모드에서만 표시 */}
           {viewMode === "주간" && (
-            <div className="flex gap-1">
+            <div className="flex gap-1 rounded-xl bg-gray-100 p-1">
               {WEEKS.map((week) => (
                 <button
                   key={week}
                   type="button"
                   onClick={() => setSelectedWeek(week)}
-                  className={`rounded-xl px-4 py-1.5 text-sm font-medium transition-all ${
+                  className={`rounded-lg px-4 py-1.5 text-sm font-medium transition-all ${
                     selectedWeek === week
-                      ? "bg-blue-600 text-white"
-                      : "border border-gray-200 bg-white text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                      ? "bg-white text-gray-800 shadow-sm"
+                      : "text-gray-400 hover:text-gray-600"
                   }`}
                 >
                   {week}주차
