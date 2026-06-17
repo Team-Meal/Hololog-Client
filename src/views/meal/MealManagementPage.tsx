@@ -1,7 +1,7 @@
 "use client";
 
 import { Copy, Sparkles } from "lucide-react";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 import { MealCalendar } from "@/widgets/meal-calendar";
 
 export function MealManagementPage() {
@@ -13,8 +13,6 @@ export function MealManagementPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <Toaster position="bottom-right" richColors closeButton />
-
       {/* Page header */}
       <div className="flex items-start justify-between">
         <div>

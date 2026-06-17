@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 
 import { Button, ShoppingCartIcon, SparklesIcon, TableIcon } from "@/shared/ui";
 
@@ -99,8 +99,7 @@ export function SuppliersPage() {
   return (
     <main className="min-h-full bg-[#f4f4f6] text-gray-900">
       <SupplierPageAnimations />
-      <Toaster position="top-right" richColors closeButton />
-      <section className="mx-auto flex w-full max-w-[1440px] flex-col gap-6">
+<section className="mx-auto flex w-full max-w-360 flex-col gap-6">
         <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-sm font-semibold text-blue-600">공급업체</p>

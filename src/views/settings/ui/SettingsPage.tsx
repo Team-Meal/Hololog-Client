@@ -1,7 +1,7 @@
 "use client";
 
 import { type ReactNode, type SVGProps, useState } from "react";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 
 type TabId = "profile" | "school" | "notifications" | "ai" | "integrations";
 type Aggressiveness = "보수적" | "균형" | "적극적";
@@ -60,8 +60,7 @@ export function SettingsPage() {
 
   return (
     <main className="min-h-screen bg-[#f4f4f6] px-4 py-6 text-[#18181b] sm:px-8 lg:px-12">
-      <Toaster position="top-right" richColors closeButton />
-      <section className="mx-auto flex w-full max-w-[1520px] flex-col gap-6">
+<section className="mx-auto flex w-full max-w-380 flex-col gap-6">
         <header className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-sm font-semibold text-[#2f6df6]">설정</p>
