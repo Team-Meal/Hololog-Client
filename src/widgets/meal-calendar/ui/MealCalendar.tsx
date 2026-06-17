@@ -48,7 +48,8 @@ function MonthlyView({ schedules }: { schedules: WeeklyMealSchedule[] }) {
 }
 
 export function MealCalendar() {
-  const { viewMode, selectedWeek, setViewMode, setSelectedWeek } = useMealCalendarStore();
+  const { viewMode, selectedWeek, selectedDay, setViewMode, setSelectedWeek, setSelectedDay } =
+    useMealCalendarStore();
 
   const schedule = MOCK_WEEKLY_SCHEDULES.find((s) => s.week === selectedWeek);
   const avgScore = Math.round(
@@ -114,11 +115,12 @@ export function MealCalendar() {
           <MonthlyView schedules={MOCK_WEEKLY_SCHEDULES} />
         ) : schedule ? (
           <div className="grid grid-cols-5 gap-3">
-            {schedule.days.map((day, idx) => (
+            {schedule.days.map((day) => (
               <MealDayCard
                 key={day.dayOfWeek}
                 day={day}
-                isToday={idx === schedule.days.length - 1}
+                selected={day.dayOfWeek === selectedDay}
+                onClick={() => setSelectedDay(day.dayOfWeek)}
               />
             ))}
           </div>
