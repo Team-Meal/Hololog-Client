@@ -1,1 +1,1 @@
-export { SettingsPage as default, metadata } from "@/views/settings";
+export { DashboardPage as default, metadata } from "@/views/dashboard";
