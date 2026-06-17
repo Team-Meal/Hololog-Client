@@ -1,1 +1,5 @@
-export { DashboardPage as default, metadata } from "@/views/dashboard";
+import { redirect } from "next/navigation";
+
+export default function DashboardRedirect() {
+  redirect("/");
+}
