@@ -87,11 +87,15 @@ function OfficialMealDocument({
               >
                 <p className="mb-2 text-center text-sm font-bold text-gray-800">{day.date}</p>
                 <ul className="space-y-1">
-                  {day.items.map((item, i) => (
-                    <li key={i} className="text-center text-xs leading-relaxed text-gray-600">
-                      {item}
-                    </li>
-                  ))}
+                  {(() => {
+                    const lunch = day.meals.find((m) => m.type === "중식");
+                    if (!lunch) return null;
+                    return [lunch.name, ...lunch.sides].map((item, i) => (
+                      <li key={i} className="text-center text-xs leading-relaxed text-gray-600">
+                        {item}
+                      </li>
+                    ));
+                  })()}
                 </ul>
               </td>
             ))}
