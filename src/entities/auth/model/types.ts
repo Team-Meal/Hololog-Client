@@ -1,4 +1,13 @@
+export type UserRole = "student" | "teacher" | "nutritionist";
+
 export interface LoginCredentials {
+  username: string;
+  password: string;
+}
+
+export interface RegisterCredentials {
+  role: UserRole;
+  name: string;
   username: string;
   password: string;
 }
@@ -16,6 +25,11 @@ export interface AuthUser {
 }
 
 export interface LoginResponse {
+  tokens: AuthTokens;
+  user: AuthUser;
+}
+
+export interface RegisterResponse {
   tokens: AuthTokens;
   user: AuthUser;
 }
