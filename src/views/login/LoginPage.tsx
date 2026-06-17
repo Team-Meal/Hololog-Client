@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { LoginForm } from "@/features/auth";
 import { CheckIcon } from "@/shared/ui";
 
@@ -110,6 +111,13 @@ export function LoginPage() {
           </div>
 
           <LoginForm />
+
+          <p className="mt-6 text-center text-sm text-zinc-500">
+            아직 계정이 없으신가요?{" "}
+            <Link href="/signup" className="font-semibold text-blue-600 hover:text-blue-500">
+              회원가입
+            </Link>
+          </p>
         </div>
       </div>
     </div>
