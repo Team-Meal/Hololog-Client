@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { LoginForm } from "@/features/auth";
+import { SignupForm } from "@/features/auth";
 import { CheckIcon } from "@/shared/ui";
 
 const FEATURES = ["식재료 재고 자동 추적 및 알림", "AI 기반 식단 생성 및 영양 분석", "실시간 예산 관리 및 비용 리포트"];
 
-export function LoginPage() {
+export function SignupPage() {
   return (
     <div className="flex min-h-screen">
       {/* ── Left: brand panel ── */}
@@ -56,9 +56,9 @@ export function LoginPage() {
             학교 급식 스마트 관리 플랫폼
           </div>
           <h1 className="text-4xl font-bold leading-tight tracking-tight text-white">
-            급식 관리의
+            지금 시작하고
             <br />
-            새로운 기준
+            급식 관리를 혁신하세요
           </h1>
           <p className="mt-4 text-base leading-relaxed text-white/50">
             식재료 재고부터 식단 생성, 예산 분석까지
@@ -106,16 +106,16 @@ export function LoginPage() {
 
         <div className="w-full max-w-[400px]">
           <div className="mb-8">
-            <h2 className="text-2xl font-bold tracking-tight text-zinc-900">로그인</h2>
-            <p className="mt-1.5 text-sm text-zinc-500">아이디와 비밀번호를 입력해 주세요</p>
+            <h2 className="text-2xl font-bold tracking-tight text-zinc-900">회원가입</h2>
+            <p className="mt-1.5 text-sm text-zinc-500">가입 유형을 선택하고 정보를 입력해 주세요</p>
           </div>
 
-          <LoginForm />
+          <SignupForm />
 
           <p className="mt-6 text-center text-sm text-zinc-500">
-            아직 계정이 없으신가요?{" "}
-            <Link href="/signup" className="font-semibold text-blue-600 hover:text-blue-500">
-              회원가입
+            이미 계정이 있으신가요?{" "}
+            <Link href="/login" className="font-semibold text-blue-600 hover:text-blue-500">
+              로그인
             </Link>
           </p>
         </div>
