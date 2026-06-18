@@ -3,16 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  CalendarDays,
-  FileOutput,
-  LayoutGrid,
-  Package,
-  Settings,
-  ShoppingCart,
-  Sparkles,
-  Truck,
-  Wallet,
-} from "lucide-react";
+  CalendarIcon,
+  FileOutputIcon,
+  LayoutDashboardIcon,
+  PackageIcon,
+  SettingsIcon,
+  ShoppingCartIcon,
+  SparklesIcon,
+  TruckIcon,
+  WalletIcon,
+} from "@/shared/ui";
 import type { NavItem as NavItemData } from "../model/nav.data";
 
 type IconComponent = React.FC<{
@@ -22,15 +22,15 @@ type IconComponent = React.FC<{
 }>;
 
 const ICON_MAP: Record<string, IconComponent> = {
-  LayoutGrid,
-  CalendarDays,
-  Package,
-  ShoppingCart,
-  Wallet,
-  Truck,
-  FileOutput,
-  Sparkles,
-  Settings,
+  LayoutGrid: LayoutDashboardIcon,
+  CalendarDays: CalendarIcon,
+  Package: PackageIcon,
+  ShoppingCart: ShoppingCartIcon,
+  Wallet: WalletIcon,
+  Truck: TruckIcon,
+  FileOutput: FileOutputIcon,
+  Sparkles: SparklesIcon,
+  Settings: SettingsIcon,
 };
 
 interface Props {
@@ -40,15 +40,13 @@ interface Props {
 export function NavItem({ item }: Props) {
   const pathname = usePathname();
   const isActive = pathname === item.href;
-  const Icon = ICON_MAP[item.icon] ?? LayoutGrid;
+  const Icon = ICON_MAP[item.icon] ?? LayoutDashboardIcon;
 
   return (
     <Link
       href={item.href}
-      className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
-        isActive
-          ? "bg-blue-50 text-blue-600"
-          : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800"
+      className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium ${
+        isActive ? "bg-blue-50 text-blue-600" : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800"
       }`}
     >
       <Icon

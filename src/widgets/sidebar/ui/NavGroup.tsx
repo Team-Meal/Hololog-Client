@@ -8,10 +8,8 @@ interface Props {
 export function NavGroup({ group }: Props) {
   return (
     <div>
-      {group.label && (
-        <p className="mb-1 px-3 py-1 text-xs text-zinc-400">{group.label}</p>
-      )}
-      <ul className="space-y-0.5">
+      <p className="mb-2 px-3 text-xs font-semibold text-zinc-400">{group.label}</p>
+      <ul className="space-y-1">
         {group.items.map((item) => (
           <li key={item.id}>
             <NavItem item={item} />
