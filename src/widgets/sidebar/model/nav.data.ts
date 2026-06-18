@@ -19,15 +19,10 @@ export interface NavGroup {
 export const NAV_GROUPS: NavGroup[] = [
   {
     id: "main",
-    label: "",
+    label: "운영",
     items: [
       { id: "dashboard", label: "대시보드", href: "/", icon: "LayoutGrid" },
-      {
-        id: "meal",
-        label: "식단 관리",
-        href: "/meal",
-        icon: "CalendarDays",
-      },
+      { id: "meal", label: "식단 관리", href: "/meal", icon: "CalendarDays" },
       {
         id: "inventory",
         label: "재고 관리",
@@ -49,18 +44,13 @@ export const NAV_GROUPS: NavGroup[] = [
     label: "분석",
     items: [
       { id: "budget", label: "예산 관리", href: "/budget", icon: "Wallet" },
-      {
-        id: "suppliers",
-        label: "공급업체",
-        href: "/suppliers",
-        icon: "Truck",
-      },
+      { id: "suppliers", label: "공급업체", href: "/suppliers", icon: "Truck" },
       { id: "export", label: "내보내기", href: "/export", icon: "FileOutput" },
     ],
   },
   {
     id: "intelligence",
-    label: "인텔리전스",
+    label: "AI",
     items: [
       {
         id: "ai-meal",
