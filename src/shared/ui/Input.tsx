@@ -21,10 +21,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           id={id}
           className={[
             "h-10 w-full rounded-lg border px-3 text-sm text-zinc-900 placeholder:text-zinc-400",
-            "transition-colors outline-none",
+            "outline-none",
             error
               ? "border-red-400 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-200"
-              : "border-gray-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100",
+              : "border-zinc-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100",
             "disabled:cursor-not-allowed disabled:opacity-50",
             className,
           ].join(" ")}

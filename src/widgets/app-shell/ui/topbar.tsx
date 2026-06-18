@@ -23,7 +23,7 @@ export function TopBar({ onOpenSidebar }: TopBarProps) {
   }, []);
 
   return (
-    <header className="flex h-20 shrink-0 items-center gap-4 border-b border-slate-200 bg-white px-4 sm:px-6 lg:px-8">
+    <header className="flex h-20 shrink-0 items-center gap-4 border-b border-slate-200/60 bg-white/70 px-4 backdrop-blur-2xl sm:px-6 lg:px-8">
       <button
         type="button"
         onClick={onOpenSidebar}
@@ -34,13 +34,13 @@ export function TopBar({ onOpenSidebar }: TopBarProps) {
       </button>
 
       <div className="min-w-0 flex-1">
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Overview</p>
+        <p className="text-xs font-semibold tracking-wider text-slate-400 uppercase">Overview</p>
         <h1 className="truncate text-xl font-semibold text-slate-950 sm:text-2xl">
           {topBarActions.title}
         </h1>
       </div>
 
-      <label className="hidden h-11 w-full max-w-sm items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-500 transition-within focus-within:border-slate-400 focus-within:bg-white md:flex">
+      <label className="hidden h-11 w-full max-w-sm items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-500 focus-within:border-slate-400 focus-within:bg-white md:flex">
         <span aria-hidden="true">Search</span>
         <input
           ref={searchInputRef}
@@ -55,7 +55,7 @@ export function TopBar({ onOpenSidebar }: TopBarProps) {
 
       <button
         type="button"
-        className="hidden h-11 items-center rounded-lg bg-cyan-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-cyan-700 sm:inline-flex"
+        className="hidden h-11 items-center rounded-lg bg-cyan-600 px-4 text-sm font-semibold text-white hover:bg-cyan-700 sm:inline-flex"
       >
         {topBarActions.aiLabel}
       </button>
@@ -66,12 +66,15 @@ export function TopBar({ onOpenSidebar }: TopBarProps) {
         aria-label="Notifications"
       >
         N
-        <span className="absolute right-2 top-2 grid size-4 place-items-center rounded-full bg-rose-500 text-[10px] font-bold leading-none text-white">
+        <span className="absolute top-2 right-2 grid size-4 place-items-center rounded-full bg-rose-500 text-[10px] leading-none font-bold text-white">
           {topBarActions.notificationCount}
         </span>
       </button>
 
-      <button type="button" className="grid size-11 place-items-center rounded-full bg-slate-950 text-sm font-semibold text-white">
+      <button
+        type="button"
+        className="grid size-11 place-items-center rounded-full bg-slate-950 text-sm font-semibold text-white"
+      >
         {shellUser.initials}
       </button>
     </header>

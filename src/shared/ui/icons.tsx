@@ -33,6 +33,23 @@ export function LayoutDashboardIcon(props: Omit<IconProps, "children">) {
   );
 }
 
+export function HomeIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+      <path d="M9 22V12h6v10" />
+    </Icon>
+  );
+}
+
+export function MenuIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="M4 6h16M4 12h16M4 18h16" />
+    </Icon>
+  );
+}
+
 export function CalendarIcon(props: Omit<IconProps, "children">) {
   return (
     <Icon {...props}>
@@ -280,6 +297,181 @@ export function PencilIcon(props: Omit<IconProps, "children">) {
     <Icon {...props}>
       <path d="M12 20h9" />
       <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+    </Icon>
+  );
+}
+
+export function MessageCircleIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="M21 11.5a8.4 8.4 0 0 1-9 8.3 9.5 9.5 0 0 1-4-.9L3 20l1.2-4.2A8.1 8.1 0 0 1 3 11.5 8.4 8.4 0 0 1 12 3.2a8.4 8.4 0 0 1 9 8.3Z" />
+    </Icon>
+  );
+}
+
+export function ChevronsUpDownIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="m7 15 5 5 5-5M7 9l5-5 5 5" />
+    </Icon>
+  );
+}
+
+export function FileOutputIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <path d="M14 2v6h6" />
+      <path d="M10 13H2" />
+      <path d="m6 9-4 4 4 4" />
+    </Icon>
+  );
+}
+
+export function CopyIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <rect x="9" y="9" width="13" height="13" rx="2" />
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+    </Icon>
+  );
+}
+
+export function SunIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+    </Icon>
+  );
+}
+
+export function MoonIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </Icon>
+  );
+}
+
+export function UtensilsIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" />
+      <path d="M7 2v20" />
+      <path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7" />
+    </Icon>
+  );
+}
+
+export function ShieldCheckIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <path d="m9 12 2 2 4-4" />
+    </Icon>
+  );
+}
+
+export function LeafIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+      <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+    </Icon>
+  );
+}
+
+export function RecycleIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5" />
+      <path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12" />
+      <path d="m14 16-3 3 3 3" />
+      <path d="M8.293 13.596 7.196 9.5 3.1 10.598" />
+      <path d="m9.344 5.811 1.093-1.892A1.83 1.83 0 0 1 11.985 3a1.784 1.784 0 0 1 1.546.888l3.943 6.843" />
+      <path d="m13.378 9.633 4.096 1.098 1.097-4.096" />
+    </Icon>
+  );
+}
+
+export function ThumbsUpIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="M7 10v12" />
+      <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" />
+    </Icon>
+  );
+}
+
+export function ActivityIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+    </Icon>
+  );
+}
+
+export function TagIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z" />
+      <path d="M7 7h.01" />
+    </Icon>
+  );
+}
+
+export function RotateCcwIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+      <path d="M3 3v5h5" />
+    </Icon>
+  );
+}
+
+export function UserIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="M20 21a8 8 0 0 0-16 0" />
+      <circle cx="12" cy="7" r="4" />
+    </Icon>
+  );
+}
+
+export function BuildingIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16" />
+      <path d="M16 8h2a2 2 0 0 1 2 2v11" />
+      <path d="M8 7h4M8 11h4M8 15h4M4 21h16" />
+    </Icon>
+  );
+}
+
+export function PlugIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="M9 6V2M15 6V2M8 6h8v5a4 4 0 0 1-8 0Z" />
+      <path d="M12 15v7" />
+    </Icon>
+  );
+}
+
+export function TrendingUpIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+      <polyline points="16 7 22 7 22 13" />
+    </Icon>
+  );
+}
+
+export function TriangleAlertIcon(props: Omit<IconProps, "children">) {
+  return (
+    <Icon {...props}>
+      <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+      <path d="M12 9v4M12 17h.01" />
     </Icon>
   );
 }

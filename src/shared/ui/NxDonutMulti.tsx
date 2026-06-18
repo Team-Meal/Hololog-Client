@@ -53,9 +53,9 @@ function CustomTooltip({ active, payload }: TooltipEntry) {
   if (!active || !payload?.length) return null;
   const { name, value } = payload[0];
   return (
-    <div className="rounded-lg border border-gray-100 bg-white px-3 py-2 shadow-md">
-      <p className="text-xs text-gray-500">{name}</p>
-      <p className="text-sm font-semibold text-gray-800">{value}%</p>
+    <div className="rounded-xl bg-white px-3 py-2 shadow-(--shadow-card)">
+      <p className="text-xs text-zinc-500">{name}</p>
+      <p className="text-sm font-semibold text-zinc-800">{value}%</p>
     </div>
   );
 }
@@ -94,9 +94,7 @@ export function NxDonutMulti({ rings = DUMMY, size = 200 }: NxDonutMultiProps) {
                     key={seg.label}
                     fill={
                       seg.color ??
-                      (segIdx === 0
-                        ? DEFAULT_COLORS[ringIdx % DEFAULT_COLORS.length]
-                        : "#F3F4F6")
+                      (segIdx === 0 ? DEFAULT_COLORS[ringIdx % DEFAULT_COLORS.length] : "#F3F4F6")
                     }
                   />
                 ))}

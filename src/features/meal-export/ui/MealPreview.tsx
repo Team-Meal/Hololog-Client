@@ -13,18 +13,18 @@ export function MealPreview() {
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <EyeIcon size={15} className="text-blue-500" />
-          <span className="text-sm font-semibold text-gray-800">실시간 미리보기</span>
+          <span className="text-sm font-semibold text-zinc-800">실시간 미리보기</span>
         </div>
-        <div className="flex rounded-lg bg-gray-100 p-0.5">
+        <div className="flex rounded-lg bg-zinc-100 p-0.5">
           {(["screen", "print"] as const).map((mode) => (
             <button
               key={mode}
               onClick={() => setPreviewMode(mode)}
               className={[
-                "rounded-md px-3 py-1.5 text-xs font-medium transition-all",
+                "rounded-md px-3 py-1.5 text-xs font-medium",
                 previewMode === mode
-                  ? "bg-white text-gray-800"
-                  : "text-gray-500 hover:text-gray-700",
+                  ? "bg-white text-zinc-800"
+                  : "text-zinc-500 hover:text-zinc-700",
               ].join(" ")}
             >
               {mode === "screen" ? "화면" : "인쇄 모드"}
@@ -36,7 +36,7 @@ export function MealPreview() {
       <div
         className={[
           "flex flex-1 items-start justify-center overflow-auto rounded-xl p-6",
-          previewMode === "screen" ? "bg-gray-100" : "bg-gray-200",
+          previewMode === "screen" ? "bg-zinc-100" : "bg-zinc-200",
         ].join(" ")}
       >
         <div className="w-full max-w-2xl rounded-lg bg-white">
@@ -57,10 +57,10 @@ function OfficialMealDocument({
   mode: PreviewMode;
 }) {
   return (
-    <div className={["p-8 font-sans", mode === "print" ? "text-black" : "text-gray-900"].join(" ")}>
+    <div className={["p-8 font-sans", mode === "print" ? "text-black" : "text-zinc-900"].join(" ")}>
       <div className="mb-6 text-center">
         <h1 className="mb-1 text-2xl font-bold tracking-tight">{schedule.month}월 급식 식단표</h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-zinc-500">
           {schedule.schoolName} · {schedule.districtName}
         </p>
       </div>
@@ -71,7 +71,7 @@ function OfficialMealDocument({
             {schedule.days.map((day) => (
               <th
                 key={day.dayOfWeek}
-                className="border-b border-gray-200 px-3 py-2.5 text-center text-xs font-semibold text-gray-600"
+                className="border-b border-zinc-200 px-3 py-2.5 text-center text-xs font-semibold text-zinc-600"
               >
                 {day.dayOfWeek}
               </th>
@@ -83,15 +83,15 @@ function OfficialMealDocument({
             {schedule.days.map((day) => (
               <td
                 key={day.date}
-                className="border-r border-gray-100 px-3 py-4 align-top last:border-r-0"
+                className="border-r border-zinc-100 px-3 py-4 align-top last:border-r-0"
               >
-                <p className="mb-2 text-center text-sm font-bold text-gray-800">{day.date}</p>
+                <p className="mb-2 text-center text-sm font-bold text-zinc-800">{day.date}</p>
                 <ul className="space-y-1">
                   {(() => {
                     const lunch = day.meals.find((m) => m.type === "중식");
                     if (!lunch) return null;
                     return [lunch.name, ...lunch.sides].map((item, i) => (
-                      <li key={i} className="text-center text-xs leading-relaxed text-gray-600">
+                      <li key={i} className="text-center text-xs leading-relaxed text-zinc-600">
                         {item}
                       </li>
                     ));
@@ -103,12 +103,12 @@ function OfficialMealDocument({
         </tbody>
       </table>
 
-      <div className="mt-6 flex items-center justify-end gap-8 text-xs text-gray-500">
+      <div className="mt-6 flex items-center justify-end gap-8 text-xs text-zinc-500">
         <span>
-          영양교사 {schedule.nutritionistName} <span className="ml-1 text-gray-300">(인)</span>
+          영양교사 {schedule.nutritionistName} <span className="ml-1 text-zinc-300">(인)</span>
         </span>
         <span>
-          학교장 <span className="ml-1 text-gray-300">(인)</span>
+          학교장 <span className="ml-1 text-zinc-300">(인)</span>
         </span>
       </div>
     </div>

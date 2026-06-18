@@ -58,20 +58,20 @@ export function InventoryTable() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="식자재 검색..."
-            className="h-9 w-52 rounded-lg border border-zinc-200 bg-white pl-8 pr-3 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className="h-9 w-52 rounded-lg border border-zinc-200 bg-white pr-3 pl-8 text-sm text-zinc-900 placeholder-zinc-400 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
           />
         </div>
 
-        <div className="flex items-center gap-1 rounded-lg border border-zinc-200 bg-white p-1">
+        <div className="flex items-center gap-1 rounded-xl bg-zinc-100 p-1">
           {STATUS_TABS.map((tab) => (
             <button
               key={tab.value}
               type="button"
               onClick={() => setStatusFilter(tab.value)}
-              className={`rounded-md px-3 py-1 text-sm font-medium transition-colors ${
+              className={`rounded-lg px-3 py-1.5 text-sm font-medium ${
                 statusFilter === tab.value
-                  ? "bg-blue-600 text-white"
-                  : "text-zinc-500 hover:text-zinc-900"
+                  ? "bg-white text-zinc-800 shadow-sm"
+                  : "text-zinc-400 hover:text-zinc-600"
               }`}
             >
               {tab.label}
@@ -99,7 +99,7 @@ export function InventoryTable() {
       {someSelected && <BulkActionBar count={selectedCount} />}
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white">
+      <div className="overflow-hidden rounded-xl bg-white shadow-(--shadow-card)">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-zinc-100 bg-zinc-50">
@@ -130,9 +130,7 @@ export function InventoryTable() {
               filtered.map((item) => (
                 <tr
                   key={item.id}
-                  className={`transition-colors hover:bg-zinc-50 ${
-                    selectedIds.has(item.id) ? "bg-blue-50/50" : ""
-                  }`}
+                  className={`hover:bg-zinc-50 ${selectedIds.has(item.id) ? "bg-blue-50/50" : ""}`}
                 >
                   <td className="px-4 py-3">
                     <input

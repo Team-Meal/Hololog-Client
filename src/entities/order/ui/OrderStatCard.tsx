@@ -26,7 +26,7 @@ export function OrderStatCard({ stat }: { stat: OrderStat }) {
   const Icon = ICONS[stat.icon];
 
   return (
-    <article className="rounded-[24px] bg-white p-5 shadow-[0_1px_0_rgba(15,23,42,0.02)]">
+    <article className="rounded-2xl bg-white p-5 shadow-(--shadow-card)">
       <div className="flex items-start justify-between gap-3">
         <span className="flex size-11 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
           <Icon className="size-6" />
@@ -43,10 +43,10 @@ export function OrderStatCard({ stat }: { stat: OrderStat }) {
       </div>
 
       <p className="mt-5 flex items-baseline gap-1.5">
-        <span className="text-3xl font-bold text-gray-950">{stat.value}</span>
-        <span className="text-sm font-semibold text-gray-400">{stat.unit}</span>
+        <span className="text-3xl font-bold text-zinc-950">{stat.value}</span>
+        <span className="text-sm font-semibold text-zinc-400">{stat.unit}</span>
       </p>
-      <p className="mt-1 text-sm font-medium text-gray-500">{stat.label}</p>
+      <p className="mt-1 text-sm font-medium text-zinc-500">{stat.label}</p>
     </article>
   );
 }

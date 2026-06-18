@@ -32,9 +32,9 @@ function CustomTooltip({ active, payload }: TooltipEntry) {
   if (!active || !payload?.length) return null;
   const { name, value } = payload[0];
   return (
-    <div className="rounded-lg border border-gray-100 bg-white px-3 py-2 shadow-md">
-      <p className="text-xs text-gray-500">{name}</p>
-      <p className="text-sm font-semibold text-gray-800">{value}</p>
+    <div className="rounded-xl bg-white px-3 py-2 shadow-(--shadow-card)">
+      <p className="text-xs text-zinc-500">{name}</p>
+      <p className="text-sm font-semibold text-zinc-800">{value}</p>
     </div>
   );
 }
@@ -44,7 +44,10 @@ export function NxDonut({ data = DUMMY, size = 200, innerRadiusRatio = 0.6, labe
   const innerRadius = outerRadius * innerRadiusRatio;
 
   return (
-    <div className="relative inline-flex items-center justify-center" style={{ width: size, height: size }}>
+    <div
+      className="relative inline-flex items-center justify-center"
+      style={{ width: size, height: size }}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
@@ -67,7 +70,7 @@ export function NxDonut({ data = DUMMY, size = 200, innerRadiusRatio = 0.6, labe
         </PieChart>
       </ResponsiveContainer>
       {label && (
-        <span className="pointer-events-none absolute text-sm font-medium text-gray-600">
+        <span className="pointer-events-none absolute text-sm font-medium text-zinc-600">
           {label}
         </span>
       )}
