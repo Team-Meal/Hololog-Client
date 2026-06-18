@@ -18,7 +18,7 @@ export function Sidebar({ onNavigate }: SidebarProps) {
           H
         </div>
         <div>
-          <p className="text-base font-semibold leading-5">Hololog</p>
+          <p className="text-base leading-5 font-semibold">Hololog</p>
           <p className="text-xs font-medium text-slate-500">Client Console</p>
         </div>
       </div>
@@ -26,7 +26,7 @@ export function Sidebar({ onNavigate }: SidebarProps) {
       <nav className="flex-1 space-y-8 overflow-y-auto px-4 py-3">
         {navigationGroups.map((group) => (
           <div key={group.label}>
-            <p className="px-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <p className="px-3 text-xs font-semibold tracking-wider text-slate-400 uppercase">
               {group.label}
             </p>
             <div className="mt-3 space-y-1">
@@ -39,7 +39,8 @@ export function Sidebar({ onNavigate }: SidebarProps) {
                     href={item.href}
                     onClick={onNavigate}
                     className={[
-                      "flex h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors",
+                      "flex h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium",
+                      "transition-all duration-150",
                       isActive
                         ? "bg-slate-950 text-white shadow-sm"
                         : "text-slate-600 hover:bg-slate-100 hover:text-slate-950",
@@ -49,6 +50,7 @@ export function Sidebar({ onNavigate }: SidebarProps) {
                     <span
                       className={[
                         "grid size-7 shrink-0 place-items-center rounded-md text-xs font-bold",
+                        "transition-all duration-150",
                         isActive ? "bg-white/15 text-white" : "bg-slate-100 text-slate-500",
                       ].join(" ")}
                       aria-hidden="true"
@@ -59,7 +61,7 @@ export function Sidebar({ onNavigate }: SidebarProps) {
                     {item.badge ? (
                       <span
                         className={[
-                          "shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold leading-5",
+                          "shrink-0 rounded-full px-2 py-0.5 text-[11px] leading-5 font-bold",
                           item.badge.kind === "count"
                             ? isActive
                               ? "bg-white text-slate-950"
