@@ -1,37 +1,35 @@
 "use client";
 
-import { Search } from "lucide-react";
+import { SearchIcon } from "@/shared/ui";
 import { useEffect, useRef } from "react";
 
 export function SearchField() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault();
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
         inputRef.current?.focus();
       }
     };
+
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   return (
-    <div className="relative flex items-center">
-      <Search
-        size={15}
-        className="pointer-events-none absolute left-3 text-zinc-400"
-      />
+    <label className="relative hidden items-center md:flex">
+      <SearchIcon size={15} className="pointer-events-none absolute left-3 text-zinc-400" />
       <input
         ref={inputRef}
-        type="text"
-        placeholder="식자재 · 메뉴 · 공급업체 검색..."
-        className="w-72 rounded-xl border border-zinc-200 bg-zinc-50 py-2 pr-14 pl-9 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-300 focus:bg-white focus:outline-none"
+        type="search"
+        placeholder="식재료, 메뉴, 공급업체 검색"
+        className="h-10 w-72 rounded-xl bg-zinc-50 pr-16 pl-9 text-sm text-zinc-900 outline-none placeholder:text-zinc-400 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
       />
-      <kbd className="pointer-events-none absolute right-2.5 rounded border border-zinc-200 bg-white px-1.5 py-0.5 font-mono text-[10px] text-zinc-400">
-        ⌘K
+      <kbd className="pointer-events-none absolute right-2.5 rounded-md bg-zinc-100 px-1.5 py-0.5 font-mono text-[10px] text-zinc-500">
+        Ctrl K
       </kbd>
-    </div>
+    </label>
   );
 }

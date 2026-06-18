@@ -1,38 +1,33 @@
-import { Bell, Sparkles } from "lucide-react";
+import { BellIcon, Button, SparklesIcon } from "@/shared/ui";
 import { PageTitle } from "./PageTitle";
 import { SearchField } from "./SearchField";
 
 export function TopBar() {
   return (
-    <header className="flex h-16 shrink-0 items-center justify-between border-b border-zinc-100 bg-white px-6">
+    <header className="flex h-18 shrink-0 items-center justify-between bg-white/90 px-4 backdrop-blur sm:px-6">
       <PageTitle />
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3">
         <SearchField />
 
-        {/* AI 버튼 */}
-        <button
-          type="button"
-          className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
-        >
-          <Sparkles size={14} />
-          <span>AI에게 물어보기</span>
-        </button>
+        <Button type="button" variant="primary" size="md" className="hidden sm:inline-flex">
+          <SparklesIcon size={14} />
+          AI에게 묻기
+        </Button>
 
-        {/* 알림 */}
         <button
           type="button"
           aria-label="알림"
-          className="relative rounded-xl p-2 text-zinc-400 transition-colors hover:bg-zinc-50 hover:text-zinc-600"
+          className="relative grid size-10 place-items-center rounded-xl bg-white text-zinc-500 hover:bg-zinc-50 hover:text-zinc-700"
         >
-          <Bell size={18} />
+          <BellIcon size={18} />
+          <span className="absolute top-2 right-2 size-2 rounded-full bg-blue-600" />
         </button>
 
-        {/* 유저 아바타 */}
         <button
           type="button"
           aria-label="내 계정"
-          className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-200 text-sm font-semibold text-zinc-600 transition-colors hover:bg-zinc-300"
+          className="grid size-10 place-items-center rounded-full bg-zinc-950 text-sm font-semibold text-white"
         >
           박
         </button>

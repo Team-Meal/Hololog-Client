@@ -18,21 +18,18 @@ const DAY_NAMES = ["일", "월", "화", "수", "목", "금", "토"] as const;
 
 function formatDate(): string {
   const now = new Date();
-  const y = now.getFullYear();
-  const m = now.getMonth() + 1;
-  const d = now.getDate();
   const day = DAY_NAMES[now.getDay()];
-  return `${y}년 ${m}월 ${d}일 ${day}요일 · 한빛초등학교`;
+  return `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일 ${day}요일 · 한빛초등학교`;
 }
 
 export function PageTitle() {
   const pathname = usePathname();
-  const title = PAGE_TITLES[pathname] ?? "홀로로그";
+  const title = PAGE_TITLES[pathname] ?? "Hololog";
 
   return (
-    <div>
-      <h1 className="text-xl font-bold text-zinc-900">{title}</h1>
-      <p className="text-xs text-zinc-400">{formatDate()}</p>
+    <div className="min-w-0">
+      <h1 className="truncate text-xl font-bold text-zinc-950">{title}</h1>
+      <p className="truncate text-xs text-zinc-400">{formatDate()}</p>
     </div>
   );
 }
