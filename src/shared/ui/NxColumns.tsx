@@ -43,9 +43,9 @@ interface TooltipEntry {
 function CustomTooltip({ active, payload, label }: TooltipEntry) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border border-gray-100 bg-white px-3 py-2 shadow-md">
-      <p className="text-xs text-gray-500">{label}</p>
-      <p className="text-sm font-semibold text-gray-800">{payload[0].value}</p>
+    <div className="rounded-xl bg-white px-3 py-2 shadow-(--shadow-card)">
+      <p className="text-xs text-zinc-500">{label}</p>
+      <p className="text-sm font-semibold text-zinc-800">{payload[0].value}</p>
     </div>
   );
 }
@@ -53,7 +53,11 @@ function CustomTooltip({ active, payload, label }: TooltipEntry) {
 export function NxColumns({ data = DUMMY, color = "#3B82F6", unit, height = 240 }: NxColumnsProps) {
   return (
     <ResponsiveContainer width="100%" height={height}>
-      <BarChart data={data} margin={{ top: 8, right: 8, left: -16, bottom: 0 }} barCategoryGap="35%">
+      <BarChart
+        data={data}
+        margin={{ top: 8, right: 8, left: -16, bottom: 0 }}
+        barCategoryGap="35%"
+      >
         <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" vertical={false} />
         <XAxis
           dataKey="label"

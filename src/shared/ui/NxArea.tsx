@@ -40,9 +40,9 @@ interface TooltipEntry {
 function CustomTooltip({ active, payload, label }: TooltipEntry) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border border-gray-100 bg-white px-3 py-2 shadow-md">
-      <p className="text-xs text-gray-500">{label}</p>
-      <p className="text-sm font-semibold text-gray-800">{payload[0].value}</p>
+    <div className="rounded-xl bg-white px-3 py-2 shadow-(--shadow-card)">
+      <p className="text-xs text-zinc-500">{label}</p>
+      <p className="text-sm font-semibold text-zinc-800">{payload[0].value}</p>
     </div>
   );
 }

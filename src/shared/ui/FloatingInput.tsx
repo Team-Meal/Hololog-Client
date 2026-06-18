@@ -39,7 +39,7 @@ export function FloatingInput({
         autoComplete={autoComplete}
         placeholder=" "
         className={[
-          "h-14 w-full rounded-xl border bg-zinc-50/80 pb-2 pl-4 pr-4 pt-5 text-sm text-zinc-900 outline-none transition-all duration-150",
+          "h-14 w-full rounded-xl border bg-zinc-50/80 pb-2 pl-4 pr-4 pt-5 text-sm text-zinc-900 outline-none",
           rightSlot ? "pr-11" : "",
           focused
             ? "border-blue-500 bg-white ring-3 ring-blue-500/10"
@@ -50,7 +50,8 @@ export function FloatingInput({
       <label
         htmlFor={id}
         className={[
-          "pointer-events-none absolute left-4 select-none transition-all duration-200",
+          "pointer-events-none absolute left-4 select-none",
+          "transition-all duration-200 ease-spring",
           floated ? "top-2.25 text-[11px] font-medium" : "top-4.25 text-sm",
           focused ? "text-blue-500" : "text-zinc-400",
         ].join(" ")}
