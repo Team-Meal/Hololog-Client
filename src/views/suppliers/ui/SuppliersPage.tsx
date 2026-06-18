@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { Button, ShoppingCartIcon, SparklesIcon, TableIcon } from "@/shared/ui";
+import { Button, PageShell, ShoppingCartIcon, SparklesIcon, TableIcon } from "@/shared/ui";
 
 type ViewMode = "cards" | "compare";
 
@@ -97,21 +97,13 @@ export function SuppliersPage() {
   };
 
   return (
-    <main className="min-h-full bg-[#f4f4f6] text-gray-900">
-      <SupplierPageAnimations />
-<section className="mx-auto flex w-full max-w-360 flex-col gap-6">
-        <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p className="text-sm font-semibold text-blue-600">공급업체</p>
-            <h1 className="mt-2 text-3xl font-bold tracking-normal text-gray-950 sm:text-4xl">
-              공급업체 추천
-            </h1>
-            <p className="mt-2 text-sm font-medium text-gray-500">
-              거리·평점·단가·배송 가능 여부를 비교해 최적의 공급업체를 찾으세요.
-            </p>
-          </div>
-
-          <div className="inline-flex w-full rounded-2xl bg-gray-200/70 p-1 sm:w-auto">
+    <>
+      <PageShell
+        eyebrow="공급업체"
+        title="공급업체 추천"
+        description="거리·평점·단가·배송 가능 여부를 비교해 최적의 공급업체를 찾으세요."
+        actions={
+          <div className="inline-flex w-full rounded-2xl bg-zinc-200/70 p-1 sm:w-auto">
             <ViewToggleButton selected={viewMode === "cards"} onClick={() => setViewMode("cards")}>
               카드
             </ViewToggleButton>
@@ -122,14 +114,11 @@ export function SuppliersPage() {
               비교
             </ViewToggleButton>
           </div>
-        </header>
-
+        }
+      >
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_405px]">
           <section className="min-w-0">
-            <div
-              key={viewMode}
-              className="animate-[supplierViewIn_220ms_ease-out] motion-reduce:animate-none"
-            >
+            <div key={viewMode}>
               {viewMode === "cards" ? (
                 <SupplierCardGrid suppliers={suppliers} onOrder={handleOrder} />
               ) : (
@@ -143,8 +132,8 @@ export function SuppliersPage() {
             <RecommendationSummary />
           </aside>
         </div>
-      </section>
-    </main>
+      </PageShell>
+    </>
   );
 }
 
@@ -162,10 +151,10 @@ function ViewToggleButton({
       type="button"
       onClick={onClick}
       className={[
-        "h-9 flex-1 rounded-xl px-5 text-sm font-semibold transition-all duration-200 ease-out sm:flex-none",
+        "h-9 flex-1 rounded-xl px-5 text-sm font-semibold sm:flex-none",
         selected
-          ? "scale-[1.02] bg-white text-gray-950 shadow-sm"
-          : "text-gray-500 hover:bg-white/40 hover:text-gray-800",
+          ? "bg-white text-zinc-950 shadow-sm"
+          : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800",
       ].join(" ")}
       aria-pressed={selected}
     >
@@ -198,18 +187,13 @@ function SupplierCard({
   onOrder: (supplierName: string) => void;
 }) {
   return (
-    <article
-      className={[
-        "rounded-[24px] border border-transparent bg-white p-5 shadow-[0_1px_0_rgba(15,23,42,0.02)]",
-        "transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-gray-200 hover:shadow-sm",
-      ].join(" ")}
-    >
+    <article className={["rounded-2xl bg-white p-5 shadow-(--shadow-card)", ""].join(" ")}>
       <div className="flex items-start justify-between gap-4">
         <div className="flex min-w-0 items-center gap-4">
           <SupplierMark supplier={supplier} />
           <div className="min-w-0">
-            <h2 className="truncate text-lg font-bold text-gray-950">{supplier.name}</h2>
-            <p className="mt-1 text-sm font-medium text-gray-400">{supplier.category}</p>
+            <h2 className="truncate text-lg font-bold text-zinc-950">{supplier.name}</h2>
+            <p className="mt-1 text-sm font-medium text-zinc-400">{supplier.category}</p>
           </div>
         </div>
         {supplier.recommended && <AiBadge />}
@@ -223,13 +207,13 @@ function SupplierCard({
       </dl>
 
       <div className="mt-5 grid grid-cols-[minmax(0,1fr)_minmax(0,1.7fr)] gap-3">
-        <Button variant="ghost" className="h-10 text-gray-800 hover:bg-gray-100">
+        <Button variant="ghost" className="h-10 text-zinc-800 hover:bg-zinc-100">
           <MessageIcon className="size-4" />
           문의
         </Button>
         <Button
           variant="primary"
-          className="h-10 rounded-lg bg-blue-600 font-bold transition-all duration-200 hover:bg-blue-700 active:scale-[0.98]"
+          className="h-10 rounded-lg bg-blue-600 font-bold hover:bg-blue-700"
           onClick={() => onOrder(supplier.name)}
         >
           <ShoppingCartIcon className="size-4" />
@@ -242,12 +226,12 @@ function SupplierCard({
 
 function SupplierCompareTable({ suppliers }: { suppliers: Supplier[] }) {
   return (
-    <div className="rounded-[24px] bg-white p-6 shadow-[0_1px_0_rgba(15,23,42,0.02)]">
-      <h2 className="text-lg font-bold text-gray-950">공급업체 비교</h2>
+    <div className="rounded-2xl bg-white p-6 shadow-(--shadow-card)">
+      <h2 className="text-lg font-bold text-zinc-950">공급업체 비교</h2>
       <div className="mt-4 overflow-x-auto">
         <table className="w-full min-w-[760px] border-collapse text-left">
           <thead>
-            <tr className="border-b border-gray-100 text-xs font-semibold text-gray-400">
+            <tr className="border-b border-zinc-100 text-xs font-semibold text-zinc-400">
               <th className="py-4 pr-4">공급업체</th>
               <th className="px-4 py-4">카테고리</th>
               <th className="px-4 py-4">거리</th>
@@ -270,13 +254,13 @@ function SupplierCompareTable({ suppliers }: { suppliers: Supplier[] }) {
 
 function SupplierCompareRow({ supplier }: { supplier: Supplier }) {
   return (
-    <tr className="border-b border-gray-100 transition-colors duration-150 hover:bg-blue-50/35 last:border-0">
+    <tr className="border-b border-zinc-100 last:border-0 hover:bg-blue-50/35">
       <td className="py-4 pr-4">
         <div className="flex items-center gap-3">
           <SupplierMark supplier={supplier} compact />
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-gray-950">{supplier.name}</span>
+              <span className="font-bold text-zinc-950">{supplier.name}</span>
               {supplier.recommended && (
                 <span className="rounded-full bg-blue-50 px-2 py-1 text-xs font-bold text-blue-600">
                   추천
@@ -286,17 +270,17 @@ function SupplierCompareRow({ supplier }: { supplier: Supplier }) {
           </div>
         </div>
       </td>
-      <td className="px-4 py-4 text-sm font-medium text-gray-500">{supplier.category}</td>
-      <td className="px-4 py-4 text-sm font-medium text-gray-600">{supplier.distance}</td>
-      <td className="px-4 py-4 text-sm font-medium text-gray-600">
+      <td className="px-4 py-4 text-sm font-medium text-zinc-500">{supplier.category}</td>
+      <td className="px-4 py-4 text-sm font-medium text-zinc-600">{supplier.distance}</td>
+      <td className="px-4 py-4 text-sm font-medium text-zinc-600">
         {supplier.rating.toFixed(1)} ({supplier.reviews})
       </td>
-      <td className="px-4 py-4 text-sm font-medium text-gray-600">{supplier.price}</td>
+      <td className="px-4 py-4 text-sm font-medium text-zinc-600">{supplier.price}</td>
       <td className="px-4 py-4">
         <DeliveryBadge delivery={supplier.delivery} />
       </td>
       <td className="py-4 pl-4 text-right">
-        <Button variant="ghost" size="sm" className="font-bold text-gray-900">
+        <Button variant="ghost" size="sm" className="font-bold text-zinc-900">
           선택
         </Button>
       </td>
@@ -329,8 +313,8 @@ function SupplierMetric({
 }) {
   return (
     <div>
-      <dt className="text-xs font-semibold text-gray-400">{label}</dt>
-      <dd className="mt-2 flex min-h-6 items-center gap-1 text-sm font-bold text-gray-950">
+      <dt className="text-xs font-semibold text-zinc-400">{label}</dt>
+      <dd className="mt-2 flex min-h-6 items-center gap-1 text-sm font-bold text-zinc-950">
         {featured && <span className="text-lg leading-none text-amber-400">★</span>}
         {value}
       </dd>
@@ -354,7 +338,7 @@ function DeliveryBadge({ delivery }: { delivery: string }) {
     <span
       className={[
         "inline-flex rounded-full px-3 py-1 text-xs font-bold",
-        sameDay ? "bg-emerald-50 text-emerald-600" : "bg-gray-100 text-gray-500",
+        sameDay ? "bg-emerald-50 text-emerald-600" : "bg-zinc-100 text-zinc-500",
       ].join(" ")}
     >
       {delivery}
@@ -364,13 +348,13 @@ function DeliveryBadge({ delivery }: { delivery: string }) {
 
 function LocationPreview() {
   return (
-    <section className="rounded-[24px] bg-white p-5 shadow-[0_1px_0_rgba(15,23,42,0.02)]">
+    <section className="rounded-2xl bg-white p-5 shadow-(--shadow-card)">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="flex items-center gap-2 text-lg font-bold text-gray-950">
+        <h2 className="flex items-center gap-2 text-lg font-bold text-zinc-950">
           <TableIcon className="size-5 text-blue-600" />
           위치 미리보기
         </h2>
-        <span className="text-xs font-medium text-gray-400">반경 15km</span>
+        <span className="text-xs font-medium text-zinc-400">반경 15km</span>
       </div>
 
       <div className="mt-4 overflow-hidden rounded-2xl bg-blue-50">
@@ -400,7 +384,7 @@ function LocationPreview() {
         </svg>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center gap-4 text-xs font-medium text-gray-500">
+      <div className="mt-4 flex flex-wrap items-center gap-4 text-xs font-medium text-zinc-500">
         <Legend color="bg-emerald-500" label="한빛초등학교" />
         <Legend color="bg-blue-600" label="공급업체 5곳" />
       </div>
@@ -428,13 +412,13 @@ function Legend({ color, label }: { color: string; label: string }) {
 
 function RecommendationSummary() {
   return (
-    <section className="rounded-[24px] bg-white p-5 shadow-[0_1px_0_rgba(15,23,42,0.02)]">
-      <h2 className="text-lg font-bold text-gray-950">추천 요약</h2>
-      <div className="mt-4 flex gap-3 rounded-xl bg-blue-50 p-4 text-sm font-medium text-gray-600">
-        <SparklesIcon className="mt-0.5 size-5 shrink-0 text-gray-500" />
+    <section className="rounded-2xl bg-white p-5 shadow-(--shadow-card)">
+      <h2 className="text-lg font-bold text-zinc-950">추천 요약</h2>
+      <div className="mt-4 flex gap-3 rounded-xl bg-blue-50 p-4 text-sm font-medium text-zinc-600">
+        <SparklesIcon className="mt-0.5 size-5 shrink-0 text-zinc-500" />
         <p>
-          채소·과일은 거리와 평점이 우수한 <strong className="text-gray-900">푸르름 농산</strong>
-          을, 육류는 품질 평점이 높은 <strong className="text-gray-900">한울 축산</strong>을
+          채소·과일은 거리와 평점이 우수한 <strong className="text-zinc-900">푸르름 농산</strong>
+          을, 육류는 품질 평점이 높은 <strong className="text-zinc-900">한울 축산</strong>을
           추천해요.
         </p>
       </div>
@@ -449,9 +433,9 @@ function RecommendationSummary() {
 
 function SummaryStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl bg-gray-50 px-3 py-3">
-      <p className="text-xs font-semibold text-gray-400">{label}</p>
-      <p className="mt-1 text-sm font-bold text-gray-950">{value}</p>
+    <div className="rounded-xl bg-zinc-50 px-3 py-3">
+      <p className="text-xs font-semibold text-zinc-400">{label}</p>
+      <p className="mt-1 text-sm font-bold text-zinc-950">{value}</p>
     </div>
   );
 }
@@ -474,19 +458,3 @@ function MessageIcon({ className = "" }: { className?: string }) {
   );
 }
 
-function SupplierPageAnimations() {
-  return (
-    <style>{`
-      @keyframes supplierViewIn {
-        from {
-          opacity: 0;
-          transform: translateY(8px) scale(0.99);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0) scale(1);
-        }
-      }
-    `}</style>
-  );
-}
