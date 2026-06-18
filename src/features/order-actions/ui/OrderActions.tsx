@@ -17,7 +17,7 @@ export function OrderActions({ item }: { item: OrderItem }) {
 
   return (
     <>
-      <Button variant="ghost" className="text-gray-700 hover:bg-gray-100" onClick={handleEdit}>
+      <Button variant="ghost" className="text-zinc-700 hover:bg-zinc-100" onClick={handleEdit}>
         <PencilIcon className="size-4" />
         수정
       </Button>
