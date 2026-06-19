@@ -1,1 +1,1 @@
-export { MealManagementPage } from "./MealManagementPage";
+export { MealManagementPage } from "./ui";

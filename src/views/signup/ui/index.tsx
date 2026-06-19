@@ -1,5 +1,4 @@
-import { SignupForm } from "@/features/auth";
-import { AuthLayout } from "@/features/auth/ui/AuthLayout";
+import { AuthLayout, SignupForm } from "@/features/auth";
 
 export function SignupPage() {
   return (
