@@ -1,4 +1,11 @@
-import { Button, CalendarIcon, PackageIcon, PageShell, ShoppingCartIcon, SparklesIcon } from "@/shared/ui";
+import {
+  Button,
+  CalendarIcon,
+  PackageIcon,
+  PageShell,
+  ShoppingCartIcon,
+  SparklesIcon,
+} from "@/shared/ui";
 import { AiInsights } from "@/widgets/ai-insights";
 import { BudgetSummary } from "@/widgets/budget-summary";
 import { LowStock } from "@/widgets/low-stock";
