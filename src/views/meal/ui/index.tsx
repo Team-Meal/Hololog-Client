@@ -19,8 +19,7 @@ export function MealManagementPage() {
       actions={
         <>
           <Button variant="secondary" onClick={handleCopyWeek}>
-            <CopyIcon size={14} />
-            주 복사
+            <CopyIcon size={14} />주 복사
           </Button>
           <Button variant="primary">
             <SparklesIcon size={14} />
