@@ -1,2 +1,2 @@
 export { metadata } from "./model/metadata";
-export { SuppliersPage } from "./ui/SuppliersPage";
+export { SuppliersPage } from "./ui";
