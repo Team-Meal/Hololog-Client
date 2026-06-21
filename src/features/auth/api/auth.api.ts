@@ -1,4 +1,4 @@
-import { api } from "@/shared/api";
+import { instance } from "@/shared/api";
 import type {
   LoginCredentials,
   LoginResponse,
@@ -7,13 +7,13 @@ import type {
 } from "@/entities/auth";
 
 export async function loginApi(credentials: LoginCredentials): Promise<LoginResponse> {
-  const response = await api.post<LoginResponse>("/auth/login", credentials);
+  const response = await instance.post<LoginResponse>("/auth/login", credentials);
   return response.data;
 }
 
 export async function registerApi(
   credentials: RegisterCredentials,
 ): Promise<RegisterResponse> {
-  const response = await api.post<RegisterResponse>("/auth/signup", credentials);
+  const response = await instance.post<RegisterResponse>("/auth/signup", credentials);
   return response.data;
 }
