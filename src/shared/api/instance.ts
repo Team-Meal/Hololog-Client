@@ -1,7 +1,12 @@
 import axios from "axios";
-import { toast } from "sonner";
 
-export const mealApi = axios.create({
+declare module "axios" {
+  interface AxiosRequestConfig {
+    requiresAuth?: boolean;
+  }
+}
+
+export const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_MEAL_API_BASE_URL,
   timeout: 10000,
   headers: {
@@ -9,15 +14,25 @@ export const mealApi = axios.create({
   },
 });
 
-mealApi.interceptors.response.use(
+instance.interceptors.request.use((config) => {
+  if (config.requiresAuth && typeof window !== "undefined") {
+    const accessToken = localStorage.getItem("accessToken");
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+  }
+  return config;
+});
+
+instance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (axios.isAxiosError(error) && typeof window !== "undefined") {
+    if (axios.isAxiosError(error)) {
       const data = error.response?.data as { message?: string } | undefined;
-      toast.error(data?.message ?? error.message ?? "요청을 처리하지 못했습니다.");
+      console.error(data?.message ?? error.message ?? "요청을 처리하지 못했습니다.");
     }
     return Promise.reject(error);
   },
 );
 
-export default mealApi;
+export default instance;
