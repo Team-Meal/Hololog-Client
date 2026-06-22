@@ -13,6 +13,7 @@ import {
 } from "@/shared/ui";
 import type { UserRole } from "@/entities/auth";
 import { useAuthStore } from "../model/auth.store";
+import { SchoolSearchField } from "./SchoolSearchField";
 
 interface RoleOption {
   value: UserRole;
@@ -157,17 +158,13 @@ export function SignupForm() {
         </>
       ) : (
         <>
-          <FloatingInput
-            id="schoolName"
-            label="학교명"
-            type="text"
+          <SchoolSearchField
             value={schoolName}
             onChange={(value) => {
               clearError();
               setSchoolName(value);
             }}
             disabled={isLoading}
-            autoComplete="organization"
           />
 
           <FloatingInput
