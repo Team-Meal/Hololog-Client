@@ -1,10 +1,11 @@
+import { Suspense } from "react";
 import { AuthLayout, LoginForm } from "@/features/auth";
 
 export function LoginPage() {
   return (
     <AuthLayout
       title="로그인"
-      description="아이디와 비밀번호를 입력해 주세요."
+      description="이메일과 비밀번호를 입력해 주세요."
       headline={
         <>
           급식 관리의
@@ -16,7 +17,9 @@ export function LoginPage() {
       footerHref="/signup"
       footerLink="회원가입"
     >
-      <LoginForm />
+      <Suspense>
+        <LoginForm />
+      </Suspense>
     </AuthLayout>
   );
 }

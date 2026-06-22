@@ -1,25 +1,27 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { EyeIcon, EyeOffIcon, FloatingInput } from "@/shared/ui";
 import { useAuthStore } from "../model/auth.store";
 
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login, isLoading, clearError } = useAuthStore();
 
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: { preventDefault(): void }) => {
     e.preventDefault();
-    const success = await login({ username, password });
+    const success = await login({ email, password });
 
     if (success) {
-      router.push("/dashboard");
+      const redirect = searchParams.get("redirect");
+      router.push(redirect && redirect.startsWith("/") ? redirect : "/dashboard");
       return;
     }
 
@@ -29,21 +31,21 @@ export function LoginForm() {
     clearError();
   };
 
-  const canSubmit = !isLoading && username.trim().length > 0 && password.length > 0;
+  const canSubmit = !isLoading && email.trim().length > 0 && password.length > 0;
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3.5" noValidate>
       <FloatingInput
-        id="username"
-        label="아이디"
-        type="text"
-        value={username}
+        id="email"
+        label="이메일"
+        type="email"
+        value={email}
         onChange={(value) => {
           clearError();
-          setUsername(value);
+          setEmail(value);
         }}
         disabled={isLoading}
-        autoComplete="username"
+        autoComplete="email"
       />
 
       <FloatingInput
