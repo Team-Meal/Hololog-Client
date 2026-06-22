@@ -2,8 +2,5 @@ export type {
   UserRole,
   LoginCredentials,
   RegisterCredentials,
-  AuthTokens,
-  AuthUser,
-  LoginResponse,
-  RegisterResponse,
+  SigninResponse,
 } from "./model/types";

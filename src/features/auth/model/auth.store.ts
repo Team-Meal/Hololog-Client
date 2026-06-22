@@ -2,10 +2,10 @@
 
 import { create } from "zustand";
 import { loginApi, registerApi } from "../api/auth.api";
-import type { LoginCredentials, RegisterCredentials, AuthUser } from "@/entities/auth";
+import type { LoginCredentials, RegisterCredentials } from "@/entities/auth";
 
 interface AuthState {
-  user: AuthUser | null;
+  role: string | null;
   isLoading: boolean;
   error: string | null;
   login: (credentials: LoginCredentials) => Promise<boolean>;
@@ -20,6 +20,15 @@ function persistTokens(accessToken: string, refreshToken?: string) {
   if (refreshToken) {
     localStorage.setItem("refreshToken", refreshToken);
   }
+  // Mirror the token into a cookie so the server-side proxy (middleware) can read it.
+  document.cookie = `accessToken=${accessToken}; path=/; max-age=${60 * 60 * 24 * 7}; samesite=lax`;
+}
+
+function clearTokens() {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+  document.cookie = "accessToken=; path=/; max-age=0; samesite=lax";
 }
 
 function extractErrorMessage(err: unknown, fallback: string): string {
@@ -30,21 +39,21 @@ function extractErrorMessage(err: unknown, fallback: string): string {
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
+  role: null,
   isLoading: false,
   error: null,
 
   login: async (credentials) => {
     set({ isLoading: true, error: null });
     try {
-      const { tokens, user } = await loginApi(credentials);
-      persistTokens(tokens.accessToken, tokens.refreshToken);
-      set({ user, isLoading: false });
+      const data = await loginApi(credentials);
+      persistTokens(data.accessToken, data.refreshToken);
+      set({ role: data.role, isLoading: false });
       return true;
     } catch (err: unknown) {
       const message = extractErrorMessage(
         err,
-        "아이디 또는 비밀번호가 올바르지 않습니다.",
+        "이메일 또는 비밀번호가 올바르지 않습니다.",
       );
       set({ error: message, isLoading: false });
       return false;
@@ -54,9 +63,9 @@ export const useAuthStore = create<AuthState>((set) => ({
   register: async (credentials) => {
     set({ isLoading: true, error: null });
     try {
-      const { tokens, user } = await registerApi(credentials);
-      persistTokens(tokens.accessToken, tokens.refreshToken);
-      set({ user, isLoading: false });
+      // Signup returns 204 with no tokens — the user signs in afterwards.
+      await registerApi(credentials);
+      set({ isLoading: false });
       return true;
     } catch (err: unknown) {
       const message = extractErrorMessage(err, "회원가입 중 오류가 발생했습니다.");
@@ -66,11 +75,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   logout: () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-    }
-    set({ user: null, error: null });
+    clearTokens();
+    set({ role: null, error: null });
   },
 
   clearError: () => set({ error: null }),
