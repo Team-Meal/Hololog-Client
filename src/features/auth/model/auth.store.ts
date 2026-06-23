@@ -14,21 +14,24 @@ interface AuthState {
   clearError: () => void;
 }
 
-function persistTokens(accessToken: string, refreshToken?: string) {
+function persistTokens(accessToken: string) {
   if (typeof window === "undefined") return;
   localStorage.setItem("accessToken", accessToken);
-  if (refreshToken) {
-    localStorage.setItem("refreshToken", refreshToken);
-  }
-  // Mirror the token into a cookie so the server-side proxy (middleware) can read it.
+  // The refresh token is intentionally NOT stored: it is unused (no reissue flow) and
+  // keeping it in JS-readable storage only widens the XSS attack surface. A proper
+  // refresh flow should have the backend issue it as an HttpOnly cookie.
+  // Mirror the access token into a cookie so the server-side proxy (middleware) can read it.
   document.cookie = `accessToken=${accessToken}; path=/; max-age=${60 * 60 * 24 * 7}; samesite=lax`;
 }
 
 function clearTokens() {
   if (typeof window === "undefined") return;
   localStorage.removeItem("accessToken");
+  // Clean up any refresh token / role cookie left over from earlier versions.
   localStorage.removeItem("refreshToken");
   document.cookie = "accessToken=; path=/; max-age=0; samesite=lax";
+  document.cookie = "refreshToken=; path=/; max-age=0; samesite=lax";
+  document.cookie = "role=; path=/; max-age=0; samesite=lax";
 }
 
 function extractErrorMessage(err: unknown, fallback: string): string {
@@ -47,7 +50,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const data = await loginApi(credentials);
-      persistTokens(data.accessToken, data.refreshToken);
+      persistTokens(data.accessToken);
       set({ role: data.role, isLoading: false });
       return true;
     } catch (err: unknown) {
