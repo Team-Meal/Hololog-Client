@@ -1,19 +1,16 @@
 import { instance } from "@/shared/api";
 import type {
   LoginCredentials,
-  LoginResponse,
   RegisterCredentials,
-  RegisterResponse,
+  SigninResponse,
 } from "@/entities/auth";
 
-export async function loginApi(credentials: LoginCredentials): Promise<LoginResponse> {
-  const response = await instance.post<LoginResponse>("/auth/login", credentials);
+export async function loginApi(credentials: LoginCredentials): Promise<SigninResponse> {
+  const response = await instance.post<SigninResponse>("/auth/signin", credentials);
   return response.data;
 }
 
-export async function registerApi(
-  credentials: RegisterCredentials,
-): Promise<RegisterResponse> {
-  const response = await instance.post<RegisterResponse>("/auth/signup", credentials);
-  return response.data;
+// Returns 204 No Content — no tokens are issued, the user must sign in afterwards.
+export async function registerApi(credentials: RegisterCredentials): Promise<void> {
+  await instance.post("/auth/signup", credentials);
 }

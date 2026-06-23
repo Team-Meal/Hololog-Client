@@ -1,35 +1,25 @@
-export type UserRole = "student" | "teacher" | "nutritionist";
+// Role values sent to POST /auth/signup. Nutritionists sign up as PENDING_NUTRITIONIST
+// and are promoted to NUTRITIONIST after submitting a license number (/auth/signup-requests)
+// and admin approval.
+export type UserRole = "STUDENT" | "TEACHER" | "PENDING_NUTRITIONIST";
 
 export interface LoginCredentials {
-  username: string;
+  email: string;
   password: string;
 }
 
 export interface RegisterCredentials {
   role: UserRole;
+  email: string;
   name: string;
-  username: string;
+  schoolName: string;
   password: string;
 }
 
-export interface AuthTokens {
+export interface SigninResponse {
   accessToken: string;
-  refreshToken?: string;
-}
-
-export interface AuthUser {
-  id: string;
-  username: string;
-  name: string;
+  refreshToken: string;
+  accessTokenExpiresAt: string;
+  refreshTokenExpiresAt: string;
   role: string;
-}
-
-export interface LoginResponse {
-  tokens: AuthTokens;
-  user: AuthUser;
-}
-
-export interface RegisterResponse {
-  tokens: AuthTokens;
-  user: AuthUser;
 }

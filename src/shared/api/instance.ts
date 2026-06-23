@@ -7,7 +7,9 @@ declare module "axios" {
 }
 
 export const instance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_MEAL_API_BASE_URL,
+  // Same-origin path proxied to the backend via the /api/backend rewrite (next.config.ts).
+  // Keeps browser requests CORS-free; the backend only whitelists its own origin.
+  baseURL: "/api/backend",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
