@@ -1,4 +1,5 @@
 export { Button } from "./Button";
+export { ConfirmDialog } from "./ConfirmDialog";
 export { Input } from "./Input";
 export { FloatingInput } from "./FloatingInput";
 export { BrandLogo } from "./BrandLogo";
