@@ -18,16 +18,13 @@ export function SchoolSearchField({ value, onChange, disabled }: SchoolSearchFie
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  // Skip the search that the value change from a selection would otherwise trigger.
-  const skipNextSearch = useRef(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  useEffect(() => {
-    if (skipNextSearch.current) {
-      skipNextSearch.current = false;
-      return;
-    }
+  const handleChange = (newValue: string) => {
+    onChange(newValue);
+    clearTimeout(timerRef.current);
 
-    const query = value.trim();
+    const query = newValue.trim();
     if (query.length < MIN_QUERY_LENGTH) {
       setResults([]);
       setSearched(false);
@@ -37,15 +34,13 @@ export function SchoolSearchField({ value, onChange, disabled }: SchoolSearchFie
 
     setLoading(true);
     setOpen(true);
-    const timer = setTimeout(async () => {
+    timerRef.current = setTimeout(async () => {
       const found = await searchSchools(query);
       setResults(found);
       setSearched(true);
       setLoading(false);
     }, 300);
-
-    return () => clearTimeout(timer);
-  }, [value]);
+  };
 
   useEffect(() => {
     function handleOutsideClick(event: MouseEvent) {
@@ -57,8 +52,12 @@ export function SchoolSearchField({ value, onChange, disabled }: SchoolSearchFie
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, []);
 
+  useEffect(() => {
+    return () => clearTimeout(timerRef.current);
+  }, []);
+
   const selectSchool = (school: School) => {
-    skipNextSearch.current = true;
+    clearTimeout(timerRef.current);
     onChange(school.name);
     setResults([]);
     setOpen(false);
@@ -71,7 +70,7 @@ export function SchoolSearchField({ value, onChange, disabled }: SchoolSearchFie
         label="학교명"
         type="text"
         value={value}
-        onChange={onChange}
+        onChange={handleChange}
         disabled={disabled}
         autoComplete="off"
       />
@@ -89,7 +88,6 @@ export function SchoolSearchField({ value, onChange, disabled }: SchoolSearchFie
               <button
                 key={school.code}
                 type="button"
-                // Select before the input's blur can close the dropdown.
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => selectSchool(school)}
                 className="flex w-full flex-col items-start gap-0.5 px-4 py-2.5 text-left hover:bg-zinc-50"
