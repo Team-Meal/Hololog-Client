@@ -15,10 +15,7 @@ const STRIPPED_REQUEST_HEADERS = new Set([
   "accept-encoding",
 ]);
 
-async function handler(
-  request: NextRequest,
-  ctx: { params: Promise<{ path: string[] }> },
-) {
+async function handler(request: NextRequest, ctx: { params: Promise<{ path: string[] }> }) {
   if (!BACKEND_URL) {
     return new Response("Backend URL is not configured.", { status: 500 });
   }

@@ -13,10 +13,17 @@ export function BrandLogo({ compact = false, dark = false }: BrandLogoProps) {
       </div>
       {!compact && (
         <div className="min-w-0">
-          <p className={["text-base font-bold leading-5", dark ? "text-white" : "text-zinc-950"].join(" ")}>
+          <p
+            className={[
+              "text-base leading-5 font-bold",
+              dark ? "text-white" : "text-zinc-950",
+            ].join(" ")}
+          >
             Hololog
           </p>
-          <p className={["text-xs font-medium", dark ? "text-white/45" : "text-zinc-400"].join(" ")}>
+          <p
+            className={["text-xs font-medium", dark ? "text-white/45" : "text-zinc-400"].join(" ")}
+          >
             School meal ops
           </p>
         </div>
