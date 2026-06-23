@@ -39,7 +39,7 @@ export function FloatingInput({
         autoComplete={autoComplete}
         placeholder=" "
         className={[
-          "h-14 w-full rounded-xl border bg-zinc-50/80 pb-2 pl-4 pr-4 pt-5 text-sm text-zinc-900 outline-none",
+          "h-14 w-full rounded-xl border bg-zinc-50/80 pt-5 pr-4 pb-2 pl-4 text-sm text-zinc-900 outline-none",
           rightSlot ? "pr-11" : "",
           focused
             ? "border-blue-500 bg-white ring-3 ring-blue-500/10"
@@ -58,9 +58,7 @@ export function FloatingInput({
       >
         {label}
       </label>
-      {rightSlot && (
-        <div className="absolute right-3.5 top-1/2 -translate-y-1/2">{rightSlot}</div>
-      )}
+      {rightSlot && <div className="absolute top-1/2 right-3.5 -translate-y-1/2">{rightSlot}</div>}
     </div>
   );
 }

@@ -58,7 +58,9 @@ export function StatCards() {
       {STATS.map((stat) => (
         <SurfaceCard key={stat.label}>
           <div className="flex items-start justify-between">
-            <span className={`flex size-10 items-center justify-center rounded-xl ${stat.iconClass}`}>
+            <span
+              className={`flex size-10 items-center justify-center rounded-xl ${stat.iconClass}`}
+            >
               <stat.icon size={18} />
             </span>
             <StatusBadge tone={stat.badgeTone}>{stat.badge}</StatusBadge>

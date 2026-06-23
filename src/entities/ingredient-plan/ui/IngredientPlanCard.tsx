@@ -18,9 +18,7 @@ export function IngredientPlanCard({ plan }: Props) {
         {start} ~ {end}
       </p>
       <h3 className="mt-1.5 text-base font-semibold text-zinc-900">{plan.title}</h3>
-      {plan.memo && (
-        <p className="mt-1 truncate text-sm text-zinc-500">{plan.memo}</p>
-      )}
+      {plan.memo && <p className="mt-1 truncate text-sm text-zinc-500">{plan.memo}</p>}
       <p className="mt-3 text-xs text-zinc-400">
         작성일 {new Date(plan.createdAt).toLocaleDateString("ko-KR")}
       </p>

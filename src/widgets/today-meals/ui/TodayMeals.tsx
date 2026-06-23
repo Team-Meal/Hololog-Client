@@ -12,17 +12,36 @@ interface MealRow {
 
 const MEALS: MealRow[] = [
   { time: "08:00", name: "조식", status: "done", items: "현미밥 · 계란찜 · 무국", count: "214" },
-  { time: "12:10", name: "중식 A", status: "serving", items: "제육볶음 · 김치 · 미역국", count: "612" },
-  { time: "12:40", name: "중식 B", status: "preparing", items: "치킨마요덮밥 · 어묵국", count: "370" },
-  { time: "16:30", name: "석식", status: "scheduled", items: "곤드레밥 · 두부찌개 · 진미채", count: null },
+  {
+    time: "12:10",
+    name: "중식 A",
+    status: "serving",
+    items: "제육볶음 · 김치 · 미역국",
+    count: "612",
+  },
+  {
+    time: "12:40",
+    name: "중식 B",
+    status: "preparing",
+    items: "치킨마요덮밥 · 어묵국",
+    count: "370",
+  },
+  {
+    time: "16:30",
+    name: "석식",
+    status: "scheduled",
+    items: "곤드레밥 · 두부찌개 · 진미채",
+    count: null,
+  },
 ];
 
-const statusMeta: Record<Status, { label: string; dot: string; tone: "blue" | "amber" | "zinc" }> = {
-  done: { label: "배식 완료", dot: "bg-zinc-300", tone: "zinc" },
-  serving: { label: "배식 중", dot: "bg-blue-500", tone: "blue" },
-  preparing: { label: "준비 중", dot: "bg-amber-500", tone: "amber" },
-  scheduled: { label: "예정", dot: "bg-zinc-300", tone: "zinc" },
-};
+const statusMeta: Record<Status, { label: string; dot: string; tone: "blue" | "amber" | "zinc" }> =
+  {
+    done: { label: "배식 완료", dot: "bg-zinc-300", tone: "zinc" },
+    serving: { label: "배식 중", dot: "bg-blue-500", tone: "blue" },
+    preparing: { label: "준비 중", dot: "bg-amber-500", tone: "amber" },
+    scheduled: { label: "예정", dot: "bg-zinc-300", tone: "zinc" },
+  };
 
 export function TodayMeals() {
   return (

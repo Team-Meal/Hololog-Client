@@ -71,7 +71,9 @@ export function BudgetSummary() {
                 <span className={`size-2.5 rounded-full ${segment.dotClass}`} />
                 {segment.label}
               </span>
-              <span className="font-semibold text-zinc-950">{segment.amount.toLocaleString()}만원</span>
+              <span className="font-semibold text-zinc-950">
+                {segment.amount.toLocaleString()}만원
+              </span>
             </li>
           ))}
         </ul>
