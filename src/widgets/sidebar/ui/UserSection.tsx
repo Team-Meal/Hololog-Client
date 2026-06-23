@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SettingsIcon } from "@/shared/ui";
+import { LogoutButton } from "@/features/auth";
 
 export function UserSection() {
   return (
@@ -13,13 +14,16 @@ export function UserSection() {
           <p className="truncate text-sm font-semibold text-zinc-900">박지윤 영양교사</p>
           <p className="truncate text-xs text-zinc-400">한빛초등학교</p>
         </div>
-        <Link
-          href="/settings"
-          aria-label="설정"
-          className="rounded-lg p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600"
-        >
-          <SettingsIcon size={16} />
-        </Link>
+        <div className="flex shrink-0 items-center gap-0.5">
+          <Link
+            href="/settings"
+            aria-label="설정"
+            className="rounded-lg p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600"
+          >
+            <SettingsIcon size={16} />
+          </Link>
+          <LogoutButton />
+        </div>
       </div>
     </div>
   );

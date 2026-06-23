@@ -1,9 +1,19 @@
 import axios from "axios";
+import { getAccessToken, getRefreshToken, setTokens, clearTokens } from "./token";
 
 declare module "axios" {
   interface AxiosRequestConfig {
     requiresAuth?: boolean;
+    // Set internally by the refresh interceptor to avoid loops / double retries.
+    _retry?: boolean;
+    _skipAuthRefresh?: boolean;
   }
+}
+
+// Subset of POST /auth/reissue's response we actually persist.
+interface ReissueResult {
+  accessToken: string;
+  refreshToken: string;
 }
 
 export const instance = axios.create({
@@ -17,8 +27,8 @@ export const instance = axios.create({
 });
 
 instance.interceptors.request.use((config) => {
-  if (config.requiresAuth && typeof window !== "undefined") {
-    const accessToken = localStorage.getItem("accessToken");
+  if (config.requiresAuth) {
+    const accessToken = getAccessToken();
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
@@ -26,13 +36,64 @@ instance.interceptors.request.use((config) => {
   return config;
 });
 
+// Reissue a token pair from the refresh token. Shared across concurrent 401s so
+// a burst of failed requests triggers only one /auth/reissue call.
+let refreshPromise: Promise<string> | null = null;
+
+async function reissueAccessToken(): Promise<string> {
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) {
+    throw new Error("리프레시 토큰이 없습니다.");
+  }
+
+  const { data } = await instance.post<ReissueResult>("/auth/reissue", null, {
+    headers: { "Refresh-Token": refreshToken },
+    // Don't let the response interceptor try to refresh the refresh call itself.
+    _skipAuthRefresh: true,
+  });
+
+  setTokens(data.accessToken, data.refreshToken);
+  return data.accessToken;
+}
+
 instance.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (axios.isAxiosError(error)) {
-      const data = error.response?.data as { message?: string } | undefined;
-      console.error(data?.message ?? error.message ?? "요청을 처리하지 못했습니다.");
+  async (error) => {
+    if (!axios.isAxiosError(error)) {
+      return Promise.reject(error);
     }
+
+    const original = error.config;
+    const isAuthExpired = error.response?.status === 401;
+
+    // On a 401 for an authed request, reissue once and replay the request.
+    if (
+      isAuthExpired &&
+      original &&
+      original.requiresAuth &&
+      !original._skipAuthRefresh &&
+      !original._retry
+    ) {
+      original._retry = true;
+      try {
+        refreshPromise = refreshPromise ?? reissueAccessToken();
+        const accessToken = await refreshPromise;
+        original.headers.Authorization = `Bearer ${accessToken}`;
+        return instance(original);
+      } catch (refreshError) {
+        // Refresh token is dead too — drop the session and bounce to login.
+        clearTokens();
+        if (typeof window !== "undefined") {
+          window.location.href = "/login";
+        }
+        return Promise.reject(refreshError);
+      } finally {
+        refreshPromise = null;
+      }
+    }
+
+    const data = error.response?.data as { message?: string } | undefined;
+    console.error(data?.message ?? error.message ?? "요청을 처리하지 못했습니다.");
     return Promise.reject(error);
   },
 );
