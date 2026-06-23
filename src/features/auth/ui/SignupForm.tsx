@@ -24,14 +24,12 @@ interface RoleOption {
 const ROLE_OPTIONS: RoleOption[] = [
   { value: "STUDENT", label: "학생", Icon: SmileIcon },
   { value: "TEACHER", label: "선생님", Icon: UsersIcon },
-  { value: "PENDING_NUTRITIONIST", label: "영양사 희망", Icon: SparklesIcon },
+  { value: "PENDING_NUTRITIONIST", label: "영양사", Icon: SparklesIcon },
 ];
-
-const TOTAL_STEPS = 2;
 
 export function SignupForm() {
   const router = useRouter();
-  const { register, isLoading, clearError } = useAuthStore();
+  const { register, login, submitSignupRequest, logout, isLoading, clearError } = useAuthStore();
 
   const [step, setStep] = useState(1);
 
@@ -41,8 +39,16 @@ export function SignupForm() {
   const [schoolName, setSchoolName] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [licenseNumber, setLicenseNumber] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  // The account is created + signed in once; a failed license submission can be
+  // retried without re-registering (which would 409).
+  const [accountReady, setAccountReady] = useState(false);
+
+  // Nutritionists need an extra step to submit their license number.
+  const isNutritionist = role === "PENDING_NUTRITIONIST";
+  const totalSteps = isNutritionist ? 3 : 2;
 
   const passwordMismatch = passwordConfirm.length > 0 && password !== passwordConfirm;
 
@@ -52,23 +58,10 @@ export function SignupForm() {
     password.length > 0 &&
     passwordConfirm.length > 0 &&
     !passwordMismatch;
+  const step3Valid = licenseNumber.trim().length > 0;
 
-  const handleSubmit = async (e: { preventDefault(): void }) => {
-    e.preventDefault();
-
-    // Step 1 only advances to the next step.
-    if (step === 1) {
-      if (step1Valid) setStep(2);
-      return;
-    }
-
-    if (passwordMismatch) {
-      toast.error("비밀번호가 일치하지 않습니다.", {
-        description: "비밀번호와 비밀번호 확인을 동일하게 입력해 주세요.",
-      });
-      return;
-    }
-
+  // Plain signup (student/teacher): create the account, then send to login.
+  const submitRegistration = async () => {
     const success = await register({ role, email, name, schoolName, password });
     if (success) {
       toast.success("회원가입이 완료되었습니다. 로그인해 주세요.");
@@ -82,16 +75,86 @@ export function SignupForm() {
     clearError();
   };
 
+  // Nutritionist flow: register → sign in (for the token) → submit license number.
+  const submitNutritionistRequest = async () => {
+    if (!accountReady) {
+      const registered = await register({ role, email, name, schoolName, password });
+      if (!registered) {
+        toast.error(useAuthStore.getState().error ?? "회원가입에 실패했습니다.", {
+          description: "입력한 정보를 다시 확인해 주세요.",
+        });
+        clearError();
+        return;
+      }
+
+      // /auth/signup-requests requires a Bearer token, so sign in first.
+      const loggedIn = await login({ email, password });
+      if (!loggedIn) {
+        toast.error("계정은 생성되었지만 로그인에 실패했습니다.", {
+          description: "잠시 후 다시 시도해 주세요.",
+        });
+        clearError();
+        return;
+      }
+      setAccountReady(true);
+    }
+
+    const requested = await submitSignupRequest({ licenseNumber: licenseNumber.trim() });
+    if (!requested) {
+      toast.error(useAuthStore.getState().error ?? "영양사 가입 요청에 실패했습니다.", {
+        description: "면허번호를 다시 확인해 주세요.",
+      });
+      clearError();
+      return;
+    }
+
+    // Drop the transient session — the user signs in after admin approval.
+    await logout();
+    toast.success("영양사 가입 요청이 접수되었습니다.", {
+      description: "관리자 승인 후 로그인해 주세요.",
+    });
+    router.push("/login");
+  };
+
+  const handleSubmit = async (e: { preventDefault(): void }) => {
+    e.preventDefault();
+
+    // Step 1 only advances to the next step.
+    if (step === 1) {
+      if (step1Valid) setStep(2);
+      return;
+    }
+
+    if (step === 2) {
+      if (passwordMismatch) {
+        toast.error("비밀번호가 일치하지 않습니다.", {
+          description: "비밀번호와 비밀번호 확인을 동일하게 입력해 주세요.",
+        });
+        return;
+      }
+
+      // Nutritionists continue to the license step; others finish here.
+      if (isNutritionist) {
+        if (step2Valid) setStep(3);
+        return;
+      }
+
+      await submitRegistration();
+      return;
+    }
+
+    // Step 3 (nutritionist only): submit the license number.
+    if (step3Valid) await submitNutritionistRequest();
+  };
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3.5" noValidate>
-      <StepIndicator current={step} total={TOTAL_STEPS} />
+      <StepIndicator current={step} total={totalSteps} />
 
       {step === 1 ? (
         <>
           <div>
-            <span className="mb-2 block text-[13px] font-medium text-zinc-700">
-              계정 유형
-            </span>
+            <span className="mb-2 block text-[13px] font-medium text-zinc-700">계정 유형</span>
             <div className="grid grid-cols-3 gap-2.5">
               {ROLE_OPTIONS.map(({ value, label, Icon }) => {
                 const selected = role === value;
@@ -156,7 +219,7 @@ export function SignupForm() {
             다음
           </button>
         </>
-      ) : (
+      ) : step === 2 ? (
         <>
           <SchoolSearchField
             value={schoolName}
@@ -206,9 +269,7 @@ export function SignupForm() {
               }
             />
             {passwordMismatch && (
-              <p className="mt-1.5 pl-1 text-xs text-red-500">
-                비밀번호가 일치하지 않습니다.
-              </p>
+              <p className="mt-1.5 pl-1 text-xs text-red-500">비밀번호가 일치하지 않습니다.</p>
             )}
           </div>
 
@@ -226,7 +287,45 @@ export function SignupForm() {
               disabled={isLoading || !step2Valid}
               className="flex h-12 flex-2 items-center justify-center gap-2 rounded-xl bg-blue-600 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40"
             >
-              {isLoading ? "가입 중..." : "회원가입"}
+              {isNutritionist ? "다음" : isLoading ? "가입 중..." : "회원가입"}
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          <div>
+            <FloatingInput
+              id="licenseNumber"
+              label="영양사 면허번호"
+              type="text"
+              value={licenseNumber}
+              onChange={(value) => {
+                clearError();
+                setLicenseNumber(value);
+              }}
+              disabled={isLoading}
+              autoComplete="off"
+            />
+            <p className="mt-1.5 pl-1 text-xs text-zinc-400">
+              제출한 면허번호는 관리자 승인 후 영양사 권한으로 전환됩니다.
+            </p>
+          </div>
+
+          <div className="mt-1 flex gap-2.5">
+            <button
+              type="button"
+              onClick={() => setStep(2)}
+              disabled={isLoading}
+              className="flex h-12 flex-1 items-center justify-center rounded-xl border border-zinc-200 bg-white text-sm font-semibold text-zinc-600 hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              이전
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading || !step3Valid}
+              className="flex h-12 flex-2 items-center justify-center gap-2 rounded-xl bg-blue-600 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              {isLoading ? "요청 중..." : "가입 요청"}
             </button>
           </div>
         </>

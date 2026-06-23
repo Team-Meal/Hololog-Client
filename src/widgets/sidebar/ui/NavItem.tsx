@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   CalendarIcon,
+  ClipboardListIcon,
   FileOutputIcon,
   LayoutDashboardIcon,
   PackageIcon,
@@ -24,6 +25,7 @@ type IconComponent = React.FC<{
 const ICON_MAP: Record<string, IconComponent> = {
   LayoutGrid: LayoutDashboardIcon,
   CalendarDays: CalendarIcon,
+  ClipboardList: ClipboardListIcon,
   Package: PackageIcon,
   ShoppingCart: ShoppingCartIcon,
   Wallet: WalletIcon,

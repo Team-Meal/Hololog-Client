@@ -1,8 +1,9 @@
 "use client";
 
 import { create } from "zustand";
-import { loginApi, registerApi } from "../api/auth.api";
-import type { LoginCredentials, RegisterCredentials } from "@/entities/auth";
+import { setTokens, clearTokens } from "@/shared/api";
+import { loginApi, logoutApi, registerApi, submitSignupRequestApi } from "../api/auth.api";
+import type { LoginCredentials, RegisterCredentials, SignupRequestPayload } from "@/entities/auth";
 
 interface AuthState {
   role: string | null;
@@ -10,34 +11,14 @@ interface AuthState {
   error: string | null;
   login: (credentials: LoginCredentials) => Promise<boolean>;
   register: (credentials: RegisterCredentials) => Promise<boolean>;
-  logout: () => void;
+  submitSignupRequest: (payload: SignupRequestPayload) => Promise<boolean>;
+  logout: () => Promise<void>;
   clearError: () => void;
-}
-
-function persistTokens(accessToken: string) {
-  if (typeof window === "undefined") return;
-  localStorage.setItem("accessToken", accessToken);
-  // The refresh token is intentionally NOT stored: it is unused (no reissue flow) and
-  // keeping it in JS-readable storage only widens the XSS attack surface. A proper
-  // refresh flow should have the backend issue it as an HttpOnly cookie.
-  // Mirror the access token into a cookie so the server-side proxy (middleware) can read it.
-  document.cookie = `accessToken=${accessToken}; path=/; max-age=${60 * 60 * 24 * 7}; samesite=lax`;
-}
-
-function clearTokens() {
-  if (typeof window === "undefined") return;
-  localStorage.removeItem("accessToken");
-  // Clean up any refresh token / role cookie left over from earlier versions.
-  localStorage.removeItem("refreshToken");
-  document.cookie = "accessToken=; path=/; max-age=0; samesite=lax";
-  document.cookie = "refreshToken=; path=/; max-age=0; samesite=lax";
-  document.cookie = "role=; path=/; max-age=0; samesite=lax";
 }
 
 function extractErrorMessage(err: unknown, fallback: string): string {
   return err instanceof Error && "response" in err
-    ? ((err as { response?: { data?: { message?: string } } }).response?.data?.message ??
-        fallback)
+    ? ((err as { response?: { data?: { message?: string } } }).response?.data?.message ?? fallback)
     : fallback;
 }
 
@@ -50,14 +31,11 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const data = await loginApi(credentials);
-      persistTokens(data.accessToken);
+      setTokens(data.accessToken, data.refreshToken);
       set({ role: data.role, isLoading: false });
       return true;
     } catch (err: unknown) {
-      const message = extractErrorMessage(
-        err,
-        "이메일 또는 비밀번호가 올바르지 않습니다.",
-      );
+      const message = extractErrorMessage(err, "이메일 또는 비밀번호가 올바르지 않습니다.");
       set({ error: message, isLoading: false });
       return false;
     }
@@ -77,7 +55,27 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  logout: () => {
+  // Requires a signed-in PENDING_NUTRITIONIST — call after login() so the token is set.
+  submitSignupRequest: async (payload) => {
+    set({ isLoading: true, error: null });
+    try {
+      await submitSignupRequestApi(payload);
+      set({ isLoading: false });
+      return true;
+    } catch (err: unknown) {
+      const message = extractErrorMessage(err, "영양사 가입 요청 중 오류가 발생했습니다.");
+      set({ error: message, isLoading: false });
+      return false;
+    }
+  },
+
+  logout: async () => {
+    try {
+      // Best-effort server-side refresh-token deletion; clear locally regardless.
+      await logoutApi();
+    } catch {
+      // Already signed out or network error — still clear the local session.
+    }
     clearTokens();
     set({ role: null, error: null });
   },
