@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId } from "react";
+import { createPortal } from "react-dom";
 import { Button } from "./Button";
 
 interface ConfirmDialogProps {
@@ -42,14 +43,14 @@ export function ConfirmDialog({
     };
   }, [open, loading, onClose]);
 
-  if (!open) return null;
+  if (!open || typeof document === "undefined") return null;
 
   const confirmClass =
     tone === "danger"
       ? "bg-red-600 hover:bg-red-500 active:bg-red-700"
       : "bg-blue-600 hover:bg-blue-500 active:bg-blue-700";
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       role="dialog"
@@ -88,6 +89,7 @@ export function ConfirmDialog({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
