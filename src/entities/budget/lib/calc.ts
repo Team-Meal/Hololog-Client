@@ -1,30 +1,26 @@
-import type { BudgetCategory } from "../model/types";
+import type { Budget } from "../model/types";
 
-/** 집행률(%)을 정수로 반올림해 반환한다. */
+/** 집행률(%)을 정수로 반올림해 반환한다. 총액이 0 이하면 0을 반환한다. */
 export function executionPercent(spent: number, total: number): number {
+  if (total <= 0) return 0;
   return Math.round((spent / total) * 100);
 }
 
-export interface DonutArc extends BudgetCategory {
-  /** 호의 길이 */
-  len: number;
-  /** 시작 오프셋 */
-  offset: number;
-}
-
 /**
- * 카테고리별 집행액을 도넛 차트의 호(arc) 정보로 변환한다.
- * @returns 각 카테고리 호 정보와 원주 길이
+ * 오늘 날짜가 기간에 포함되는 예산을 고르고, 없으면 종료일이 가장 늦은 예산을 반환한다.
  */
-export function buildDonutArcs(categories: BudgetCategory[], total: number, radius: number) {
-  const circumference = 2 * Math.PI * radius;
-  const arcs: DonutArc[] = categories.map((cat, i) => {
-    const len = (cat.spent / total) * circumference;
-    const offset = categories
-      .slice(0, i)
-      .reduce((sum, prev) => sum + (prev.spent / total) * circumference, 0);
-    return { ...cat, len, offset };
-  });
+export function selectActiveBudget(budgets: Budget[]): Budget | null {
+  if (budgets.length === 0) return null;
 
-  return { arcs, circumference };
+  const now = Date.now();
+  const current = budgets.find((budget) => {
+    const start = new Date(budget.startDate).getTime();
+    const end = new Date(budget.endDate).getTime();
+    return start <= now && now <= end;
+  });
+  if (current) return current;
+
+  return [...budgets].sort(
+    (a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime(),
+  )[0];
 }

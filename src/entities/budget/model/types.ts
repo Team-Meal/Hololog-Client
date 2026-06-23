@@ -1,26 +1,20 @@
-import type { FC } from "react";
-
-export interface BudgetCategory {
-  label: string;
-  /** 집행액 (만원) */
-  spent: number;
-  /** 배정 예산 (만원) */
-  budget: number;
-  /** 도넛/막대 색상 (hex) */
-  color: string;
-  /** 막대 트랙 색상 클래스 */
-  trackColor: string;
+// A budget record from GET /budgets. Amounts are in KRW (원).
+export interface Budget {
+  id: number;
+  title: string;
+  totalAmount: number;
+  usedAmount: number;
+  startDate: string; // YYYY-MM-DD
+  endDate: string; // YYYY-MM-DD
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface MonthlyPoint {
-  label: string;
-  /** 월 집행액 (만원) */
-  value: number;
-}
-
-export interface AiTip {
-  text: string;
-  iconBg: string;
-  iconColor: string;
-  Icon: FC<{ size?: number; className?: string }>;
+// Body for POST /budgets. Amounts are in KRW (원), dates are YYYY-MM-DD.
+export interface CreateBudgetRequest {
+  title: string;
+  totalAmount: number;
+  usedAmount: number;
+  startDate: string;
+  endDate: string;
 }

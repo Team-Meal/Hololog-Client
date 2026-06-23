@@ -30,4 +30,7 @@ export function clearTokens(): void {
   localStorage.removeItem(ACCESS_TOKEN_KEY);
   localStorage.removeItem(REFRESH_TOKEN_KEY);
   document.cookie = `${ACCESS_TOKEN_KEY}=; path=/; max-age=0; samesite=lax`;
+  // Clean up a refresh token / role cookie left over from earlier versions.
+  document.cookie = `${REFRESH_TOKEN_KEY}=; path=/; max-age=0; samesite=lax`;
+  document.cookie = "role=; path=/; max-age=0; samesite=lax";
 }
