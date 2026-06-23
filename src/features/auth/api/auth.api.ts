@@ -1,9 +1,5 @@
 import { instance } from "@/shared/api";
-import type {
-  LoginCredentials,
-  RegisterCredentials,
-  SigninResponse,
-} from "@/entities/auth";
+import type { LoginCredentials, RegisterCredentials, SigninResponse } from "@/entities/auth";
 
 export async function loginApi(credentials: LoginCredentials): Promise<SigninResponse> {
   const response = await instance.post<SigninResponse>("/auth/signin", credentials);

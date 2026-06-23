@@ -33,8 +33,7 @@ function clearTokens() {
 
 function extractErrorMessage(err: unknown, fallback: string): string {
   return err instanceof Error && "response" in err
-    ? ((err as { response?: { data?: { message?: string } } }).response?.data?.message ??
-        fallback)
+    ? ((err as { response?: { data?: { message?: string } } }).response?.data?.message ?? fallback)
     : fallback;
 }
 
@@ -51,10 +50,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ role: data.role, isLoading: false });
       return true;
     } catch (err: unknown) {
-      const message = extractErrorMessage(
-        err,
-        "이메일 또는 비밀번호가 올바르지 않습니다.",
-      );
+      const message = extractErrorMessage(err, "이메일 또는 비밀번호가 올바르지 않습니다.");
       set({ error: message, isLoading: false });
       return false;
     }

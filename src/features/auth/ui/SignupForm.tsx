@@ -89,9 +89,7 @@ export function SignupForm() {
       {step === 1 ? (
         <>
           <div>
-            <span className="mb-2 block text-[13px] font-medium text-zinc-700">
-              계정 유형
-            </span>
+            <span className="mb-2 block text-[13px] font-medium text-zinc-700">계정 유형</span>
             <div className="grid grid-cols-3 gap-2.5">
               {ROLE_OPTIONS.map(({ value, label, Icon }) => {
                 const selected = role === value;
@@ -206,9 +204,7 @@ export function SignupForm() {
               }
             />
             {passwordMismatch && (
-              <p className="mt-1.5 pl-1 text-xs text-red-500">
-                비밀번호가 일치하지 않습니다.
-              </p>
+              <p className="mt-1.5 pl-1 text-xs text-red-500">비밀번호가 일치하지 않습니다.</p>
             )}
           </div>
 
