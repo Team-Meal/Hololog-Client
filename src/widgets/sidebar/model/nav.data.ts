@@ -23,7 +23,12 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { id: "dashboard", label: "대시보드", href: "/", icon: "LayoutGrid" },
       { id: "meal", label: "식단 관리", href: "/meal", icon: "CalendarDays" },
-      { id: "ingredient-plans", label: "식자재 계획표", href: "/ingredient-plans", icon: "ClipboardList" },
+      {
+        id: "ingredient-plans",
+        label: "식자재 계획표",
+        href: "/ingredient-plans",
+        icon: "ClipboardList",
+      },
       {
         id: "inventory",
         label: "재고 관리",
