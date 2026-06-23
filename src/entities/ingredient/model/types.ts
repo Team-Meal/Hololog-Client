@@ -12,3 +12,37 @@ export interface Ingredient {
   safetyStock: number;
   status: IngredientStatus;
 }
+
+// Server API types — returned by /ingredients endpoints
+export interface IngredientItem {
+  ingredientId: number;
+  name: string;
+  quantity: number;
+  unit: string;
+  expirationDate: string;
+  category: string;
+}
+
+export interface IngredientDetail extends IngredientItem {
+  createdAt: string;
+}
+
+export interface CreateIngredientPayload {
+  name: string;
+  quantity?: number;
+  unit: string;
+  expirationDate?: string;
+  category: string;
+}
+
+export interface PatchIngredientPayload {
+  name?: string;
+  quantity?: number;
+  unit?: string;
+  expirationDate?: string;
+  category?: string;
+}
+
+export interface PatchIngredientResponse extends IngredientItem {
+  updatedAt: string;
+}
