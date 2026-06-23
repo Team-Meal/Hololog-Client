@@ -9,7 +9,7 @@ allowed-tools: Bash, Glob, Grep
 Based on the user's request or changed files, choose the appropriate scope:
 
 | Scope               | Command                                              |
-|---------------------|------------------------------------------------------|
+| ------------------- | ---------------------------------------------------- |
 | Specific test class | `./gradlew test --tests "fully.qualified.ClassName"` |
 | Specific module     | `./gradlew :<module>:test`                           |
 | All modules         | `./gradlew test`                                     |

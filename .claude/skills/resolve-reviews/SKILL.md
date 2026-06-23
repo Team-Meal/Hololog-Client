@@ -12,6 +12,7 @@ bash "${CLAUDE_SKILL_DIR}/scripts/get-pr-data.sh"
 ```
 
 Output files:
+
 - `.pr-tmp/pr_comments.json` — inline review comments (id, path, line, body, user)
 - `.pr-tmp/pr_changed_files.txt` — changed files
 - `.pr-tmp/pr_commits.txt` — commits in this PR

@@ -16,19 +16,19 @@ Do not use a hardcoded list. Determine scope from:
 
 ## Module / Cross-cutting Names (Secondary)
 
-| Scope    | When to use                              |
-|----------|------------------------------------------|
-| `global` | Affects multiple modules or the whole project |
-| `ci/cd`  | Build / deployment pipelines             |
+| Scope    | When to use                                       |
+| -------- | ------------------------------------------------- |
+| `global` | Affects multiple modules or the whole project     |
+| `ci/cd`  | Build / deployment pipelines                      |
 | (module) | Changes scoped to one module but multiple domains |
 
 ## Examples
 
-| Wrong | Correct | Reason |
-|-------|---------|--------|
-| `fix(module): 로그인 버그 수정` | `fix(auth): 로그인 버그 수정` | auth is the domain |
+| Wrong                              | Correct                          | Reason                             |
+| ---------------------------------- | -------------------------------- | ---------------------------------- |
+| `fix(module): 로그인 버그 수정`    | `fix(auth): 로그인 버그 수정`    | auth is the domain                 |
 | `update(common): 유저 엔티티 수정` | `update(user): 엔티티 필드 추가` | user entity belongs to user domain |
-| `add(module): 결제 필터 추가` | `add(payment): 결제 필터 추가` | payment feature is payment domain |
+| `add(module): 결제 필터 추가`      | `add(payment): 결제 필터 추가`   | payment feature is payment domain  |
 
 ## Correct Cross-cutting Usage
 
