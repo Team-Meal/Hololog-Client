@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   BudgetKpiCards,
   ExecutionDonut,
@@ -9,7 +9,8 @@ import {
   selectActiveBudget,
   type Budget,
 } from "@/entities/budget";
-import { SurfaceCard } from "@/shared/ui";
+import { Button, PlusIcon, SurfaceCard } from "@/shared/ui";
+import { CreateBudgetDialog } from "./CreateBudgetDialog";
 
 function formatPeriod(budget: Budget): string {
   const toDots = (date: string) => date.replaceAll("-", ".");
@@ -31,12 +32,29 @@ function toLoadError(err: unknown): LoadError {
 export function BudgetContent() {
   const [budgets, setBudgets] = useState<Budget[] | null>(null);
   const [error, setError] = useState<LoadError | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
+
+  // Reusable fetch for the initial load and post-create refresh.
+  const reload = useCallback(() => {
+    getBudgets()
+      .then((data) => {
+        setBudgets(data);
+        setError(null);
+      })
+      .catch((err: unknown) => {
+        setError(toLoadError(err));
+        setBudgets([]);
+      });
+  }, []);
 
   useEffect(() => {
     let alive = true;
     getBudgets()
       .then((data) => {
-        if (alive) setBudgets(data);
+        if (alive) {
+          setBudgets(data);
+          setError(null);
+        }
       })
       .catch((err: unknown) => {
         if (alive) {
@@ -75,29 +93,44 @@ export function BudgetContent() {
     return <Notice text="예산 정보를 불러오지 못했습니다." />;
   }
 
-  if (budgets.length === 0) {
-    return <Notice text="등록된 예산이 없습니다." />;
-  }
-
-  const active = selectActiveBudget(budgets);
-  if (!active) {
-    return <Notice text="등록된 예산이 없습니다." />;
-  }
+  const active = budgets.length > 0 ? selectActiveBudget(budgets) : null;
 
   return (
     <div className="flex flex-col gap-6">
-      <BudgetKpiCards
-        total={active.totalAmount}
-        spent={active.usedAmount}
-        period={formatPeriod(active)}
-      />
-
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <BudgetList budgets={budgets} activeId={active.id} />
-        </div>
-        <ExecutionDonut used={active.usedAmount} total={active.totalAmount} />
+      <div className="flex items-center justify-end">
+        <Button variant="primary" onClick={() => setCreateOpen(true)}>
+          <PlusIcon size={16} />
+          예산 입력
+        </Button>
       </div>
+
+      {active ? (
+        <>
+          <BudgetKpiCards
+            total={active.totalAmount}
+            spent={active.usedAmount}
+            period={formatPeriod(active)}
+          />
+
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <div className="lg:col-span-2">
+              <BudgetList budgets={budgets} activeId={active.id} />
+            </div>
+            <ExecutionDonut used={active.usedAmount} total={active.totalAmount} />
+          </div>
+        </>
+      ) : (
+        <Notice text="등록된 예산이 없습니다. 예산을 입력해 주세요." />
+      )}
+
+      <CreateBudgetDialog
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        onCreated={() => {
+          setCreateOpen(false);
+          reload();
+        }}
+      />
     </div>
   );
 }

@@ -9,3 +9,12 @@ export interface Budget {
   createdAt: string;
   updatedAt: string;
 }
+
+// Body for POST /budgets. Amounts are in KRW (원), dates are YYYY-MM-DD.
+export interface CreateBudgetRequest {
+  title: string;
+  totalAmount: number;
+  usedAmount: number;
+  startDate: string;
+  endDate: string;
+}
