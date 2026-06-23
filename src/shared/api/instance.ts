@@ -40,6 +40,23 @@ instance.interceptors.request.use((config) => {
 // a burst of failed requests triggers only one /auth/reissue call.
 let refreshPromise: Promise<string> | null = null;
 
+// Whether the stored access token's `exp` claim has already passed. This backend
+// answers expired/invalid tokens with 403 (not 401), so we decode the token to tell
+// "expired session" apart from a genuine "insufficient permission" 403.
+function isAccessTokenExpired(): boolean {
+  const token = getAccessToken();
+  const payload = token?.split(".")[1];
+  if (!payload) return false;
+  try {
+    const claims = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/"))) as {
+      exp?: number;
+    };
+    return typeof claims.exp === "number" && claims.exp * 1000 <= Date.now();
+  } catch {
+    return false;
+  }
+}
+
 async function reissueAccessToken(): Promise<string> {
   const refreshToken = getRefreshToken();
   if (!refreshToken) {
@@ -64,11 +81,13 @@ instance.interceptors.response.use(
     }
 
     const original = error.config;
-    const isAuthExpired = error.response?.status === 401;
+    const status = error.response?.status;
+    // 401 = token rejected; 403 + expired token = expired session (this backend
+    // returns 403 for expired tokens). Either way, reissue and replay once.
+    const shouldReissue = status === 401 || (status === 403 && isAccessTokenExpired());
 
-    // On a 401 for an authed request, reissue once and replay the request.
     if (
-      isAuthExpired &&
+      shouldReissue &&
       original &&
       original.requiresAuth &&
       !original._skipAuthRefresh &&
