@@ -1,60 +1,16 @@
 "use client";
 
-import { useState } from "react";
 import { CalendarIcon, SparklesIcon, SurfaceCard } from "@/shared/ui";
 import { useGeneratorStore } from "@/features/ai-meal-generator";
-import type { WeekPlan } from "@/features/ai-meal-generator";
-
-const DAY_LABELS: Record<string, string> = {
-  월: "월요일",
-  화: "화요일",
-  수: "수요일",
-  목: "목요일",
-  금: "금요일",
-};
-
-function WeekView({ plan }: { plan: WeekPlan }) {
-  return (
-    <div>
-      <p className="mb-2 text-xs font-semibold text-zinc-400">{plan.week}주차</p>
-      <div className="grid grid-cols-5 gap-2">
-        {plan.days.map((day) => (
-          <div key={day.day} className="rounded-lg bg-zinc-50 p-2.5">
-            <p className="mb-1 text-xs font-medium text-zinc-400">{DAY_LABELS[day.day]}</p>
-            <p className="text-sm font-semibold text-zinc-900">{day.main}</p>
-            <p className="mt-1 text-[11px] leading-relaxed text-zinc-400">
-              {day.sides.join(" · ")}
-            </p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 export function GeneratedMealPanel() {
   const { status, result } = useGeneratorStore();
-  const [showAllWeeks, setShowAllWeeks] = useState(false);
-
-  const weeks = result?.weeks ?? [];
-  const displayedWeeks = showAllWeeks ? weeks : weeks.slice(0, 1);
 
   return (
     <SurfaceCard className="flex flex-col overflow-hidden">
-      <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <CalendarIcon size={15} className="text-blue-600" />
-          <p className="text-sm font-semibold text-zinc-800">생성된 한 달 식단</p>
-        </div>
-        {status === "done" && (
-          <button
-            type="button"
-            onClick={() => setShowAllWeeks((v) => !v)}
-            className="text-xs text-zinc-400 hover:text-zinc-600"
-          >
-            {showAllWeeks ? "1주차만 보기" : "전체 4주 보기"}
-          </button>
-        )}
+      <div className="mb-4 flex items-center gap-2">
+        <CalendarIcon size={15} className="text-blue-600" />
+        <p className="text-sm font-semibold text-zinc-800">생성 결과</p>
       </div>
 
       {status === "idle" && (
@@ -90,11 +46,32 @@ export function GeneratedMealPanel() {
 
       {status === "done" && result && (
         <div className="flex flex-1 flex-col gap-4 overflow-y-auto">
-          {displayedWeeks.map((week) => (
-            <WeekView key={week.week} plan={week} />
-          ))}
+          {result.error ? (
+            <div className="rounded-lg bg-red-50 p-4 text-sm leading-relaxed text-red-600">
+              {result.error}
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 gap-2">
+                <Stat label="생성 월" value={result.month || "-"} />
+                <Stat label="생성된 식단 수" value={`${result.totalMeals}건`} />
+              </div>
+              <div className="rounded-lg bg-blue-50 p-3 text-sm leading-relaxed text-blue-700">
+                AI가 식단을 생성했어요. 생성된 식단은 ‘식단 관리’에서 확인·수정할 수 있어요.
+              </div>
+            </>
+          )}
         </div>
       )}
     </SurfaceCard>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-lg bg-zinc-50 p-3">
+      <p className="text-[11px] text-zinc-500">{label}</p>
+      <p className="text-lg font-bold text-zinc-900">{value}</p>
+    </div>
   );
 }

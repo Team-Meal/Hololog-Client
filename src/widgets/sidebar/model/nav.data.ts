@@ -42,7 +42,6 @@ export const NAV_GROUPS: NavGroup[] = [
     label: "분석",
     items: [
       { id: "budget", label: "예산 관리", href: "/budget", icon: "Wallet" },
-      { id: "suppliers", label: "공급업체", href: "/suppliers", icon: "Truck" },
       { id: "export", label: "내보내기", href: "/export", icon: "FileOutput" },
     ],
   },

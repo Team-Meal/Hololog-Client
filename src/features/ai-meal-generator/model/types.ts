@@ -21,27 +21,12 @@ export interface GeneratorConditions {
   nutritionCriteria: NutritionCriterion[];
 }
 
-export interface DayMeal {
-  day: "월" | "화" | "수" | "목" | "금";
-  main: string;
-  sides: string[];
-}
-
-export interface WeekPlan {
-  week: number;
-  days: DayMeal[];
-}
-
-export interface EvaluationResult {
-  satisfactionRate: number;
-  costEfficiency: number;
-  nutritionScore: number;
-  wasteReduction: number;
-  aiConfidence: number;
-  reasons: string[];
-}
-
+// Result of POST /meals/ai-generations. The backend returns a summary only —
+// the generated diets themselves are retrievable from the 식단 관리 화면.
 export interface GeneratorResult {
-  weeks: WeekPlan[];
-  evaluation: EvaluationResult;
+  month: string;
+  totalMeals: number;
+  validationErrors: unknown[];
+  budgetInfo: Record<string, unknown>;
+  error?: string;
 }
