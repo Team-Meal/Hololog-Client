@@ -6,7 +6,6 @@ const PAGE_TITLES: Record<string, string> = {
   "/": "대시보드",
   "/meal": "식단 관리",
   "/inventory": "재고 관리",
-  "/orders": "발주 관리",
   "/budget": "예산 관리",
   "/suppliers": "공급업체",
   "/export": "내보내기",
