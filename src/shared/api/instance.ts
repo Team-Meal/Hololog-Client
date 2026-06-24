@@ -7,6 +7,9 @@ declare module "axios" {
     // Set internally by the refresh interceptor to avoid loops / double retries.
     _retry?: boolean;
     _skipAuthRefresh?: boolean;
+    // Suppress the interceptor's console.error for calls where a failure is an
+    // expected/handled outcome (e.g. probing for an optional resource).
+    _skipErrorLog?: boolean;
   }
 }
 
@@ -111,8 +114,10 @@ instance.interceptors.response.use(
       }
     }
 
-    const data = error.response?.data as { message?: string } | undefined;
-    console.error(data?.message ?? error.message ?? "요청을 처리하지 못했습니다.");
+    if (!original?._skipErrorLog) {
+      const data = error.response?.data as { message?: string } | undefined;
+      console.error(data?.message ?? error.message ?? "요청을 처리하지 못했습니다.");
+    }
     return Promise.reject(error);
   },
 );
