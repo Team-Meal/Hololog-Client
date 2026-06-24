@@ -13,6 +13,7 @@ export interface NutritionCriterion {
 }
 
 export interface GeneratorConditions {
+  month: string; // YYYY-MM
   useInventory: boolean;
   budgetPerPerson: number;
   preferenceWeight: number;
