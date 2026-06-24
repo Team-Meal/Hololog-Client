@@ -10,7 +10,7 @@ export function UserSection() {
   const initial = name.charAt(0) || "·";
 
   return (
-    <div className="px-3 pt-3">
+    <div className="px-3 pt-3 pb-4">
       <Link
         href="/settings"
         aria-label="프로필 설정"
