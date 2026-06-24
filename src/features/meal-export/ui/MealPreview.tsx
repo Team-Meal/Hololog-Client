@@ -1,12 +1,32 @@
 "use client";
 
-import { MOCK_MEAL_SCHEDULE } from "@/entities/meal";
+import { useEffect, useState } from "react";
+import { getDiets, shortDate, weekdayLabel } from "@/entities/meal";
+import type { DietListItem, PreviewMode } from "@/entities/meal";
 import { EyeIcon } from "@/shared/ui";
 import { useExportStore } from "../model/export.store";
 
 export function MealPreview() {
   const { previewMode, setPreviewMode } = useExportStore();
-  const schedule = MOCK_MEAL_SCHEDULE;
+  const [diets, setDiets] = useState<DietListItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    getDiets()
+      .then((list) => {
+        if (active) setDiets(list);
+      })
+      .catch(() => {
+        if (active) setDiets([]);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
@@ -40,72 +60,63 @@ export function MealPreview() {
         ].join(" ")}
       >
         <div className="w-full max-w-2xl rounded-lg bg-white">
-          <OfficialMealDocument schedule={schedule} mode={previewMode} />
+          <MealDocument diets={diets} loading={loading} mode={previewMode} />
         </div>
       </div>
     </div>
   );
 }
 
-import type { WeeklyMealSchedule, PreviewMode } from "@/entities/meal";
-
-function OfficialMealDocument({
-  schedule,
+function MealDocument({
+  diets,
+  loading,
   mode,
 }: {
-  schedule: WeeklyMealSchedule;
+  diets: DietListItem[];
+  loading: boolean;
   mode: PreviewMode;
 }) {
   return (
     <div className={["p-8 font-sans", mode === "print" ? "text-black" : "text-zinc-900"].join(" ")}>
       <div className="mb-6 text-center">
-        <h1 className="mb-1 text-2xl font-bold tracking-tight">{schedule.month}월 급식 식단표</h1>
-        <p className="text-sm text-zinc-500">
-          {schedule.schoolName} · {schedule.districtName}
-        </p>
+        <h1 className="mb-1 text-2xl font-bold tracking-tight">급식 식단표</h1>
+        <p className="text-sm text-zinc-500">한빛초등학교</p>
       </div>
 
-      <table className="w-full border-collapse text-sm">
-        <thead>
-          <tr>
-            {schedule.days.map((day) => (
-              <th
-                key={day.dayOfWeek}
-                className="border-b border-zinc-200 px-3 py-2.5 text-center text-xs font-semibold text-zinc-600"
-              >
-                {day.dayOfWeek}
+      {loading ? (
+        <p className="py-10 text-center text-sm text-zinc-400">불러오는 중…</p>
+      ) : diets.length === 0 ? (
+        <p className="py-10 text-center text-sm text-zinc-400">등록된 식단이 없습니다.</p>
+      ) : (
+        <table className="w-full border-collapse text-sm">
+          <thead>
+            <tr>
+              <th className="border-b border-zinc-200 px-3 py-2.5 text-left text-xs font-semibold text-zinc-600">
+                날짜
               </th>
+              <th className="border-b border-zinc-200 px-3 py-2.5 text-left text-xs font-semibold text-zinc-600">
+                식단
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {diets.map((diet) => (
+              <tr key={diet.id}>
+                <td className="border-b border-zinc-100 px-3 py-3 align-top text-xs text-zinc-600">
+                  {shortDate(diet.dietDate)} ({weekdayLabel(diet.dietDate)})
+                </td>
+                <td className="border-b border-zinc-100 px-3 py-3 align-top text-sm font-medium text-zinc-800">
+                  {diet.name}
+                </td>
+              </tr>
             ))}
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            {schedule.days.map((day) => (
-              <td
-                key={day.date}
-                className="border-r border-zinc-100 px-3 py-4 align-top last:border-r-0"
-              >
-                <p className="mb-2 text-center text-sm font-bold text-zinc-800">{day.date}</p>
-                <ul className="space-y-1">
-                  {(() => {
-                    const lunch = day.meals.find((m) => m.type === "중식");
-                    if (!lunch) return null;
-                    return [lunch.name, ...lunch.sides].map((item, i) => (
-                      <li key={i} className="text-center text-xs leading-relaxed text-zinc-600">
-                        {item}
-                      </li>
-                    ));
-                  })()}
-                </ul>
-              </td>
-            ))}
-          </tr>
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      )}
 
       <div className="mt-6 flex items-center justify-end gap-8 text-xs text-zinc-500">
         <span>
-          영양교사 {schedule.nutritionistName} <span className="ml-1 text-zinc-300">(인)</span>
+          영양교사 <span className="ml-1 text-zinc-300">(인)</span>
         </span>
         <span>
           학교장 <span className="ml-1 text-zinc-300">(인)</span>
