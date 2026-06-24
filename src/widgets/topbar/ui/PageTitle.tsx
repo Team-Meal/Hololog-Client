@@ -14,24 +14,17 @@ const PAGE_TITLES: Record<string, string> = {
   "/settings": "설정",
 };
 
-const DAY_NAMES = ["일", "월", "화", "수", "목", "금", "토"] as const;
-
-function formatDate(): string {
-  const now = new Date();
-  const day = DAY_NAMES[now.getDay()];
-  return `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일 ${day}요일`;
-}
-
 export function PageTitle() {
   const pathname = usePathname();
   const { profile } = useMemberProfile();
   const title = PAGE_TITLES[pathname] ?? "Hololog";
-  const subtitle = profile?.schoolName ? `${formatDate()} · ${profile.schoolName}` : formatDate();
 
   return (
     <div className="min-w-0">
       <h1 className="truncate text-xl font-bold text-zinc-950">{title}</h1>
-      <p className="truncate text-xs text-zinc-400">{subtitle}</p>
+      {profile?.schoolName && (
+        <p className="truncate text-xs text-zinc-400">{profile.schoolName}</p>
+      )}
     </div>
   );
 }
