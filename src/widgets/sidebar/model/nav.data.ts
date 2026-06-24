@@ -34,7 +34,6 @@ export const NAV_GROUPS: NavGroup[] = [
         label: "재고 관리",
         href: "/inventory",
         icon: "Package",
-        badge: { type: "count", value: 6 },
       },
       {
         id: "orders",
@@ -63,7 +62,6 @@ export const NAV_GROUPS: NavGroup[] = [
         label: "AI 식단 생성",
         href: "/ai-meal",
         icon: "Sparkles",
-        badge: { type: "text", value: "NEW" },
       },
     ],
   },
