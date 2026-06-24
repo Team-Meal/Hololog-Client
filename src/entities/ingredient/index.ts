@@ -9,7 +9,6 @@ export type {
   PatchIngredientPayload,
   PatchIngredientResponse,
 } from "./model/types";
-export { MOCK_INGREDIENTS } from "./model/mock";
 export { useIngredientStore } from "./model/ingredient.store";
 export {
   getIngredientsApi,
