@@ -7,7 +7,6 @@ const PAGE_TITLES: Record<string, string> = {
   "/meal": "식단 관리",
   "/inventory": "재고 관리",
   "/budget": "예산 관리",
-  "/suppliers": "공급업체",
   "/export": "내보내기",
   "/ai-meal": "AI 식단 생성",
   "/settings": "설정",
