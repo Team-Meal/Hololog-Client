@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import {
@@ -16,7 +16,12 @@ import {
   type ToggleKey,
   type ToggleValues,
 } from "@/entities/settings";
-import { getMyProfile, roleLabel, updateSchoolName, type MemberProfile } from "@/entities/member";
+import {
+  roleLabel,
+  updateSchoolName,
+  useMemberProfile,
+  useMemberProfileStore,
+} from "@/entities/member";
 import { Button, CheckIcon, PageShell, SurfaceCard } from "@/shared/ui";
 
 export function SettingsPage() {
@@ -24,26 +29,10 @@ export function SettingsPage() {
   const [toggleValues, setToggleValues] = useState<ToggleValues>(INITIAL_TOGGLES);
   const [aggressiveness, setAggressiveness] = useState<Aggressiveness>("균형");
 
-  const [profile, setProfile] = useState<MemberProfile | null>(null);
-  const [profileLoading, setProfileLoading] = useState(true);
+  // Shared profile store so school-name edits propagate to the sidebar/topbar.
+  const { profile, loading: profileLoading } = useMemberProfile();
+  const setProfile = useMemberProfileStore((s) => s.setProfile);
   const [savingSchool, setSavingSchool] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-    getMyProfile()
-      .then((data) => {
-        if (active) setProfile(data);
-      })
-      .catch(() => {
-        if (active) toast.error("프로필을 불러오지 못했습니다.");
-      })
-      .finally(() => {
-        if (active) setProfileLoading(false);
-      });
-    return () => {
-      active = false;
-    };
-  }, []);
 
   const handleToggle = (key: ToggleKey) => {
     setToggleValues((current) => ({ ...current, [key]: !current[key] }));
