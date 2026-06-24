@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Button,
   CalendarIcon,
@@ -6,6 +8,7 @@ import {
   ShoppingCartIcon,
   SparklesIcon,
 } from "@/shared/ui";
+import { roleLabel, useMemberProfile } from "@/entities/member";
 import { AiInsights } from "@/widgets/ai-insights";
 import { BudgetSummary } from "@/widgets/budget-summary";
 import { LowStock } from "@/widgets/low-stock";
@@ -13,10 +16,15 @@ import { StatCards } from "@/widgets/stat-cards";
 import { TodayMeals } from "@/widgets/today-meals";
 
 export function DashboardPage() {
+  const { profile } = useMemberProfile();
+  const greeting = profile
+    ? `좋은 아침이에요, ${profile.name} ${roleLabel(profile.role)}님`
+    : "좋은 아침이에요";
+
   return (
     <PageShell
       eyebrow="대시보드"
-      title="좋은 아침이에요, 박지윤 영양교사님"
+      title={greeting}
       description="오늘은 4회 배식이 예정되어 있고, AI가 재고와 예산 흐름에서 확인할 항목을 정리했습니다."
       actions={
         <>

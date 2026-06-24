@@ -41,7 +41,8 @@ interface Props {
 
 export function NavItem({ item }: Props) {
   const pathname = usePathname();
-  const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href + "/"));
+  const isActive =
+    pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href + "/"));
   const Icon = ICON_MAP[item.icon] ?? LayoutDashboardIcon;
 
   return (
