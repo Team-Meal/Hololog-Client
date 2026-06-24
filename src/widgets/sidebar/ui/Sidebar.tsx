@@ -1,4 +1,5 @@
 import { BrandLogo } from "@/shared/ui";
+import { LogoutButton } from "@/features/auth";
 import { NAV_GROUPS } from "../model/nav.data";
 import { NavGroup } from "./NavGroup";
 import { SchoolSelector } from "./SchoolSelector";
@@ -22,6 +23,10 @@ export function Sidebar() {
       </nav>
 
       <UserSection />
+
+      <div className="px-3 pt-2 pb-3">
+        <LogoutButton variant="menu" />
+      </div>
     </aside>
   );
 }

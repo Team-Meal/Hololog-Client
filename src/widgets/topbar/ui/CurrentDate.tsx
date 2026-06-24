@@ -12,8 +12,8 @@ function formatToday(): string {
 
 export function CurrentDate() {
   return (
-    <div className="flex items-center gap-2 text-sm font-medium text-zinc-600">
-      <CalendarIcon size={16} className="text-zinc-400" />
+    <div className="flex items-center gap-2 text-base font-semibold text-zinc-700 sm:text-lg">
+      <CalendarIcon size={20} className="text-zinc-400" />
       <span>{formatToday()}</span>
     </div>
   );
