@@ -1,11 +1,42 @@
 export type {
   ExportFormType,
   PreviewMode,
-  DayOfWeek,
-  MealType,
-  MealItem,
-  DayMenu,
-  WeeklyMealSchedule,
-  MonthlyMealSchedule,
+  ServerMealType,
+  MealSuggestionStatus,
+  TodayMeal,
+  MealSuggestion,
+  CreateMealSuggestionRequest,
+  UpdateMealSuggestionStatusRequest,
+  GenerateAiMealPlanRequest,
+  AiMealPlanResult,
+  CreateAiMealRequest,
+  LeftoverUnit,
+  DietExportFormat,
+  DietListItem,
+  Diet,
+  CreateDietRequest,
+  UpdateDietRequest,
+  DietLeftover,
+  CreateDietLeftoverRequest,
+  DietExport,
 } from "./model/types";
-export { MOCK_MEAL_SCHEDULE, MOCK_WEEKLY_SCHEDULES } from "./model/mock";
+export {
+  getTodayMeal,
+  getMealSuggestions,
+  createMealSuggestion,
+  updateMealSuggestionStatus,
+  generateAiMealPlan,
+  createAiMeal,
+} from "./api/meal.api";
+export {
+  getDiets,
+  getDiet,
+  createDiet,
+  updateDiet,
+  deleteDiet,
+  getDietLeftover,
+  createDietLeftover,
+  exportDiet,
+} from "./api/diet.api";
+export { groupDietsByDate, weekdayLabel, shortDate } from "./lib/group";
+export type { DietDateGroup } from "./lib/group";
