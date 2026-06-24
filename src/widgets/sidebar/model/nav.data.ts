@@ -35,13 +35,6 @@ export const NAV_GROUPS: NavGroup[] = [
         href: "/inventory",
         icon: "Package",
       },
-      {
-        id: "orders",
-        label: "발주 관리",
-        href: "/orders",
-        icon: "ShoppingCart",
-        badge: { type: "count", value: 4, variant: "primary" },
-      },
     ],
   },
   {
