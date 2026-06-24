@@ -41,7 +41,7 @@ export function LogoutButton({ variant = "icon" }: LogoutButtonProps) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-red-200 bg-white px-4 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50"
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-red-200 bg-white px-4 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50"
         >
           <LogOutIcon size={16} />
           로그아웃

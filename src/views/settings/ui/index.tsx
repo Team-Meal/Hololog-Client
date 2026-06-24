@@ -22,6 +22,7 @@ import {
   useMemberProfile,
   useMemberProfileStore,
 } from "@/entities/member";
+import { LogoutButton } from "@/features/auth";
 import { Button, CheckIcon, PageShell, SurfaceCard } from "@/shared/ui";
 
 export function SettingsPage() {
@@ -72,12 +73,17 @@ export function SettingsPage() {
 
         <SurfaceCard>
           {activeTab === "profile" && (
-            <ProfilePanel
-              name={profile?.name ?? ""}
-              roleText={profile ? roleLabel(profile.role) : ""}
-              schoolName={profile?.schoolName ?? ""}
-              loading={profileLoading}
-            />
+            <div className="flex flex-col gap-6">
+              <ProfilePanel
+                name={profile?.name ?? ""}
+                roleText={profile ? roleLabel(profile.role) : ""}
+                schoolName={profile?.schoolName ?? ""}
+                loading={profileLoading}
+              />
+              <div className="flex justify-end border-t border-zinc-100 pt-6">
+                <LogoutButton variant="menu" />
+              </div>
+            </div>
           )}
           {activeTab === "school" && (
             <SchoolPanel
