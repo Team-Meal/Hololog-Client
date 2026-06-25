@@ -1,0 +1,25 @@
+import { Suspense } from "react";
+import { AuthLayout, LoginForm } from "@/features/auth";
+
+export function LoginPage() {
+  return (
+    <AuthLayout
+      title="로그인"
+      description="이메일과 비밀번호를 입력해 주세요."
+      headline={
+        <>
+          급식 관리의
+          <br />
+          새로운 기준
+        </>
+      }
+      footerText="아직 계정이 없으신가요?"
+      footerHref="/signup"
+      footerLink="회원가입"
+    >
+      <Suspense>
+        <LoginForm />
+      </Suspense>
+    </AuthLayout>
+  );
+}
