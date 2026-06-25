@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { SectionTitle, StatusBadge, SurfaceCard } from "@/shared/ui";
 import { useMealStore } from "@/features/meal";
 import type { ServerMealType, TodayMealResponse } from "@/features/meal";
@@ -37,6 +38,7 @@ function formatMenuItems(meal: TodayMealResponse): string {
 }
 
 export function TodayMeals() {
+  const router = useRouter();
   const { todayMeals, isTodayLoading, fetchTodayMeals } = useMealStore();
 
   useEffect(() => {
@@ -58,7 +60,11 @@ export function TodayMeals() {
         title="오늘의 배식"
         description={`${dateLabel} · ${availableCount}회 배식`}
         action={
-          <button type="button" className="text-sm font-semibold text-blue-600 hover:text-blue-500">
+          <button
+            type="button"
+            className="text-sm font-semibold text-blue-600 hover:text-blue-500"
+            onClick={() => router.push("/meal")}
+          >
             식단표 보기
           </button>
         }

@@ -34,6 +34,10 @@ export function LoginForm() {
         router.push("/admin");
         return;
       }
+      if (role === "STUDENT") {
+        router.push("/student");
+        return;
+      }
       const redirect = searchParams.get("redirect");
       router.push(redirect && redirect.startsWith("/") ? redirect : "/dashboard");
       return;

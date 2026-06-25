@@ -14,6 +14,16 @@ interface FormFields {
 
 const EMPTY: FormFields = { title: "", startDate: "", endDate: "", memo: "" };
 
+const PRESETS = [
+  { label: "1주", days: 7 },
+  { label: "2주", days: 14 },
+  { label: "한달", days: 30 },
+] as const;
+
+function isoDate(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
 export function PlanFormModal() {
   const { editingPlan, isSaving, closeForm, createPlan, updatePlan } = useIngredientPlanStore();
 
@@ -106,9 +116,29 @@ export function PlanFormModal() {
 
             {/* 기간 */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-zinc-500">
-                기간 <span className="text-red-400">*</span>
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-medium text-zinc-500">
+                  기간 <span className="text-red-400">*</span>
+                </label>
+                <div className="flex gap-1">
+                  {PRESETS.map(({ label, days }) => (
+                    <button
+                      key={label}
+                      type="button"
+                      disabled={isSaving}
+                      onClick={() => {
+                        const start = new Date();
+                        const end = new Date(start);
+                        end.setDate(end.getDate() + days);
+                        patch({ startDate: isoDate(start), endDate: isoDate(end) });
+                      }}
+                      className="rounded-md border border-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-500 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50"
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <div className="flex items-center gap-2">
                 <input
                   type="date"
