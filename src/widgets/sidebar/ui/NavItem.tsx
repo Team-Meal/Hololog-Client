@@ -13,6 +13,7 @@ import {
   ShoppingCartIcon,
   SparklesIcon,
   TruckIcon,
+  UtensilsIcon,
   WalletIcon,
 } from "@/shared/ui";
 import type { NavItem as NavItemData } from "../model/nav.data";
@@ -35,6 +36,7 @@ const ICON_MAP: Record<string, IconComponent> = {
   Sparkles: SparklesIcon,
   Settings: SettingsIcon,
   ShieldCheck: ShieldCheckIcon,
+  Utensils: UtensilsIcon,
 };
 
 interface Props {
