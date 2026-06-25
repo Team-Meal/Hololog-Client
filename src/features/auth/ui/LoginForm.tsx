@@ -9,7 +9,7 @@ import { useAuthStore } from "../model/auth.store";
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login, isLoading, clearError } = useAuthStore();
+  const { login, logout, isLoading, clearError } = useAuthStore();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,6 +21,15 @@ export function LoginForm() {
 
     if (success) {
       const role = useAuthStore.getState().role;
+
+      if (role === "PENDING_NUTRITIONIST") {
+        await logout();
+        toast.error("아직 승인되지 않은 계정입니다.", {
+          description: "관리자의 가입 승인 후 로그인하실 수 있습니다.",
+        });
+        return;
+      }
+
       if (role === "ADMIN") {
         router.push("/admin");
         return;
