@@ -59,6 +59,16 @@ export const NAV_GROUPS: NavGroup[] = [
   },
 ];
 
+export const ADMIN_NAV_GROUPS: NavGroup[] = [
+  {
+    id: "admin",
+    label: "관리",
+    items: [
+      { id: "admin", label: "영양사 승인 관리", href: "/admin", icon: "ShieldCheck" },
+    ],
+  },
+];
+
 export const SETTINGS_NAV: NavItem = {
   id: "settings",
   label: "설정",
