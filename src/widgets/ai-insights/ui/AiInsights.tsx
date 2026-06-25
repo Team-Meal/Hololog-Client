@@ -1,3 +1,6 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import type { ComponentType } from "react";
 import {
   BarChart2Icon,
@@ -15,6 +18,7 @@ interface Insight {
   description: string;
   confidence: number;
   action: string;
+  href: string;
 }
 
 const INSIGHTS: Insight[] = [
@@ -25,6 +29,7 @@ const INSIGHTS: Insight[] = [
     description: "이번 주 120kg을 선구매하면 현재 가격을 고정해 약 38만원을 절감할 수 있습니다.",
     confidence: 94,
     action: "발주 반영",
+    href: "/ingredient-plans",
   },
   {
     icon: PackageIcon,
@@ -33,6 +38,7 @@ const INSIGHTS: Insight[] = [
     description: "최근 선호도와 잔반 데이터를 기준으로 준비량을 줄여도 충분한 배식이 가능합니다.",
     confidence: 89,
     action: "식단 수정",
+    href: "/meal",
   },
   {
     icon: SmileIcon,
@@ -41,10 +47,13 @@ const INSIGHTS: Insight[] = [
     description: "선호도 점수가 높고 단가가 낮아 영양 균형과 만족도를 함께 개선합니다.",
     confidence: 91,
     action: "메뉴 교체",
+    href: "/meal",
   },
 ];
 
 export function AiInsights() {
+  const router = useRouter();
+
   return (
     <SurfaceCard>
       <SectionTitle
@@ -69,6 +78,7 @@ export function AiInsights() {
             <button
               type="button"
               className="shrink-0 text-sm font-semibold text-blue-600 hover:text-blue-500"
+              onClick={() => router.push(insight.href)}
             >
               {insight.action}
             </button>
