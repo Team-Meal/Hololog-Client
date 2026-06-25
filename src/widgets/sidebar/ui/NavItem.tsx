@@ -9,6 +9,7 @@ import {
   LayoutDashboardIcon,
   PackageIcon,
   SettingsIcon,
+  ShieldCheckIcon,
   ShoppingCartIcon,
   SparklesIcon,
   TruckIcon,
@@ -33,6 +34,7 @@ const ICON_MAP: Record<string, IconComponent> = {
   FileOutput: FileOutputIcon,
   Sparkles: SparklesIcon,
   Settings: SettingsIcon,
+  ShieldCheck: ShieldCheckIcon,
 };
 
 interface Props {

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Button, ConfirmDialog, StatusBadge, SurfaceCard } from "@/shared/ui";
+import { ConfirmDialog } from "@/shared/ui";
 import { useAdminStore } from "../model/admin.store";
 import type { SignupRequestItem } from "../model/types";
 
@@ -33,88 +33,118 @@ export function SignupRequestList() {
 
   return (
     <>
-      <SurfaceCard>
-        <div className="overflow-x-auto">
-          {isLoading ? (
-            <div className="flex items-center justify-center py-16 text-sm text-zinc-400">
-              불러오는 중…
-            </div>
-          ) : error ? (
-            <div className="flex flex-col items-center gap-3 py-16 text-sm text-zinc-500">
-              <span>{error}</span>
-              <Button size="sm" onClick={() => fetchRequests(page)}>
-                다시 시도
-              </Button>
-            </div>
-          ) : pendingRequests.length === 0 ? (
-            <div className="flex items-center justify-center py-16 text-sm text-zinc-400">
-              처리 대기 중인 요청이 없습니다.
-            </div>
-          ) : (
-            <table className="w-full min-w-[640px] text-sm">
-              <thead>
-                <tr className="border-b border-zinc-100 text-left text-xs font-semibold text-zinc-400">
-                  <th className="pb-3 pr-4">이름</th>
-                  <th className="pb-3 pr-4">면허 번호</th>
-                  <th className="pb-3 pr-4">상태</th>
-                  <th className="pb-3 text-right">작업</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-50">
-                {pendingRequests.map((item) => (
-                  <tr key={item.requestId}>
-                    <td className="py-3 pr-4 font-medium text-zinc-900">{item.name}</td>
-                    <td className="py-3 pr-4 font-mono text-zinc-600">{item.licenseNumber}</td>
-                    <td className="py-3 pr-4">
-                      <StatusBadge tone="amber">대기 중</StatusBadge>
-                    </td>
-                    <td className="py-3 text-right">
-                      <div className="inline-flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="primary"
-                          disabled={actionLoading}
-                          onClick={() => setPendingAction({ type: "approve", item })}
-                        >
-                          승인
-                        </Button>
-                        <Button
-                          size="sm"
-                          disabled={actionLoading}
-                          className="text-red-600 hover:bg-red-50"
-                          onClick={() => setPendingAction({ type: "reject", item })}
-                        >
-                          거절
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+      {/* 대기 건수 */}
+      {!isLoading && !error && (
+        <p className="mb-4 font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-[#f5a623]">
+          대기 중 {pendingRequests.length}건
+        </p>
+      )}
 
-        {totalPages > 1 && (
-          <div className="mt-4 flex items-center justify-between border-t border-zinc-100 pt-4 text-sm">
-            <span className="text-zinc-400">
-              {page + 1} / {totalPages} 페이지
-            </span>
-            <div className="flex gap-2">
-              <Button size="sm" disabled={page === 0 || isLoading} onClick={() => fetchRequests(page - 1)}>
-                이전
-              </Button>
-              <Button
-                size="sm"
-                disabled={page + 1 >= totalPages || isLoading}
-                onClick={() => fetchRequests(page + 1)}
-              >
-                다음
-              </Button>
-            </div>
+      {/* 목록 */}
+      <div className="flex flex-col gap-2">
+        {isLoading ? (
+          <div className="flex items-center justify-center rounded-xl border border-[#ebebeb] bg-white py-16">
+            <span className="text-sm text-[#8f8f8f]">불러오는 중…</span>
           </div>
+
+        ) : error ? (
+          <div className="flex flex-col items-center gap-3 rounded-xl border border-[#ebebeb] bg-white py-16">
+            <span className="text-sm text-[#4d4d4d]">{error}</span>
+            <button
+              type="button"
+              onClick={() => fetchRequests(page)}
+              className="flex h-8 items-center rounded-md border border-[#ebebeb] bg-white px-3 text-sm font-medium text-[#171717] hover:border-[#d5d5d5] hover:bg-[#f2f2f2]"
+            >
+              다시 시도
+            </button>
+          </div>
+
+        ) : pendingRequests.length === 0 ? (
+          <div className="flex flex-col items-center gap-1.5 rounded-xl border border-[#ebebeb] bg-white py-16">
+            <p className="text-sm font-medium text-[#171717]">처리 대기 중인 요청이 없습니다</p>
+            <p className="text-xs text-[#8f8f8f]">모든 가입 요청이 처리되었습니다.</p>
+          </div>
+
+        ) : (
+          pendingRequests.map((item) => (
+            <div
+              key={item.requestId}
+              className="flex items-center gap-4 rounded-xl border border-[#ebebeb] bg-white px-6 py-4"
+              style={{ boxShadow: "0px 1px 1px rgba(0,0,0,0.04)" }}
+            >
+              {/* 이니셜 아바타 */}
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#171717] text-[13px] font-semibold text-white">
+                {item.name.charAt(0)}
+              </div>
+
+              {/* 이름 + 면허번호 */}
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium tracking-[-0.01em] text-[#171717]">
+                  {item.name}
+                </p>
+                <p
+                  className="mt-0.5 font-mono text-xs text-[#8f8f8f]"
+                  style={{ fontVariantNumeric: "tabular-nums" }}
+                >
+                  {item.licenseNumber}
+                </p>
+              </div>
+
+              {/* 상태 */}
+              <span className="shrink-0 font-mono text-[11px] font-medium uppercase tracking-[0.04em] text-[#f5a623]">
+                대기 중
+              </span>
+
+              {/* 액션 버튼 */}
+              <div className="flex shrink-0 gap-2">
+                <button
+                  type="button"
+                  disabled={actionLoading}
+                  onClick={() => setPendingAction({ type: "approve", item })}
+                  className="flex h-8 items-center rounded-md bg-[#0070f3] px-3 text-sm font-medium text-white transition-colors hover:bg-[#0761d1] disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  승인
+                </button>
+                <button
+                  type="button"
+                  disabled={actionLoading}
+                  onClick={() => setPendingAction({ type: "reject", item })}
+                  className="flex h-8 items-center rounded-md border border-[#ebebeb] bg-white px-3 text-sm font-medium text-[#ee0000] transition-colors hover:border-[#ee0000]/30 hover:bg-[#ee0000]/5 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  거절
+                </button>
+              </div>
+            </div>
+          ))
         )}
-      </SurfaceCard>
+      </div>
+
+      {/* 페이지네이션 */}
+      {totalPages > 1 && (
+        <div className="mt-6 flex items-center justify-between border-t border-[#ebebeb] pt-4">
+          <span className="font-mono text-xs text-[#8f8f8f]">
+            {page + 1} / {totalPages}
+          </span>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              disabled={page === 0 || isLoading}
+              onClick={() => fetchRequests(page - 1)}
+              className="flex h-8 items-center rounded-md border border-[#ebebeb] bg-white px-3 text-sm font-medium text-[#171717] hover:bg-[#f2f2f2] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              이전
+            </button>
+            <button
+              type="button"
+              disabled={page + 1 >= totalPages || isLoading}
+              onClick={() => fetchRequests(page + 1)}
+              className="flex h-8 items-center rounded-md border border-[#ebebeb] bg-white px-3 text-sm font-medium text-[#171717] hover:bg-[#f2f2f2] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              다음
+            </button>
+          </div>
+        </div>
+      )}
 
       <ConfirmDialog
         open={pendingAction !== null}

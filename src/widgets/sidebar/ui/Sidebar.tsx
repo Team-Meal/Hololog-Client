@@ -1,6 +1,5 @@
 import { BrandLogo } from "@/shared/ui";
-import { NAV_GROUPS } from "../model/nav.data";
-import { NavGroup } from "./NavGroup";
+import { RoleAwareNav } from "./RoleAwareNav";
 import { SchoolSelector } from "./SchoolSelector";
 import { UserSection } from "./UserSection";
 
@@ -16,9 +15,7 @@ export function Sidebar() {
       </div>
 
       <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-4">
-        {NAV_GROUPS.map((group) => (
-          <NavGroup key={group.id} group={group} />
-        ))}
+        <RoleAwareNav />
       </nav>
 
       <UserSection />
