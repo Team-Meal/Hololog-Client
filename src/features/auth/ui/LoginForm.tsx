@@ -20,6 +20,11 @@ export function LoginForm() {
     const success = await login({ email, password });
 
     if (success) {
+      const role = useAuthStore.getState().role;
+      if (role === "ADMIN") {
+        router.push("/admin");
+        return;
+      }
       const redirect = searchParams.get("redirect");
       router.push(redirect && redirect.startsWith("/") ? redirect : "/dashboard");
       return;
