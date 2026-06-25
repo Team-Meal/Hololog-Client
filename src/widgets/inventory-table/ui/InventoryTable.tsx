@@ -6,21 +6,74 @@ import { useIngredientStore } from "@/entities/ingredient";
 import type { IngredientItem } from "@/entities/ingredient";
 import { IngredientFormModal } from "@/features/ingredient-actions";
 import { useInventoryFilterStore } from "@/features/inventory-filter";
-import { SearchIcon, SlidersIcon, DownloadIcon, Button, PencilIcon, TrashIcon, ConfirmDialog } from "@/shared/ui";
+import {
+  SearchIcon,
+  SlidersIcon,
+  DownloadIcon,
+  Button,
+  PencilIcon,
+  TrashIcon,
+  ConfirmDialog,
+} from "@/shared/ui";
 import { BulkActionBar } from "./BulkActionBar";
+
+const CATEGORIES = ["전체", "곡물", "농산물", "축산", "수산", "가공"] as const;
+
+const CATEGORY_COLORS: Record<string, string> = {
+  곡물: "bg-amber-100 text-amber-700",
+  농산물: "bg-green-100 text-green-700",
+  축산: "bg-red-100 text-red-700",
+  수산: "bg-blue-100 text-blue-700",
+  가공: "bg-purple-100 text-purple-700",
+};
 
 function formatDate(iso: string): string {
   return iso.slice(0, 10);
 }
 
+function categoryInitial(category: string): string {
+  const map: Record<string, string> = {
+    곡물: "곡",
+    농산물: "농",
+    축산: "축",
+    수산: "수",
+    가공: "가",
+  };
+  return map[category] ?? category[0] ?? "식";
+}
+
+function downloadCSV(items: IngredientItem[]) {
+  const header = "이름,카테고리,수량,단위,유통기한";
+  const rows = items.map((i) =>
+    [i.name, i.category, i.quantity, i.unit, i.expirationDate ? formatDate(i.expirationDate) : ""].join(","),
+  );
+  const csv = [header, ...rows].join("\n");
+  const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "재고목록.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 export function InventoryTable() {
   const { items, isLoading, error, fetchIngredients, deleteIngredient } = useIngredientStore();
-  const { search, selectedIds, setSearch, toggleId, toggleAll, clearSelection } =
-    useInventoryFilterStore();
+  const {
+    search,
+    categoryFilter,
+    selectedIds,
+    setSearch,
+    setCategoryFilter,
+    toggleId,
+    toggleAll,
+    clearSelection,
+  } = useInventoryFilterStore();
 
   const [editItem, setEditItem] = useState<IngredientItem | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<IngredientItem | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
 
   useEffect(() => {
     fetchIngredients();
@@ -28,9 +81,12 @@ export function InventoryTable() {
 
   const filtered = useMemo(() => {
     const q = search.trim();
-    if (!q) return items;
-    return items.filter((item) => item.name.includes(q) || item.category.includes(q));
-  }, [items, search]);
+    return items.filter((item) => {
+      if (categoryFilter !== "전체" && item.category !== categoryFilter) return false;
+      if (q && !item.name.includes(q) && !item.category.includes(q)) return false;
+      return true;
+    });
+  }, [items, search, categoryFilter]);
 
   const filteredIds = filtered.map((i) => String(i.ingredientId));
   const allSelected = filteredIds.length > 0 && filteredIds.every((id) => selectedIds.has(id));
@@ -72,18 +128,48 @@ export function InventoryTable() {
           <div className="ml-auto flex items-center gap-2">
             <button
               type="button"
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-500 hover:bg-zinc-50"
+              onClick={() => setFilterOpen((o) => !o)}
+              className={`flex h-9 w-9 items-center justify-center rounded-lg border text-zinc-500 hover:bg-zinc-50 ${
+                filterOpen || categoryFilter !== "전체"
+                  ? "border-blue-400 bg-blue-50 text-blue-600"
+                  : "border-zinc-200 bg-white"
+              }`}
             >
               <SlidersIcon size={15} />
             </button>
             <button
               type="button"
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-500 hover:bg-zinc-50"
+              onClick={() => downloadCSV(filtered)}
+              disabled={filtered.length === 0}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-500 hover:bg-zinc-50 disabled:opacity-40"
             >
               <DownloadIcon size={15} />
             </button>
           </div>
         </div>
+
+        {/* Category filter panel */}
+        {filterOpen && (
+          <div className="flex items-center gap-3 rounded-lg border border-zinc-100 bg-zinc-50 px-3 py-2">
+            <span className="shrink-0 text-xs text-zinc-500">카테고리</span>
+            <div className="flex flex-wrap gap-1.5">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setCategoryFilter(cat)}
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                    categoryFilter === cat
+                      ? "bg-blue-600 text-white"
+                      : "bg-white text-zinc-600 ring-1 ring-zinc-200 hover:bg-zinc-100"
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Bulk action bar */}
         {someSelected && (
@@ -159,7 +245,11 @@ export function InventoryTable() {
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
-                            <div className="h-9 w-9 shrink-0 rounded-lg bg-zinc-100" />
+                            <div
+                              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm font-semibold ${CATEGORY_COLORS[item.category] ?? "bg-zinc-100 text-zinc-500"}`}
+                            >
+                              {categoryInitial(item.category)}
+                            </div>
                             <div>
                               <p className="font-medium text-zinc-900">{item.name}</p>
                               <p className="text-xs text-zinc-400">{item.category}</p>
