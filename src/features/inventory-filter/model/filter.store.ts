@@ -1,16 +1,16 @@
 "use client";
 
 import { create } from "zustand";
-import type { IngredientStatus } from "@/entities/ingredient";
+import type { IngredientCategory } from "@/entities/ingredient";
 
-export type StatusFilter = IngredientStatus | "전체";
+export type CategoryFilter = IngredientCategory | "전체";
 
 interface InventoryFilterState {
   search: string;
-  statusFilter: StatusFilter;
+  categoryFilter: CategoryFilter;
   selectedIds: Set<string>;
   setSearch: (search: string) => void;
-  setStatusFilter: (filter: StatusFilter) => void;
+  setCategoryFilter: (filter: CategoryFilter) => void;
   toggleId: (id: string) => void;
   toggleAll: (ids: string[]) => void;
   clearSelection: () => void;
@@ -18,10 +18,10 @@ interface InventoryFilterState {
 
 export const useInventoryFilterStore = create<InventoryFilterState>((set) => ({
   search: "",
-  statusFilter: "전체",
+  categoryFilter: "전체",
   selectedIds: new Set(),
   setSearch: (search) => set({ search }),
-  setStatusFilter: (statusFilter) => set({ statusFilter, selectedIds: new Set() }),
+  setCategoryFilter: (categoryFilter) => set({ categoryFilter, selectedIds: new Set() }),
   toggleId: (id) =>
     set((state) => {
       const next = new Set(state.selectedIds);
