@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useMemberProfileStore } from "@/entities/member";
-import { ADMIN_NAV_GROUPS, NAV_GROUPS } from "../model/nav.data";
+import { ADMIN_NAV_GROUPS, NAV_GROUPS, STUDENT_NAV_GROUPS } from "../model/nav.data";
 import { NavGroup } from "./NavGroup";
 
 export function RoleAwareNav() {
@@ -17,7 +17,12 @@ export function RoleAwareNav() {
 
   if (!loaded && loading) return null;
 
-  const groups = profile?.role === "ADMIN" ? ADMIN_NAV_GROUPS : NAV_GROUPS;
+  const groups =
+    profile?.role === "ADMIN"
+      ? ADMIN_NAV_GROUPS
+      : profile?.role === "STUDENT"
+        ? STUDENT_NAV_GROUPS
+        : NAV_GROUPS;
 
   return (
     <>
