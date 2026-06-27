@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { isAxiosError } from "axios";
 import { toast } from "sonner";
 import { deleteDiet, getDiet, getDiets, groupDietsByDate } from "@/entities/meal";
 import type { Diet, DietDateGroup } from "@/entities/meal";
@@ -31,8 +32,10 @@ export function MealCalendar() {
       setDeleteOpen(false);
       setSelectedDietId(null);
       bumpReload();
-    } catch {
-      toast.error("식단 삭제에 실패했습니다.");
+    } catch (err) {
+      const message =
+        isAxiosError(err) ? (err.response?.data as { message?: string } | undefined)?.message : undefined;
+      toast.error("식단 삭제에 실패했습니다.", { description: message });
     } finally {
       setDeleting(false);
     }
@@ -109,22 +112,36 @@ export function MealCalendar() {
               ))}
             </div>
 
-            {selectedDietId !== null && detail?.id === selectedDietId && (
+            {selectedDietId !== null && (
               <div className="mt-6 rounded-2xl border border-zinc-100 bg-zinc-50 p-5">
-                <div className="mb-1 flex items-center justify-between">
-                  <span className="text-sm font-bold text-zinc-800">{detail.name}</span>
-                  <span className="text-xs text-zinc-400">{detail.dietDate}</span>
-                </div>
-                <p className="text-sm leading-relaxed text-zinc-600">
-                  {detail.description || "상세 설명이 없습니다."}
-                </p>
+                {detail?.id === selectedDietId ? (
+                  <>
+                    <div className="mb-1 flex items-center justify-between">
+                      <span className="text-sm font-bold text-zinc-800">{detail.name}</span>
+                      <span className="text-xs text-zinc-400">{detail.dietDate}</span>
+                    </div>
+                    <p className="text-sm leading-relaxed text-zinc-600">
+                      {detail.description || "상세 설명이 없습니다."}
+                    </p>
+                  </>
+                ) : (
+                  <div className="h-10 animate-pulse rounded-lg bg-zinc-200" />
+                )}
 
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <Button variant="secondary" onClick={() => setEditOpen(true)}>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setEditOpen(true)}
+                    disabled={detail?.id !== selectedDietId}
+                  >
                     <PencilIcon size={14} />
                     수정
                   </Button>
-                  <Button variant="secondary" onClick={() => setLeftoverOpen(true)}>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setLeftoverOpen(true)}
+                    disabled={detail?.id !== selectedDietId}
+                  >
                     <RecycleIcon size={14} />
                     잔반량
                   </Button>

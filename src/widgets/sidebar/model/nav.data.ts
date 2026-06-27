@@ -59,6 +59,16 @@ export const NAV_GROUPS: NavGroup[] = [
   },
 ];
 
+export const STUDENT_NAV_GROUPS: NavGroup[] = [
+  {
+    id: "student",
+    label: "급식",
+    items: [
+      { id: "student", label: "오늘의 급식", href: "/student", icon: "Utensils" },
+    ],
+  },
+];
+
 export const ADMIN_NAV_GROUPS: NavGroup[] = [
   {
     id: "admin",

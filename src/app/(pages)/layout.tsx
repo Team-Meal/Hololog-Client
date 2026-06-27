@@ -3,26 +3,26 @@ import { AdminRouteGuard } from "@/features/auth";
 import { Sidebar } from "@/widgets/sidebar";
 import { TopBar } from "@/widgets/topbar";
 
-async function isAdminSession(): Promise<boolean> {
+async function getSessionRole(): Promise<string | null> {
   try {
     const store = await cookies();
     const token = store.get("accessToken")?.value;
-    if (!token) return false;
+    if (!token) return null;
     const raw = token.split(".")[1];
-    if (!raw) return false;
+    if (!raw) return null;
     const claims = JSON.parse(Buffer.from(raw, "base64url").toString("utf-8")) as {
       role?: string;
     };
-    return claims?.role === "ADMIN";
+    return claims?.role ?? null;
   } catch {
-    return false;
+    return null;
   }
 }
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const isAdmin = await isAdminSession();
+  const role = await getSessionRole();
 
-  if (isAdmin) {
+  if (role === "ADMIN" || role === "STUDENT") {
     return <>{children}</>;
   }
 

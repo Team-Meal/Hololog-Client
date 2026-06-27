@@ -26,6 +26,10 @@ export function DietFormDialog({ open, diet, onClose, onSaved }: DietFormDialogP
   const [dietDate, setDietDate] = useState(diet?.dietDate ?? "");
   const [submitting, setSubmitting] = useState(false);
 
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+
   // Close on Escape and lock body scroll while open.
   useEffect(() => {
     if (!open) return;
@@ -119,6 +123,7 @@ export function DietFormDialog({ open, diet, onClose, onSaved }: DietFormDialogP
             value={dietDate}
             onChange={(e) => setDietDate(e.target.value)}
             disabled={submitting}
+            min={isEdit ? undefined : todayStr}
           />
 
           <label className="flex flex-col gap-1.5">

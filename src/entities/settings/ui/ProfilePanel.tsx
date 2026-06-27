@@ -1,18 +1,42 @@
-import { SectionTitle } from "@/shared/ui";
+import { PencilIcon, SectionTitle } from "@/shared/ui";
 
 interface ProfilePanelProps {
   name: string;
   roleText: string;
   schoolName: string;
   loading?: boolean;
+  // When provided, renders a "수정하기" button that triggers school-name editing.
+  onEdit?: () => void;
 }
 
-export function ProfilePanel({ name, roleText, schoolName, loading = false }: ProfilePanelProps) {
+export function ProfilePanel({
+  name,
+  roleText,
+  schoolName,
+  loading = false,
+  onEdit,
+}: ProfilePanelProps) {
   const initial = name.charAt(0) || "?";
 
   return (
     <div className="flex flex-col gap-8">
-      <SectionTitle title="프로필" description="이름, 권한, 소속 학교를 확인하세요." />
+      <SectionTitle
+        title="프로필"
+        description="이름, 권한, 소속 학교를 확인하세요."
+        action={
+          onEdit && (
+            <button
+              type="button"
+              onClick={onEdit}
+              disabled={loading}
+              className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-xl px-3 text-sm font-semibold text-blue-600 transition-colors hover:bg-blue-50 disabled:pointer-events-none disabled:opacity-40"
+            >
+              <PencilIcon className="size-4" aria-hidden="true" />
+              수정하기
+            </button>
+          )
+        }
+      />
 
       {loading ? (
         <div className="h-16 animate-pulse rounded-2xl bg-zinc-100" />

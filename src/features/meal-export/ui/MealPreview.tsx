@@ -3,11 +3,13 @@
 import { useEffect, useState } from "react";
 import { getDiets, shortDate, weekdayLabel } from "@/entities/meal";
 import type { DietListItem, PreviewMode } from "@/entities/meal";
+import { useMemberProfile } from "@/entities/member";
 import { EyeIcon } from "@/shared/ui";
 import { useExportStore } from "../model/export.store";
 
 export function MealPreview() {
   const { previewMode, setPreviewMode } = useExportStore();
+  const { profile } = useMemberProfile();
   const [diets, setDiets] = useState<DietListItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -59,8 +61,16 @@ export function MealPreview() {
           previewMode === "screen" ? "bg-zinc-100" : "bg-zinc-200",
         ].join(" ")}
       >
-        <div className="w-full max-w-2xl rounded-lg bg-white">
-          <MealDocument diets={diets} loading={loading} mode={previewMode} />
+        <div
+          className="shrink-0 rounded-lg bg-white shadow-sm"
+          style={{ width: "794px", minHeight: "1123px" }}
+        >
+          <MealDocument
+            diets={diets}
+            loading={loading}
+            mode={previewMode}
+            schoolName={profile?.schoolName ?? ""}
+          />
         </div>
       </div>
     </div>
@@ -71,16 +81,18 @@ function MealDocument({
   diets,
   loading,
   mode,
+  schoolName,
 }: {
   diets: DietListItem[];
   loading: boolean;
   mode: PreviewMode;
+  schoolName: string;
 }) {
   return (
-    <div className={["p-8 font-sans", mode === "print" ? "text-black" : "text-zinc-900"].join(" ")}>
-      <div className="mb-6 text-center">
+    <div className={["p-12 font-sans", mode === "print" ? "text-black" : "text-zinc-900"].join(" ")}>
+      <div className="mb-8 text-center">
         <h1 className="mb-1 text-2xl font-bold tracking-tight">급식 식단표</h1>
-        <p className="text-sm text-zinc-500">한빛초등학교</p>
+        {schoolName && <p className="text-sm text-zinc-500">{schoolName}</p>}
       </div>
 
       {loading ? (
