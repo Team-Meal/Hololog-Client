@@ -20,7 +20,10 @@ export function shortDate(date: string): string {
   return month && day ? `${Number(month)}/${Number(day)}` : date;
 }
 
+const MEAL_TYPE_ORDER: Record<string, number> = { BREAKFAST: 0, LUNCH: 1, DINNER: 2 };
+
 // Group a flat diet list by dietDate, sorted ascending by date.
+// Within each day, diets are sorted breakfast → lunch → dinner.
 export function groupDietsByDate(diets: DietListItem[]): DietDateGroup[] {
   const byDate = new Map<string, DietListItem[]>();
   for (const diet of diets) {
@@ -30,5 +33,11 @@ export function groupDietsByDate(diets: DietListItem[]): DietDateGroup[] {
   }
   return [...byDate.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([date, items]) => ({ date, diets: items }));
+    .map(([date, items]) => ({
+      date,
+      diets: [...items].sort(
+        (a, b) =>
+          (MEAL_TYPE_ORDER[a.mealType ?? ""] ?? 9) - (MEAL_TYPE_ORDER[b.mealType ?? ""] ?? 9),
+      ),
+    }));
 }
