@@ -69,7 +69,21 @@ export function ConditionsPanel() {
   } = useGeneratorStore();
 
   const [ingInput, setIngInput] = useState("");
-  const [nutInput, setNutInput] = useState("");
+
+  const NUTRITION_OPTIONS = [
+    "고단백",
+    "저지방",
+    "저나트륨",
+    "저탄수화물",
+    "고식이섬유",
+    "칼슘 강화",
+    "철분 강화",
+    "비타민 풍부",
+    "항산화",
+    "오메가-3",
+    "저당",
+    "균형 영양",
+  ];
 
   function handleAddIngredient() {
     const trimmed = ingInput.trim();
@@ -78,11 +92,13 @@ export function ConditionsPanel() {
     setIngInput("");
   }
 
-  function handleAddNutrition() {
-    const trimmed = nutInput.trim();
-    if (!trimmed) return;
-    addNutrition(trimmed);
-    setNutInput("");
+  function handleToggleNutrition(label: string) {
+    const existing = conditions.nutritionCriteria.find((nc) => nc.label === label);
+    if (existing) {
+      removeNutrition(existing.id);
+    } else {
+      addNutrition(label);
+    }
   }
 
   const isLoading = status === "loading";
@@ -179,43 +195,25 @@ export function ConditionsPanel() {
 
           <div className="flex flex-col gap-2">
             <p className="text-sm font-medium text-zinc-800">영양 기준</p>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={nutInput}
-                onChange={(e) => setNutInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleAddNutrition()}
-                placeholder="기준 입력 후 Enter"
-                className="min-w-0 flex-1 rounded-lg border border-zinc-200 px-3 py-1.5 text-xs text-zinc-900 placeholder:text-zinc-400 focus:border-blue-500 focus:outline-none"
-              />
-              <button
-                type="button"
-                onClick={handleAddNutrition}
-                className="flex shrink-0 items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
-              >
-                <PlusIcon size={12} />
-                추가
-              </button>
-            </div>
-            {conditions.nutritionCriteria.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {conditions.nutritionCriteria.map((nc) => (
-                  <span
-                    key={nc.id}
-                    className="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700"
+            <div className="flex flex-wrap gap-1.5">
+              {NUTRITION_OPTIONS.map((option) => {
+                const selected = conditions.nutritionCriteria.some((nc) => nc.label === option);
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => handleToggleNutrition(option)}
+                    className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${
+                      selected
+                        ? "border-blue-500 bg-blue-600 text-white"
+                        : "border-zinc-200 bg-white text-zinc-600 hover:border-blue-300 hover:text-blue-600"
+                    }`}
                   >
-                    {nc.label}
-                    <button
-                      type="button"
-                      onClick={() => removeNutrition(nc.id)}
-                      className="ml-0.5 text-blue-400 hover:text-blue-700"
-                    >
-                      <XIcon size={10} strokeWidth={2.5} />
-                    </button>
-                  </span>
-                ))}
-              </div>
-            )}
+                    {option}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       </SurfaceCard>
