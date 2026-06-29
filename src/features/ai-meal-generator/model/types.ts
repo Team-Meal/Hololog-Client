@@ -3,13 +3,11 @@ export type GeneratorStatus = "idle" | "loading" | "done";
 export interface SeasonalIngredient {
   id: string;
   label: string;
-  selected: boolean;
 }
 
 export interface NutritionCriterion {
   id: string;
   label: string;
-  checked: boolean;
 }
 
 export interface GeneratorConditions {

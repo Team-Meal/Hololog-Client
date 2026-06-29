@@ -4,6 +4,7 @@ import { create } from "zustand";
 import { setTokens, clearTokens } from "@/shared/api";
 import { loginApi, logoutApi, registerApi, submitSignupRequestApi } from "../api/auth.api";
 import type { LoginCredentials, RegisterCredentials, SignupRequestPayload } from "@/entities/auth";
+import { useMemberProfileStore } from "@/entities/member";
 
 interface AuthState {
   role: string | null;
@@ -77,6 +78,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       // Already signed out or network error — still clear the local session.
     }
     clearTokens();
+    useMemberProfileStore.getState().clearProfile();
     set({ role: null, error: null });
   },
 

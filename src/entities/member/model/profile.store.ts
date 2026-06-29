@@ -12,6 +12,8 @@ interface MemberProfileState {
   fetchProfile: () => Promise<void>;
   // Replaces the cached profile (e.g. after editing the school name).
   setProfile: (profile: MemberProfile) => void;
+  // Clears the cached profile on logout so the next login fetches fresh data.
+  clearProfile: () => void;
 }
 
 export const useMemberProfileStore = create<MemberProfileState>((set, get) => ({
@@ -29,4 +31,5 @@ export const useMemberProfileStore = create<MemberProfileState>((set, get) => ({
     }
   },
   setProfile: (profile) => set({ profile, loaded: true }),
+  clearProfile: () => set({ profile: null, loaded: false, loading: false }),
 }));
