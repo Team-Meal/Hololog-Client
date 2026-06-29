@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { toast } from "sonner";
 import { Button } from "@/shared/ui";
 import { createDiet, updateDiet } from "@/entities/meal";
-import type { Diet } from "@/entities/meal";
+import type { Diet, ServerMealType } from "@/entities/meal";
 
 interface DietFormDialogProps {
   open: boolean;
@@ -24,6 +24,7 @@ export function DietFormDialog({ open, diet, onClose, onSaved }: DietFormDialogP
   const [name, setName] = useState(diet?.name ?? "");
   const [description, setDescription] = useState(diet?.description ?? "");
   const [dietDate, setDietDate] = useState(diet?.dietDate ?? "");
+  const [mealType, setMealType] = useState<ServerMealType | "">(diet?.mealType ?? "");
   const [submitting, setSubmitting] = useState(false);
 
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -63,6 +64,7 @@ export function DietFormDialog({ open, diet, onClose, onSaved }: DietFormDialogP
         name: name.trim(),
         description: description.trim() || undefined,
         dietDate,
+        mealType: mealType || undefined,
       };
       if (diet) {
         await updateDiet(diet.id, payload);
@@ -116,6 +118,33 @@ export function DietFormDialog({ open, diet, onClose, onSaved }: DietFormDialogP
             onChange={(e) => setName(e.target.value)}
             disabled={submitting}
           />
+
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[13px] font-medium text-zinc-700">구분 (선택)</span>
+            <div className="flex gap-1.5">
+              {(
+                [
+                  { value: "BREAKFAST", label: "아침" },
+                  { value: "LUNCH", label: "점심" },
+                  { value: "DINNER", label: "저녁" },
+                ] as { value: ServerMealType; label: string }[]
+              ).map(({ value, label }) => (
+                <button
+                  key={value}
+                  type="button"
+                  disabled={submitting}
+                  onClick={() => setMealType(mealType === value ? "" : value)}
+                  className={`flex-1 rounded-xl border py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+                    mealType === value
+                      ? "border-blue-500 bg-blue-50 text-blue-700"
+                      : "border-zinc-200 bg-zinc-50 text-zinc-500 hover:bg-zinc-100"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
 
           <Field
             label="날짜"
