@@ -11,6 +11,7 @@ export async function generateAiMealPlanApi(
 ): Promise<GeneratorResult> {
   const response = await instance.post<GeneratorResult>("/meals/ai-generations", payload, {
     requiresAuth: true,
+    timeout: 10_000,
   });
   return response.data;
 }
