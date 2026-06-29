@@ -82,6 +82,7 @@ export type DietExportFormat = "PDF" | "EXCEL" | "IMAGE";
 export interface DietListItem {
   id: number;
   name: string;
+  mealType?: ServerMealType;
   dietDate: string; // YYYY-MM-DD
   createdAt: string;
   updatedAt: string;
@@ -92,6 +93,7 @@ export interface Diet {
   id: number;
   name: string;
   description: string;
+  mealType?: ServerMealType;
   dietDate: string; // YYYY-MM-DD
   createdAt: string;
   updatedAt: string;
@@ -103,6 +105,7 @@ export interface CreateDietRequest {
   name: string;
   description?: string;
   dietDate: string; // YYYY-MM-DD
+  mealType?: ServerMealType;
 }
 
 // Body for PATCH /diets/{dietId} (식단 수정).
@@ -110,6 +113,7 @@ export interface UpdateDietRequest {
   name: string;
   description?: string;
   dietDate: string; // YYYY-MM-DD
+  mealType?: ServerMealType;
 }
 
 // GET /diets/{dietId}/leftovers (식단별 잔반량 조회).
