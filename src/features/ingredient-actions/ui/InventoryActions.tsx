@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import * as XLSX from "xlsx";
 import { toast } from "sonner";
-import { Button, PlusIcon, UploadIcon } from "@/shared/ui";
+import { Button, DownloadIcon, PlusIcon, UploadIcon } from "@/shared/ui";
 import { createIngredientApi, useIngredientStore } from "@/entities/ingredient";
 import type { CreateIngredientPayload } from "@/entities/ingredient";
 import { IngredientFormModal } from "./IngredientFormModal";
@@ -60,6 +60,22 @@ async function parseExcel(file: File): Promise<ParsedRow[]> {
   return parseSheet(data);
 }
 
+function downloadTemplate() {
+  const rows = [
+    "이름,카테고리,수량,단위,유통기한",
+    "쌀,곡물,20,kg,2025-08-01",
+    "두부,가공,15,개,2025-09-10",
+    "돼지고기,축산,10,kg,2025-07-20",
+  ];
+  const blob = new Blob(["﻿" + rows.join("\n")], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "재고_업로드_서식.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 export function InventoryActions() {
   const [addOpen, setAddOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -108,6 +124,10 @@ export function InventoryActions() {
       <input ref={csvRef} type="file" accept=".csv" className="hidden" onChange={handleCSV} />
       <input ref={xlsxRef} type="file" accept=".xlsx,.xls" className="hidden" onChange={handleExcel} />
 
+      <Button variant="ghost" size="sm" onClick={downloadTemplate}>
+        <DownloadIcon size={14} />
+        서식 다운로드
+      </Button>
       <Button variant="secondary" size="sm" disabled={uploading} onClick={() => xlsxRef.current?.click()}>
         <UploadIcon size={14} />
         엑셀 업로드

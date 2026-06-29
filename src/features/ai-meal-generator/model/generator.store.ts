@@ -11,22 +11,10 @@ function currentYearMonth(): string {
 const INITIAL_CONDITIONS: GeneratorConditions = {
   month: currentYearMonth(),
   useInventory: true,
-  budgetPerPerson: 1600,
-  preferenceWeight: 82,
-  seasonalIngredients: [
-    { id: "potato", label: "하지감자", selected: true },
-    { id: "zucchini", label: "애호박", selected: true },
-    { id: "melon", label: "참외", selected: false },
-    { id: "cucumber", label: "오이", selected: false },
-    { id: "pepper", label: "파리고추", selected: false },
-    { id: "radish", label: "열무", selected: false },
-  ],
-  nutritionCriteria: [
-    { id: "protein", label: "단백질 균형", checked: true },
-    { id: "sodium", label: "나트륨 제한", checked: true },
-    { id: "allergy", label: "알레르기 회피", checked: true },
-    { id: "calorie", label: "칼로리 목표", checked: false },
-  ],
+  budgetPerPerson: 1900,
+  preferenceWeight: 50,
+  seasonalIngredients: [],
+  nutritionCriteria: [],
 };
 
 interface GeneratorState {
@@ -39,8 +27,10 @@ interface GeneratorState {
   setUseInventory: (value: boolean) => void;
   setBudgetPerPerson: (value: number) => void;
   setPreferenceWeight: (value: number) => void;
-  toggleIngredient: (id: string) => void;
-  toggleNutrition: (id: string) => void;
+  addIngredient: (label: string) => void;
+  removeIngredient: (id: string) => void;
+  addNutrition: (label: string) => void;
+  removeNutrition: (id: string) => void;
 }
 
 export const useGeneratorStore = create<GeneratorState>((set, get) => ({
@@ -71,23 +61,41 @@ export const useGeneratorStore = create<GeneratorState>((set, get) => ({
   setPreferenceWeight: (value) =>
     set((s) => ({ conditions: { ...s.conditions, preferenceWeight: value } })),
 
-  toggleIngredient: (id) =>
+  addIngredient: (label) =>
     set((s) => ({
       conditions: {
         ...s.conditions,
-        seasonalIngredients: s.conditions.seasonalIngredients.map((ing) =>
-          ing.id === id ? { ...ing, selected: !ing.selected } : ing,
-        ),
+        seasonalIngredients: [
+          ...s.conditions.seasonalIngredients,
+          { id: crypto.randomUUID(), label },
+        ],
       },
     })),
 
-  toggleNutrition: (id) =>
+  removeIngredient: (id) =>
     set((s) => ({
       conditions: {
         ...s.conditions,
-        nutritionCriteria: s.conditions.nutritionCriteria.map((nc) =>
-          nc.id === id ? { ...nc, checked: !nc.checked } : nc,
-        ),
+        seasonalIngredients: s.conditions.seasonalIngredients.filter((ing) => ing.id !== id),
+      },
+    })),
+
+  addNutrition: (label) =>
+    set((s) => ({
+      conditions: {
+        ...s.conditions,
+        nutritionCriteria: [
+          ...s.conditions.nutritionCriteria,
+          { id: crypto.randomUUID(), label },
+        ],
+      },
+    })),
+
+  removeNutrition: (id) =>
+    set((s) => ({
+      conditions: {
+        ...s.conditions,
+        nutritionCriteria: s.conditions.nutritionCriteria.filter((nc) => nc.id !== id),
       },
     })),
 }));

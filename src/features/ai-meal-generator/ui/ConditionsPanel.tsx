@@ -1,6 +1,7 @@
 "use client";
 
-import { CheckIcon, SlidersIcon, SparklesIcon, SurfaceCard } from "@/shared/ui";
+import { useState } from "react";
+import { PlusIcon, SlidersIcon, SparklesIcon, SurfaceCard, XIcon } from "@/shared/ui";
 import { useGeneratorStore } from "../model/generator.store";
 
 function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
@@ -61,9 +62,28 @@ export function ConditionsPanel() {
     setUseInventory,
     setBudgetPerPerson,
     setPreferenceWeight,
-    toggleIngredient,
-    toggleNutrition,
+    addIngredient,
+    removeIngredient,
+    addNutrition,
+    removeNutrition,
   } = useGeneratorStore();
+
+  const [ingInput, setIngInput] = useState("");
+  const [nutInput, setNutInput] = useState("");
+
+  function handleAddIngredient() {
+    const trimmed = ingInput.trim();
+    if (!trimmed) return;
+    addIngredient(trimmed);
+    setIngInput("");
+  }
+
+  function handleAddNutrition() {
+    const trimmed = nutInput.trim();
+    if (!trimmed) return;
+    addNutrition(trimmed);
+    setNutInput("");
+  }
 
   const isLoading = status === "loading";
   const isDone = status === "done";
@@ -101,7 +121,6 @@ export function ConditionsPanel() {
               step={100}
               onChange={setBudgetPerPerson}
             />
-            <p className="text-xs text-zinc-400">월 예산 ₩7,200만 기준 권장 범위 내</p>
           </div>
 
           <div className="flex flex-col gap-2">
@@ -119,46 +138,84 @@ export function ConditionsPanel() {
 
           <div className="flex flex-col gap-2">
             <p className="text-sm font-medium text-zinc-800">제철 식자재</p>
-            <div className="flex flex-wrap gap-2">
-              {conditions.seasonalIngredients.map((ing) => (
-                <button
-                  key={ing.id}
-                  type="button"
-                  onClick={() => toggleIngredient(ing.id)}
-                  className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium ${
-                    ing.selected
-                      ? "border-blue-200 bg-blue-50 text-blue-700"
-                      : "border-zinc-200 bg-white text-zinc-500 hover:border-zinc-300 hover:text-zinc-700"
-                  }`}
-                >
-                  {ing.selected && <CheckIcon size={10} strokeWidth={2.5} />}
-                  {ing.label}
-                </button>
-              ))}
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={ingInput}
+                onChange={(e) => setIngInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleAddIngredient()}
+                placeholder="재료 입력 후 Enter"
+                className="min-w-0 flex-1 rounded-lg border border-zinc-200 px-3 py-1.5 text-xs text-zinc-900 placeholder:text-zinc-400 focus:border-blue-500 focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={handleAddIngredient}
+                className="flex shrink-0 items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
+              >
+                <PlusIcon size={12} />
+                추가
+              </button>
             </div>
+            {conditions.seasonalIngredients.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {conditions.seasonalIngredients.map((ing) => (
+                  <span
+                    key={ing.id}
+                    className="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700"
+                  >
+                    {ing.label}
+                    <button
+                      type="button"
+                      onClick={() => removeIngredient(ing.id)}
+                      className="ml-0.5 text-blue-400 hover:text-blue-700"
+                    >
+                      <XIcon size={10} strokeWidth={2.5} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col gap-2">
             <p className="text-sm font-medium text-zinc-800">영양 기준</p>
-            <div className="flex flex-col gap-2">
-              {conditions.nutritionCriteria.map((nc) => (
-                <button
-                  key={nc.id}
-                  type="button"
-                  onClick={() => toggleNutrition(nc.id)}
-                  className="flex items-center gap-2.5 text-left"
-                >
-                  <div
-                    className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border ${
-                      nc.checked ? "border-blue-600 bg-blue-600" : "border-zinc-300 bg-white"
-                    }`}
-                  >
-                    {nc.checked && <CheckIcon size={10} strokeWidth={3} className="text-white" />}
-                  </div>
-                  <span className="text-sm text-zinc-700">{nc.label}</span>
-                </button>
-              ))}
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={nutInput}
+                onChange={(e) => setNutInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleAddNutrition()}
+                placeholder="기준 입력 후 Enter"
+                className="min-w-0 flex-1 rounded-lg border border-zinc-200 px-3 py-1.5 text-xs text-zinc-900 placeholder:text-zinc-400 focus:border-blue-500 focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={handleAddNutrition}
+                className="flex shrink-0 items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
+              >
+                <PlusIcon size={12} />
+                추가
+              </button>
             </div>
+            {conditions.nutritionCriteria.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {conditions.nutritionCriteria.map((nc) => (
+                  <span
+                    key={nc.id}
+                    className="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700"
+                  >
+                    {nc.label}
+                    <button
+                      type="button"
+                      onClick={() => removeNutrition(nc.id)}
+                      className="ml-0.5 text-blue-400 hover:text-blue-700"
+                    >
+                      <XIcon size={10} strokeWidth={2.5} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </SurfaceCard>
