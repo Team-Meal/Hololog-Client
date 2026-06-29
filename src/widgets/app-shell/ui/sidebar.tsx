@@ -13,7 +13,11 @@ export function Sidebar({ onNavigate }: SidebarProps) {
 
   return (
     <aside className="flex h-full w-72 shrink-0 flex-col border-r border-slate-200 bg-white text-slate-950">
-      <div className="flex h-20 items-center gap-3 px-6">
+      <Link
+        href="/"
+        onClick={onNavigate}
+        className="flex h-20 items-center gap-3 px-6 transition-colors hover:bg-slate-50"
+      >
         <div className="grid size-10 place-items-center rounded-lg bg-slate-950 text-sm font-semibold text-white">
           H
         </div>
@@ -21,7 +25,7 @@ export function Sidebar({ onNavigate }: SidebarProps) {
           <p className="text-base leading-5 font-semibold">Hololog</p>
           <p className="text-xs font-medium text-slate-500">Client Console</p>
         </div>
-      </div>
+      </Link>
 
       <nav className="flex-1 space-y-8 overflow-y-auto px-4 py-3">
         {navigationGroups.map((group) => (
