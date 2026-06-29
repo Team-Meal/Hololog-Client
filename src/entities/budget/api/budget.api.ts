@@ -69,7 +69,7 @@ export async function createBudget(payload: CreateBudgetRequest): Promise<void> 
 }
 
 export async function updateBudget(id: number, payload: CreateBudgetRequest): Promise<void> {
-  await instance.put(`/budgets/${id}`, payload, { requiresAuth: true });
+  await instance.patch(`/budgets/${id}`, payload, { requiresAuth: true });
 }
 
 export async function deleteBudget(id: number): Promise<void> {
