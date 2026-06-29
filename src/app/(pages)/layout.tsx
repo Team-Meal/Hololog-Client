@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { AdminRouteGuard } from "@/features/auth";
 import { Sidebar } from "@/widgets/sidebar";
@@ -21,6 +22,8 @@ async function getSessionRole(): Promise<string | null> {
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const role = await getSessionRole();
+
+  if (!role) redirect("/login");
 
   if (role === "ADMIN" || role === "STUDENT") {
     return <>{children}</>;
