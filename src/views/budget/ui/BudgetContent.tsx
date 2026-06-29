@@ -1,16 +1,19 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 import {
   BudgetKpiCards,
   ExecutionDonut,
+  deleteBudget,
   executionPercent,
   getBudgets,
   selectActiveBudget,
   type Budget,
 } from "@/entities/budget";
-import { Button, PlusIcon, SurfaceCard } from "@/shared/ui";
+import { Button, ConfirmDialog, PencilIcon, PlusIcon, SurfaceCard, TrashIcon } from "@/shared/ui";
 import { CreateBudgetDialog } from "./CreateBudgetDialog";
+import { EditBudgetDialog } from "./EditBudgetDialog";
 
 function formatPeriod(budget: Budget): string {
   const toDots = (date: string) => date.replaceAll("-", ".");
@@ -32,9 +35,12 @@ function toLoadError(err: unknown): LoadError {
 export function BudgetContent() {
   const [budgets, setBudgets] = useState<Budget[] | null>(null);
   const [error, setError] = useState<LoadError | null>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
+  const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
+  const [deletingBudget, setDeletingBudget] = useState<Budget | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
-  // Reusable fetch for the initial load and post-create refresh.
   const reload = useCallback(() => {
     getBudgets()
       .then((data) => {
@@ -54,6 +60,8 @@ export function BudgetContent() {
         if (alive) {
           setBudgets(data);
           setError(null);
+          const auto = selectActiveBudget(data);
+          if (auto) setSelectedId(auto.id);
         }
       })
       .catch((err: unknown) => {
@@ -66,6 +74,21 @@ export function BudgetContent() {
       alive = false;
     };
   }, []);
+
+  const handleDelete = async () => {
+    if (!deletingBudget) return;
+    setDeleting(true);
+    try {
+      await deleteBudget(deletingBudget.id);
+      if (selectedId === deletingBudget.id) setSelectedId(null);
+      setDeletingBudget(null);
+      reload();
+    } catch {
+      toast.error("예산 삭제에 실패했습니다.");
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   if (budgets === null) {
     return <div className="h-64 animate-pulse rounded-2xl bg-zinc-100" />;
@@ -93,7 +116,9 @@ export function BudgetContent() {
     return <Notice text="예산 정보를 불러오지 못했습니다." />;
   }
 
-  const active = budgets.length > 0 ? selectActiveBudget(budgets) : null;
+  const dateActiveId = budgets.length > 0 ? (selectActiveBudget(budgets)?.id ?? null) : null;
+  const effectiveId = selectedId ?? dateActiveId;
+  const active = budgets.find((b) => b.id === effectiveId) ?? null;
 
   return (
     <div className="flex flex-col gap-6">
@@ -114,7 +139,14 @@ export function BudgetContent() {
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2">
-              <BudgetList budgets={budgets} activeId={active.id} />
+              <BudgetList
+                budgets={budgets}
+                dateActiveId={dateActiveId}
+                selectedId={effectiveId}
+                onSelect={setSelectedId}
+                onEdit={setEditingBudget}
+                onDelete={setDeletingBudget}
+              />
             </div>
             <ExecutionDonut used={active.usedAmount} total={active.totalAmount} />
           </div>
@@ -131,29 +163,96 @@ export function BudgetContent() {
           reload();
         }}
       />
+
+      {editingBudget && (
+        <EditBudgetDialog
+          key={editingBudget.id}
+          budget={editingBudget}
+          onClose={() => setEditingBudget(null)}
+          onUpdated={() => {
+            setEditingBudget(null);
+            reload();
+          }}
+        />
+      )}
+
+      <ConfirmDialog
+        open={deletingBudget !== null}
+        title="예산을 삭제할까요?"
+        description={deletingBudget ? `"${deletingBudget.title}" 예산이 영구적으로 삭제됩니다.` : undefined}
+        confirmText="삭제"
+        tone="danger"
+        loading={deleting}
+        onConfirm={handleDelete}
+        onClose={() => !deleting && setDeletingBudget(null)}
+      />
     </div>
   );
 }
 
-function BudgetList({ budgets, activeId }: { budgets: Budget[]; activeId: number }) {
+type BudgetListProps = {
+  budgets: Budget[];
+  dateActiveId: number | null;
+  selectedId: number | null;
+  onSelect: (id: number) => void;
+  onEdit: (budget: Budget) => void;
+  onDelete: (budget: Budget) => void;
+};
+
+function BudgetList({ budgets, dateActiveId, selectedId, onSelect, onEdit, onDelete }: BudgetListProps) {
   return (
     <SurfaceCard>
       <h2 className="text-base font-semibold text-zinc-900">예산 목록</h2>
       <ul className="mt-4 flex flex-col divide-y divide-zinc-100">
         {budgets.map((budget) => {
           const pct = executionPercent(budget.usedAmount, budget.totalAmount);
+          const isSelected = budget.id === selectedId;
+          const isDateActive = budget.id === dateActiveId;
+
           return (
-            <li key={budget.id} className="flex flex-col gap-2 py-3.5 first:pt-0 last:pb-0">
+            <li
+              key={budget.id}
+              className={[
+                "flex flex-col gap-2 py-3.5 first:pt-0 last:pb-0",
+                "-mx-2 cursor-pointer rounded-lg px-2 transition-colors",
+                isSelected ? "bg-blue-50" : "hover:bg-zinc-50",
+              ].join(" ")}
+              onClick={() => onSelect(budget.id)}
+            >
               <div className="flex items-center justify-between gap-3">
-                <span className="flex items-center gap-2 truncate text-sm font-medium text-zinc-900">
+                <span className="flex min-w-0 items-center gap-2 truncate text-sm font-medium text-zinc-900">
                   {budget.title}
-                  {budget.id === activeId && (
-                    <span className="rounded-md bg-blue-50 px-1.5 py-0.5 text-[11px] font-semibold text-blue-600">
+                  {isDateActive && (
+                    <span className="shrink-0 rounded-md bg-blue-50 px-1.5 py-0.5 text-[11px] font-semibold text-blue-600">
                       진행 중
                     </span>
                   )}
                 </span>
-                <span className="shrink-0 text-xs text-zinc-400">{formatPeriod(budget)}</span>
+                <div className="flex shrink-0 items-center gap-1">
+                  <span className="text-xs text-zinc-400">{formatPeriod(budget)}</span>
+                  <button
+                    type="button"
+                    aria-label="예산 수정"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEdit(budget);
+                    }}
+                    className="rounded-md p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
+                  >
+                    <PencilIcon size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="예산 삭제"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDelete(budget);
+                    }}
+                    className="rounded-md p-1 text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-500"
+                  >
+                    <TrashIcon size={14} />
+                  </button>
+                </div>
               </div>
               <div className="flex items-center gap-3">
                 <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-100">
