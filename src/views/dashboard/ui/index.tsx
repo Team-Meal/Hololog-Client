@@ -18,8 +18,8 @@ export function DashboardPage() {
   const router = useRouter();
   const { profile } = useMemberProfile();
   const greeting = profile
-    ? `좋은 아침이에요, ${profile.name} ${roleLabel(profile.role)}님`
-    : "좋은 아침이에요";
+    ? `안녕하세요, ${profile.name} ${roleLabel(profile.role)}님`
+    : "안녕하세요";
 
   return (
     <PageShell

@@ -60,12 +60,9 @@ export function MealDayCard({ group, selectedDietId, onSelect }: Props) {
               onClick={() => onSelect(diet.id)}
               className={`w-full rounded-lg px-2 py-1.5 text-left transition-colors ${baseClass}`}
             >
-              {type && (
-                <span className="mb-0.5 block text-[10px] font-semibold leading-none opacity-70">
-                  {MEAL_LABEL[type]}
-                </span>
-              )}
-              <p className="truncate text-xs font-medium text-zinc-800">{diet.name}</p>
+              <span className="block text-[10px] font-semibold leading-none opacity-70">
+                {type ? MEAL_LABEL[type] : diet.name}
+              </span>
             </button>
           );
         })}

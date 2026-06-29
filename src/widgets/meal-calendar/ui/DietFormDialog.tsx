@@ -7,6 +7,12 @@ import { Button } from "@/shared/ui";
 import { createDiet, updateDiet } from "@/entities/meal";
 import type { Diet, ServerMealType } from "@/entities/meal";
 
+const MEAL_NAME: Record<ServerMealType, string> = {
+  BREAKFAST: "조식",
+  LUNCH: "중식",
+  DINNER: "석식",
+};
+
 interface DietFormDialogProps {
   open: boolean;
   // When provided, the dialog edits this diet; otherwise it creates a new one.
@@ -19,9 +25,6 @@ export function DietFormDialog({ open, diet, onClose, onSaved }: DietFormDialogP
   const titleId = useId();
   const isEdit = Boolean(diet);
 
-  // Initialized from `diet` for edit; the dialog is mounted fresh per open
-  // (parent gates on `open`), so these initializers always reflect the target.
-  const [name, setName] = useState(diet?.name ?? "");
   const [description, setDescription] = useState(diet?.description ?? "");
   const [dietDate, setDietDate] = useState(diet?.dietDate ?? "");
   const [mealType, setMealType] = useState<ServerMealType | "">(diet?.mealType ?? "");
@@ -47,7 +50,7 @@ export function DietFormDialog({ open, diet, onClose, onSaved }: DietFormDialogP
 
   if (!open || typeof document === "undefined") return null;
 
-  const valid = name.trim().length > 0 && dietDate.length > 0;
+  const valid = mealType.length > 0 && dietDate.length > 0;
 
   const handleClose = () => {
     if (submitting) return;
@@ -61,10 +64,10 @@ export function DietFormDialog({ open, diet, onClose, onSaved }: DietFormDialogP
     setSubmitting(true);
     try {
       const payload = {
-        name: name.trim(),
+        name: MEAL_NAME[mealType as ServerMealType],
         description: description.trim() || undefined,
         dietDate,
-        mealType: mealType || undefined,
+        mealType: mealType as ServerMealType,
       };
       if (diet) {
         await updateDiet(diet.id, payload);
@@ -109,31 +112,21 @@ export function DietFormDialog({ open, diet, onClose, onSaved }: DietFormDialogP
         </p>
 
         <div className="mt-5 flex flex-col gap-3.5">
-          <Field
-            label="식단명"
-            type="text"
-            value={name}
-            maxLength={100}
-            placeholder="예: 백미밥"
-            onChange={(e) => setName(e.target.value)}
-            disabled={submitting}
-          />
-
           <div className="flex flex-col gap-1.5">
-            <span className="text-[13px] font-medium text-zinc-700">구분 (선택)</span>
+            <span className="text-[13px] font-medium text-zinc-700">구분</span>
             <div className="flex gap-1.5">
               {(
                 [
-                  { value: "BREAKFAST", label: "아침" },
-                  { value: "LUNCH", label: "점심" },
-                  { value: "DINNER", label: "저녁" },
+                  { value: "BREAKFAST", label: "조식" },
+                  { value: "LUNCH", label: "중식" },
+                  { value: "DINNER", label: "석식" },
                 ] as { value: ServerMealType; label: string }[]
               ).map(({ value, label }) => (
                 <button
                   key={value}
                   type="button"
                   disabled={submitting}
-                  onClick={() => setMealType(mealType === value ? "" : value)}
+                  onClick={() => setMealType(value)}
                   className={`flex-1 rounded-xl border py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
                     mealType === value
                       ? "border-blue-500 bg-blue-50 text-blue-700"
@@ -156,13 +149,13 @@ export function DietFormDialog({ open, diet, onClose, onSaved }: DietFormDialogP
           />
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-[13px] font-medium text-zinc-700">설명 (선택)</span>
+            <span className="text-[13px] font-medium text-zinc-700">메뉴 (선택)</span>
             <textarea
               value={description}
-              placeholder="반찬 구성, 비고 등"
+              placeholder={"백미밥\n된장국\n제육볶음"}
               onChange={(e) => setDescription(e.target.value)}
               disabled={submitting}
-              rows={3}
+              rows={4}
               className="w-full resize-none rounded-xl border border-zinc-200 bg-zinc-50/80 px-3.5 py-2.5 text-sm text-zinc-900 outline-none focus:border-blue-500 focus:bg-white focus:ring-3 focus:ring-blue-500/10 disabled:cursor-not-allowed disabled:opacity-50"
             />
           </label>
