@@ -42,6 +42,7 @@ export { groupDietsByDate, weekdayLabel, shortDate } from "./lib/group";
 export type { DietDateGroup } from "./lib/group";
 export {
   currentMonth,
+  todayStr,
   addMonths,
   monthLabel,
   monthKey,

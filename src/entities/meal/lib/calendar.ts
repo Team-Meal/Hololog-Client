@@ -25,6 +25,11 @@ export function currentMonth(): MonthRef {
   return { year: now.getFullYear(), month: now.getMonth() + 1 };
 }
 
+// Today as a YYYY-MM-DD string (local time), for highlighting the current day.
+export function todayStr(): string {
+  return dateToStr(new Date());
+}
+
 // Shift a month by ±N months, rolling the year over as needed.
 export function addMonths({ year, month }: MonthRef, delta: number): MonthRef {
   const d = new Date(year, month - 1 + delta, 1);
