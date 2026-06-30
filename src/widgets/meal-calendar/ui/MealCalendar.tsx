@@ -42,6 +42,14 @@ export function MealCalendar() {
   const [viewMonth, setViewMonth] = useState<MonthRef>(() => currentMonth());
   // Today's date, captured once on mount — used to highlight the current day.
   const [today] = useState(() => todayStr());
+  // Bumped by the "오늘" button to scroll today's cell into view after the grid re-renders.
+  const [scrollToToday, setScrollToToday] = useState(0);
+  const todayCellRef = useRef<HTMLDivElement>(null);
+
+  const goToday = () => {
+    setViewMonth(currentMonth());
+    setScrollToToday((n) => n + 1);
+  };
 
   const [editOpen, setEditOpen] = useState(false);
   const [leftoverOpen, setLeftoverOpen] = useState(false);
@@ -156,6 +164,12 @@ export function MealCalendar() {
     };
   }, [selectedDietId, reloadToken, detailById]);
 
+  // Smooth-scroll today's cell into view when the "오늘" button is pressed.
+  useEffect(() => {
+    if (scrollToToday === 0) return;
+    todayCellRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [scrollToToday]);
+
   return (
     <div className="rounded-2xl bg-white shadow-(--shadow-card)">
       <div className="flex items-center justify-between border-b border-zinc-100 px-6 py-4">
@@ -181,7 +195,7 @@ export function MealCalendar() {
           </button>
           <button
             type="button"
-            onClick={() => setViewMonth(currentMonth())}
+            onClick={goToday}
             className="ml-1 rounded-lg border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-500 transition-colors hover:bg-zinc-50"
           >
             오늘
@@ -209,6 +223,7 @@ export function MealCalendar() {
               detailById={detailById}
               selectedDietId={selectedDietId}
               today={today}
+              todayCellRef={todayCellRef}
               onSelect={(id) => setSelectedDietId(id === selectedDietId ? null : id)}
               onAddDate={(date) => setAddDate(date)}
             />

@@ -1,3 +1,4 @@
+import type { Ref } from "react";
 import { WEEKDAY_HEADERS } from "@/entities/meal";
 import type { Diet, DietListItem, MonthGridDay, ServerMealType } from "@/entities/meal";
 import { PlusIcon } from "@/shared/ui";
@@ -8,6 +9,7 @@ interface Props {
   detailById: Map<number, Diet>;
   selectedDietId: number | null;
   today: string; // YYYY-MM-DD — highlighted in the grid
+  todayCellRef?: Ref<HTMLDivElement>; // attached to today's cell so it can be scrolled into view
   onSelect: (id: number) => void;
   onAddDate: (date: string) => void;
 }
@@ -53,6 +55,7 @@ export function MealMonthGrid({
   detailById,
   selectedDietId,
   today,
+  todayCellRef,
   onSelect,
   onAddDate,
 }: Props) {
@@ -86,6 +89,7 @@ export function MealMonthGrid({
             return (
               <div
                 key={cell.date}
+                ref={isToday ? todayCellRef : undefined}
                 className={`group/cell flex min-h-28 flex-col gap-1 border-b border-r border-zinc-100 p-1.5 ${
                   isToday ? "bg-blue-50/60 ring-1 ring-inset ring-blue-300" : cell.inMonth ? "bg-white" : "bg-zinc-50/60"
                 }`}
