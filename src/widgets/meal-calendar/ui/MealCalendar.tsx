@@ -12,6 +12,7 @@ import {
   getDiets,
   monthKey,
   monthLabel,
+  todayStr,
 } from "@/entities/meal";
 import type { Diet, DietListItem, MonthRef } from "@/entities/meal";
 import {
@@ -39,6 +40,8 @@ export function MealCalendar() {
 
   // Month the grid is showing. Defaults to the current month.
   const [viewMonth, setViewMonth] = useState<MonthRef>(() => currentMonth());
+  // Today's date, captured once on mount — used to highlight the current day.
+  const [today] = useState(() => todayStr());
 
   const [editOpen, setEditOpen] = useState(false);
   const [leftoverOpen, setLeftoverOpen] = useState(false);
@@ -205,6 +208,7 @@ export function MealCalendar() {
               dietsByDate={dietsByDate}
               detailById={detailById}
               selectedDietId={selectedDietId}
+              today={today}
               onSelect={(id) => setSelectedDietId(id === selectedDietId ? null : id)}
               onAddDate={(date) => setAddDate(date)}
             />

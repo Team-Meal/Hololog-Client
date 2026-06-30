@@ -7,6 +7,7 @@ interface Props {
   dietsByDate: Map<string, DietListItem[]>;
   detailById: Map<number, Diet>;
   selectedDietId: number | null;
+  today: string; // YYYY-MM-DD — highlighted in the grid
   onSelect: (id: number) => void;
   onAddDate: (date: string) => void;
 }
@@ -51,12 +52,13 @@ export function MealMonthGrid({
   dietsByDate,
   detailById,
   selectedDietId,
+  today,
   onSelect,
   onAddDate,
 }: Props) {
   return (
     <div className="overflow-x-auto">
-      <div className="min-w-[44rem]">
+      <div className="min-w-176">
         {/* 월 화 수 목 금 토 일 — one header row */}
         <div className="grid grid-cols-7 border-b border-zinc-100">
           {WEEKDAY_HEADERS.map((label) => {
@@ -79,24 +81,27 @@ export function MealMonthGrid({
             const diets = sortByMeal(dietsByDate.get(cell.date) ?? []);
             const isSunday = cell.weekday === 0;
             const isSaturday = cell.weekday === 6;
+            const isToday = cell.date === today;
 
             return (
               <div
                 key={cell.date}
                 className={`group/cell flex min-h-28 flex-col gap-1 border-b border-r border-zinc-100 p-1.5 ${
-                  cell.inMonth ? "bg-white" : "bg-zinc-50/60"
+                  isToday ? "bg-blue-50/60 ring-1 ring-inset ring-blue-300" : cell.inMonth ? "bg-white" : "bg-zinc-50/60"
                 }`}
               >
                 <div className="flex items-center justify-between px-0.5">
                   <span
                     className={`text-[11px] font-semibold ${
-                      !cell.inMonth
-                        ? "text-zinc-300"
-                        : isSunday
-                          ? "text-red-500"
-                          : isSaturday
-                            ? "text-blue-500"
-                            : "text-zinc-600"
+                      isToday
+                        ? "flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-500 px-1 text-white"
+                        : !cell.inMonth
+                          ? "text-zinc-300"
+                          : isSunday
+                            ? "text-red-500"
+                            : isSaturday
+                              ? "text-blue-500"
+                              : "text-zinc-600"
                     }`}
                   >
                     {cell.day}
