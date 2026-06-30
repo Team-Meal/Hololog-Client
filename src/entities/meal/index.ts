@@ -40,3 +40,13 @@ export {
 } from "./api/diet.api";
 export { groupDietsByDate, weekdayLabel, shortDate } from "./lib/group";
 export type { DietDateGroup } from "./lib/group";
+export {
+  currentMonth,
+  todayStr,
+  addMonths,
+  monthLabel,
+  monthKey,
+  buildMonthGrid,
+  WEEKDAY_HEADERS,
+} from "./lib/calendar";
+export type { MonthRef, MonthGridDay } from "./lib/calendar";

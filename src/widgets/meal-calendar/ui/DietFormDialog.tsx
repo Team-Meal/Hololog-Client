@@ -17,16 +17,18 @@ interface DietFormDialogProps {
   open: boolean;
   // When provided, the dialog edits this diet; otherwise it creates a new one.
   diet?: Diet | null;
+  // Pre-fills the date when creating (e.g. the calendar day the user clicked).
+  defaultDate?: string;
   onClose: () => void;
   onSaved: () => void;
 }
 
-export function DietFormDialog({ open, diet, onClose, onSaved }: DietFormDialogProps) {
+export function DietFormDialog({ open, diet, defaultDate, onClose, onSaved }: DietFormDialogProps) {
   const titleId = useId();
   const isEdit = Boolean(diet);
 
   const [description, setDescription] = useState(diet?.description ?? "");
-  const [dietDate, setDietDate] = useState(diet?.dietDate ?? "");
+  const [dietDate, setDietDate] = useState(diet?.dietDate ?? defaultDate ?? "");
   const [mealType, setMealType] = useState<ServerMealType | "">(diet?.mealType ?? "");
   const [submitting, setSubmitting] = useState(false);
 
