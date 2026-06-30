@@ -106,9 +106,9 @@ export function MealMonthGrid({
                       type="button"
                       aria-label={`${cell.date} 식단 추가`}
                       onClick={() => onAddDate(cell.date)}
-                      className="rounded-md p-0.5 text-zinc-300 opacity-0 transition-opacity hover:bg-zinc-100 hover:text-zinc-600 group-hover/cell:opacity-100"
+                      className="rounded-md bg-zinc-100 p-0.5 text-zinc-400 transition-colors hover:bg-blue-100 hover:text-blue-600 group-hover/cell:bg-blue-50 group-hover/cell:text-blue-500"
                     >
-                      <PlusIcon size={12} />
+                      <PlusIcon size={13} />
                     </button>
                   )}
                 </div>
