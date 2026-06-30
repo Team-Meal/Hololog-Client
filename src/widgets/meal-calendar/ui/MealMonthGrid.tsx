@@ -43,10 +43,17 @@ function formatDescription(description?: string): string[] {
     : [];
 }
 
+// Rank for 조식 → 중식 → 석식 ordering. The list API may omit mealType, so fall
+// back to the name (식단 작성 시 항상 "조식"/"중식"/"석식" 으로 저장됨).
+const NAME_ORDER: Record<string, number> = { 조식: 0, 중식: 1, 석식: 2 };
+
+function mealRank(diet: DietListItem): number {
+  if (diet.mealType) return MEAL_ORDER[diet.mealType];
+  return NAME_ORDER[diet.name] ?? 9;
+}
+
 function sortByMeal(diets: DietListItem[]): DietListItem[] {
-  return [...diets].sort(
-    (a, b) => (MEAL_ORDER[a.mealType ?? "BREAKFAST"] ?? 9) - (MEAL_ORDER[b.mealType ?? "BREAKFAST"] ?? 9),
-  );
+  return [...diets].sort((a, b) => mealRank(a) - mealRank(b));
 }
 
 export function MealMonthGrid({
