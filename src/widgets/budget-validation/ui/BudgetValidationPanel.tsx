@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import type { Budget } from "@/entities/budget";
-import {
-  getOrderPlans,
-  getOrderPlanById,
-  type OrderPlanSummary,
-  type OrderPlanDetail,
-} from "@/entities/order-plan";
+import { useIngredientStore } from "@/entities/ingredient";
+import { usePriceStore } from "@/entities/price";
+import { useOrderPlanCalcStore, useOrderPlanItems } from "@/features/order-plan-calc";
 import { SectionTitle, StatusBadge, SurfaceCard } from "@/shared/ui";
 import { validateOrderAgainstBudget, type BudgetVerdict } from "../lib/validate";
+import { buildBudgetKpis, buildSpikeSubstitutions } from "../lib/budget-kpis";
+import { BudgetKpiExtras } from "./BudgetKpiExtras";
+import { PriceSpikePanel } from "./PriceSpikePanel";
 
 const won = (value: number) => `₩${Math.round(value).toLocaleString()}`;
 
@@ -27,111 +27,63 @@ interface Props {
 }
 
 export function BudgetValidationPanel({ budget }: Props) {
-  const [plans, setPlans] = useState<OrderPlanSummary[] | null>(null);
-  const [plansError, setPlansError] = useState(false);
-  const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [detail, setDetail] = useState<OrderPlanDetail | null>(null);
-  const [detailError, setDetailError] = useState(false);
+  const studentCount = useOrderPlanCalcStore((s) => s.studentCount);
+  const setStudentCount = useOrderPlanCalcStore((s) => s.setStudentCount);
+  const { items, totalEstimatedCost, isLoading } = useOrderPlanItems();
 
-  // 발주 계획 목록 로드
-  useEffect(() => {
-    let alive = true;
-    getOrderPlans()
-      .then((data) => {
-        if (!alive) return;
-        setPlans(data);
-        setPlansError(false);
-        if (data.length > 0) setSelectedId((prev) => prev ?? data[0].id);
-      })
-      .catch(() => {
-        if (alive) {
-          setPlans([]);
-          setPlansError(true);
-        }
-      });
-    return () => {
-      alive = false;
-    };
-  }, []);
+  const ingredients = useIngredientStore((s) => s.items);
+  const priceItems = usePriceStore((s) => s.items);
 
-  // 선택된 발주 계획 상세 로드 (동기 setState 없이 비동기 결과에서만 갱신)
-  useEffect(() => {
-    if (selectedId === null) return;
-    let alive = true;
-    getOrderPlanById(selectedId)
-      .then((data) => {
-        if (alive) {
-          setDetail(data);
-          setDetailError(false);
-        }
-      })
-      .catch(() => {
-        if (alive) {
-          setDetail(null);
-          setDetailError(true);
-        }
-      });
-    return () => {
-      alive = false;
-    };
-  }, [selectedId]);
-
-  // 선택된 계획의 상세를 아직 못 받았고 오류도 아니면 로딩으로 간주
-  const detailLoading =
-    selectedId !== null && !detailError && (detail === null || detail.id !== selectedId);
-
-  // 상세가 현재 선택과 일치할 때만 검증 결과 계산 (직전 선택의 값으로 계산되지 않도록)
   const result = useMemo(
-    () =>
-      budget && detail && detail.id === selectedId
-        ? validateOrderAgainstBudget(budget, detail.totalEstimatedCost)
-        : null,
-    [budget, detail, selectedId],
+    () => (budget ? validateOrderAgainstBudget(budget, totalEstimatedCost) : null),
+    [budget, totalEstimatedCost],
+  );
+
+  const kpis = useMemo(
+    () => buildBudgetKpis(items, studentCount, ingredients),
+    [items, studentCount, ingredients],
+  );
+
+  const spikeSummary = useMemo(
+    () => buildSpikeSubstitutions(priceItems, items),
+    [priceItems, items],
   );
 
   return (
     <SurfaceCard>
       <SectionTitle
-        title="예산 검증"
-        description="발주 예상비용을 현재 예산에 반영해 초과 여부를 확인합니다."
+        title="농산물 예산 분석"
+        description="농산물 발주 계획표(같은 급식 인원 기준)의 예상비용을 현재 예산에 반영해 초과 여부를 확인합니다."
       />
 
-      {/* 발주 계획 선택 */}
       <div className="mt-4 flex items-center gap-2">
-        <span className="shrink-0 text-xs text-zinc-500">발주 계획</span>
-        <select
-          value={selectedId ?? ""}
-          onChange={(e) => setSelectedId(e.target.value ? Number(e.target.value) : null)}
-          disabled={!plans || plans.length === 0}
-          className="h-9 flex-1 rounded-lg border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:bg-zinc-50 disabled:text-zinc-400"
-        >
-          {plans && plans.length > 0 ? (
-            plans.map((plan) => (
-              <option key={plan.id} value={plan.id}>
-                {plan.title}
-                {plan.planDate ? ` · ${plan.planDate}` : ""}
-              </option>
-            ))
-          ) : (
-            <option value="">발주 계획 없음</option>
-          )}
-        </select>
+        <span className="shrink-0 text-xs text-zinc-500">급식 인원</span>
+        <input
+          type="number"
+          min={0}
+          value={studentCount}
+          onChange={(e) => setStudentCount(Number(e.target.value))}
+          className="h-9 w-24 rounded-lg border border-zinc-200 bg-white px-3 text-right text-sm text-zinc-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+        />
+        <span className="text-xs text-zinc-400">명</span>
       </div>
 
-      {/* 본문 */}
       <div className="mt-4">
         {!budget ? (
           <Empty text="검증할 예산을 먼저 선택해 주세요." />
-        ) : plansError ? (
-          <Empty text="발주 계획을 불러오지 못했습니다." />
-        ) : plans && plans.length === 0 ? (
-          <Empty text="등록된 발주 계획이 없습니다. 발주 계획을 먼저 작성해 주세요." />
-        ) : detailError ? (
-          <Empty text="발주 계획 상세를 불러오지 못했습니다." />
-        ) : detailLoading || !result ? (
+        ) : isLoading && items.length === 0 ? (
           <div className="h-40 animate-pulse rounded-xl bg-zinc-100" />
+        ) : result ? (
+          <div className="flex flex-col gap-4">
+            <Result result={result} />
+            <BudgetKpiExtras
+              kpis={kpis}
+              savingsWon={priceItems.length > 0 ? spikeSummary.totalSavings : null}
+            />
+            <PriceSpikePanel substitutions={spikeSummary.substitutions} />
+          </div>
         ) : (
-          <Result result={result} />
+          <Empty text="예산 정보를 계산할 수 없습니다." />
         )}
       </div>
     </SurfaceCard>
