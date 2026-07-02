@@ -11,6 +11,7 @@ import {
   selectActiveBudget,
   type Budget,
 } from "@/entities/budget";
+import { BudgetValidationPanel } from "@/widgets/budget-validation";
 import { Button, ConfirmDialog, PencilIcon, PlusIcon, SurfaceCard, TrashIcon } from "@/shared/ui";
 import { CreateBudgetDialog } from "./CreateBudgetDialog";
 import { EditBudgetDialog } from "./EditBudgetDialog";
@@ -150,6 +151,8 @@ export function BudgetContent() {
             </div>
             <ExecutionDonut used={active.usedAmount} total={active.totalAmount} />
           </div>
+
+          <BudgetValidationPanel budget={active} />
         </>
       ) : (
         <Notice text="등록된 예산이 없습니다. 예산을 입력해 주세요." />
@@ -179,7 +182,9 @@ export function BudgetContent() {
       <ConfirmDialog
         open={deletingBudget !== null}
         title="예산을 삭제할까요?"
-        description={deletingBudget ? `"${deletingBudget.title}" 예산이 영구적으로 삭제됩니다.` : undefined}
+        description={
+          deletingBudget ? `"${deletingBudget.title}" 예산이 영구적으로 삭제됩니다.` : undefined
+        }
         confirmText="삭제"
         tone="danger"
         loading={deleting}
@@ -199,7 +204,14 @@ type BudgetListProps = {
   onDelete: (budget: Budget) => void;
 };
 
-function BudgetList({ budgets, dateActiveId, selectedId, onSelect, onEdit, onDelete }: BudgetListProps) {
+function BudgetList({
+  budgets,
+  dateActiveId,
+  selectedId,
+  onSelect,
+  onEdit,
+  onDelete,
+}: BudgetListProps) {
   return (
     <SurfaceCard>
       <h2 className="text-base font-semibold text-zinc-900">예산 목록</h2>
