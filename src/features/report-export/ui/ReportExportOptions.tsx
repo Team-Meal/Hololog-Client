@@ -12,11 +12,23 @@ import {
   exportLocalProduceExcel,
   type LocalProduceStats,
 } from "../lib/local-produce-report";
+import {
+  buildBudgetExecutionPdfHtml,
+  exportBudgetExecutionExcel,
+  type BudgetExecutionStats,
+} from "../lib/budget-execution-report";
+import {
+  buildAllergyNoticePdfHtml,
+  exportAllergyNoticeExcel,
+  type AllergyNoticeRow,
+} from "../lib/allergy-notice-report";
 
 interface Props {
   kind: ReportKind;
   orderPlanDetail: OrderPlanDetail | null;
   localStats: LocalProduceStats | null;
+  budgetStats: BudgetExecutionStats | null;
+  allergyRows: AllergyNoticeRow[];
   schoolName: string;
   disabled: boolean;
 }
@@ -25,6 +37,8 @@ export function ReportExportOptions({
   kind,
   orderPlanDetail,
   localStats,
+  budgetStats,
+  allergyRows,
   schoolName,
   disabled,
 }: Props) {
@@ -44,7 +58,7 @@ export function ReportExportOptions({
         } else if (!openPrintWindow(buildOrderPlanPdfHtml(orderPlanDetail, schoolName))) {
           toast.error("팝업이 차단되었습니다. 팝업 허용 후 다시 시도해주세요.");
         }
-      } else {
+      } else if (kind === "local-produce") {
         if (!localStats || localStats.total === 0) {
           toast.error("집계할 재고가 없습니다.");
           return;
@@ -53,6 +67,28 @@ export function ReportExportOptions({
           exportLocalProduceExcel(localStats);
           toast.success("엑셀 파일이 다운로드됐습니다.");
         } else if (!openPrintWindow(buildLocalProducePdfHtml(localStats, schoolName))) {
+          toast.error("팝업이 차단되었습니다. 팝업 허용 후 다시 시도해주세요.");
+        }
+      } else if (kind === "budget-execution") {
+        if (!budgetStats) {
+          toast.error("집계할 예산이 없습니다.");
+          return;
+        }
+        if (format === "EXCEL") {
+          exportBudgetExecutionExcel(budgetStats);
+          toast.success("엑셀 파일이 다운로드됐습니다.");
+        } else if (!openPrintWindow(buildBudgetExecutionPdfHtml(budgetStats, schoolName))) {
+          toast.error("팝업이 차단되었습니다. 팝업 허용 후 다시 시도해주세요.");
+        }
+      } else {
+        if (allergyRows.length === 0) {
+          toast.error("등록된 식단이 없습니다.");
+          return;
+        }
+        if (format === "EXCEL") {
+          exportAllergyNoticeExcel(allergyRows);
+          toast.success("엑셀 파일이 다운로드됐습니다.");
+        } else if (!openPrintWindow(buildAllergyNoticePdfHtml(allergyRows, schoolName))) {
           toast.error("팝업이 차단되었습니다. 팝업 허용 후 다시 시도해주세요.");
         }
       }
@@ -77,6 +113,9 @@ export function ReportExportOptions({
         <FileDownIcon size={16} />
         {busy === "PDF" ? "내보내는 중…" : "PDF로 내보내기"}
       </Button>
+      <p className="px-1 text-[11px] text-zinc-400">
+        인쇄 대화상자에서 &apos;PDF로 저장&apos;을 선택하세요.
+      </p>
       <Button
         variant="secondary"
         size="lg"

@@ -1,9 +1,12 @@
 "use client";
 
 import type { OrderPlanDetail } from "@/entities/order-plan";
+import { ALLERGEN_DISCLAIMER } from "@/entities/meal";
 import { EyeIcon } from "@/shared/ui";
 import type { ReportKind } from "../model/types";
 import type { LocalProduceStats } from "../lib/local-produce-report";
+import type { BudgetExecutionStats } from "../lib/budget-execution-report";
+import type { AllergyNoticeRow } from "../lib/allergy-notice-report";
 import { won, qty } from "../lib/html";
 
 type PreviewMode = "screen" | "print";
@@ -12,6 +15,8 @@ interface Props {
   kind: ReportKind;
   orderPlanDetail: OrderPlanDetail | null;
   localStats: LocalProduceStats | null;
+  budgetStats: BudgetExecutionStats | null;
+  allergyRows: AllergyNoticeRow[];
   loading: boolean;
   schoolName: string;
   previewMode: PreviewMode;
@@ -22,6 +27,8 @@ export function ReportPreview({
   kind,
   orderPlanDetail,
   localStats,
+  budgetStats,
+  allergyRows,
   loading,
   schoolName,
   previewMode,
@@ -69,8 +76,12 @@ export function ReportPreview({
             <p className="py-10 text-center text-sm text-zinc-400">불러오는 중…</p>
           ) : kind === "order-plan" ? (
             <OrderPlanDoc detail={orderPlanDetail} schoolName={schoolName} />
-          ) : (
+          ) : kind === "local-produce" ? (
             <LocalProduceDoc stats={localStats} schoolName={schoolName} />
+          ) : kind === "budget-execution" ? (
+            <BudgetExecutionDoc stats={budgetStats} schoolName={schoolName} />
+          ) : (
+            <AllergyNoticeDoc rows={allergyRows} schoolName={schoolName} />
           )}
         </div>
       </div>
@@ -229,6 +240,92 @@ function LocalProduceDoc({
           ))}
         </tbody>
       </table>
+    </>
+  );
+}
+
+function BudgetExecutionDoc({
+  stats,
+  schoolName,
+}: {
+  stats: BudgetExecutionStats | null;
+  schoolName: string;
+}) {
+  if (!stats) {
+    return <p className="py-10 text-center text-sm text-zinc-400">집계할 예산이 없습니다.</p>;
+  }
+  return (
+    <>
+      <div className="mb-6 text-center">
+        <h1 className="text-2xl font-bold tracking-tight">예산 집행 리포트</h1>
+        <p className="mt-1.5 text-xs text-zinc-500">
+          {[schoolName, stats.budgetTitle].filter(Boolean).join(" · ")}
+        </p>
+      </div>
+
+      <div className="grid grid-cols-3 gap-3">
+        <StatCard label="예산 총액" value={won(stats.totalAmount)} sub="설정 예산" />
+        <StatCard
+          label="집행액"
+          value={won(stats.usedAmount)}
+          sub={`집행률 ${stats.executionPercentValue}%`}
+        />
+        <StatCard
+          label="잔여액"
+          value={won(stats.remaining)}
+          sub={stats.remaining < 0 ? "초과" : "여유"}
+        />
+        <StatCard
+          label="지역 농산물 발주 예정액"
+          value={won(stats.localCost)}
+          sub={`집행 비중 ${stats.localCostRate.toFixed(1)}%`}
+        />
+        <StatCard
+          label="예산 절감 예상액"
+          value={stats.estimatedSavings !== null ? won(stats.estimatedSavings) : "연동 대기"}
+          sub="가격 급등 품목 대체 기준"
+        />
+      </div>
+    </>
+  );
+}
+
+function AllergyNoticeDoc({ rows, schoolName }: { rows: AllergyNoticeRow[]; schoolName: string }) {
+  if (rows.length === 0) {
+    return <p className="py-10 text-center text-sm text-zinc-400">등록된 식단이 없습니다.</p>;
+  }
+  return (
+    <>
+      <div className="mb-6 text-center">
+        <h1 className="text-2xl font-bold tracking-tight">알레르기 안내표</h1>
+        <p className="mt-1.5 text-xs text-zinc-500">{schoolName}</p>
+      </div>
+
+      <table className="w-full border-collapse text-xs">
+        <thead>
+          <tr className="bg-zinc-100 text-zinc-600">
+            <th className="border border-zinc-300 px-2 py-1.5 text-left font-semibold">날짜</th>
+            <th className="border border-zinc-300 px-2 py-1.5 text-left font-semibold">메뉴</th>
+            <th className="border border-zinc-300 px-2 py-1.5 text-left font-semibold">
+              알레르기 유발 항목(추정)
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r, i) => (
+            <tr key={i}>
+              <td className="border border-zinc-200 px-2 py-1.5">{r.dietDate}</td>
+              <td className="border border-zinc-200 px-2 py-1.5">{r.name}</td>
+              <td className="border border-zinc-200 px-2 py-1.5">
+                {r.allergens.length > 0 ? r.allergens.join(", ") : "-"}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="mt-4 rounded-lg bg-amber-50 p-3 text-[11px] text-amber-700">
+        {ALLERGEN_DISCLAIMER}
+      </p>
     </>
   );
 }

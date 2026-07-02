@@ -1,7 +1,7 @@
 "use client";
 
-import type { OrderPlanSummary } from "@/entities/order-plan";
-import { CheckIcon, ClipboardListIcon, LeafIcon } from "@/shared/ui";
+import { useOrderPlanCalcStore } from "@/entities/order-plan";
+import { CheckIcon, ClipboardListIcon, LeafIcon, TriangleAlertIcon, WalletIcon } from "@/shared/ui";
 import type { ReportKind } from "../model/types";
 
 interface ReportOption {
@@ -27,17 +27,31 @@ const REPORT_OPTIONS: ReportOption[] = [
     title: "지역농산물 활용 리포트",
     description: "지역·제철 활용률과 카테고리별 집계",
   },
+  {
+    kind: "budget-execution",
+    icon: <WalletIcon size={18} className="text-purple-600" />,
+    iconBg: "bg-purple-100",
+    title: "예산 집행 리포트",
+    description: "예산 집행률·지역 농산물 비중·절감 예상액",
+  },
+  {
+    kind: "allergy-notice",
+    icon: <TriangleAlertIcon size={18} className="text-amber-600" />,
+    iconBg: "bg-amber-100",
+    title: "알레르기 안내표",
+    description: "식단별 알레르기 유발 항목 추정 안내",
+  },
 ];
 
 interface Props {
   kind: ReportKind;
   onKindChange: (kind: ReportKind) => void;
-  plans: OrderPlanSummary[] | null;
-  selectedPlanId: number | null;
-  onSelectPlan: (id: number | null) => void;
 }
 
-export function ReportSelector({ kind, onKindChange, plans, selectedPlanId, onSelectPlan }: Props) {
+export function ReportSelector({ kind, onKindChange }: Props) {
+  const studentCount = useOrderPlanCalcStore((s) => s.studentCount);
+  const setStudentCount = useOrderPlanCalcStore((s) => s.setStudentCount);
+
   return (
     <div className="flex flex-col gap-2">
       {REPORT_OPTIONS.map((option) => {
@@ -77,27 +91,18 @@ export function ReportSelector({ kind, onKindChange, plans, selectedPlanId, onSe
               )}
             </button>
 
-            {/* 발주 계획서는 어떤 계획을 쓸지 선택 */}
+            {/* 발주 계획서는 급식 인원 기준으로 계산됨 — 발주표/예산 화면과 동일한 값 공유 */}
             {isSelected && option.kind === "order-plan" && (
               <div className="mt-2 flex items-center gap-2 px-1">
-                <span className="shrink-0 text-xs text-zinc-500">발주 계획</span>
-                <select
-                  value={selectedPlanId ?? ""}
-                  onChange={(e) => onSelectPlan(e.target.value ? Number(e.target.value) : null)}
-                  disabled={!plans || plans.length === 0}
-                  className="h-9 flex-1 rounded-lg border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:bg-zinc-50 disabled:text-zinc-400"
-                >
-                  {plans && plans.length > 0 ? (
-                    plans.map((plan) => (
-                      <option key={plan.id} value={plan.id}>
-                        {plan.title}
-                        {plan.planDate ? ` · ${plan.planDate}` : ""}
-                      </option>
-                    ))
-                  ) : (
-                    <option value="">발주 계획 없음</option>
-                  )}
-                </select>
+                <span className="shrink-0 text-xs text-zinc-500">급식 인원</span>
+                <input
+                  type="number"
+                  min={0}
+                  value={studentCount}
+                  onChange={(e) => setStudentCount(Number(e.target.value))}
+                  className="h-9 w-24 rounded-lg border border-zinc-200 bg-white px-3 text-right text-sm text-zinc-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                />
+                <span className="text-xs text-zinc-400">명</span>
               </div>
             )}
           </div>

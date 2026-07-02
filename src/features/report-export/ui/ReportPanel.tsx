@@ -1,14 +1,22 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { getIngredientsApi } from "@/entities/ingredient";
-import type { IngredientItem } from "@/entities/ingredient";
-import { getOrderPlans, getOrderPlanById } from "@/entities/order-plan";
-import type { OrderPlanSummary, OrderPlanDetail } from "@/entities/order-plan";
+import { useIngredientStore } from "@/entities/ingredient";
+import type { OrderPlanDetail } from "@/entities/order-plan";
+import { useOrderPlanCalcStore } from "@/entities/order-plan";
+import { usePriceStore } from "@/entities/price";
 import { useMemberProfile } from "@/entities/member";
+import { getBudgets, selectActiveBudget, type Budget } from "@/entities/budget";
+import { getDiets, type DietListItem } from "@/entities/meal";
 import { SurfaceCard } from "@/shared/ui";
 import type { ReportKind } from "../model/types";
 import { computeLocalProduceStats } from "../lib/local-produce-report";
+import { buildOrderPlanDetail } from "../lib/order-plan-source";
+import {
+  computeBudgetExecutionStats,
+  type BudgetExecutionStats,
+} from "../lib/budget-execution-report";
+import { buildAllergyNoticeRows, type AllergyNoticeRow } from "../lib/allergy-notice-report";
 import { ReportSelector } from "./ReportSelector";
 import { ReportExportOptions } from "./ReportExportOptions";
 import { ReportPreview } from "./ReportPreview";
@@ -22,99 +30,62 @@ export function ReportPanel() {
   const [kind, setKind] = useState<ReportKind>("order-plan");
   const [previewMode, setPreviewMode] = useState<PreviewMode>("screen");
 
-  const [plans, setPlans] = useState<OrderPlanSummary[] | null>(null);
-  const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
-  const [orderPlanDetail, setOrderPlanDetail] = useState<OrderPlanDetail | null>(null);
-  const [orderPlanError, setOrderPlanError] = useState(false);
+  const ingredients = useIngredientStore((s) => s.items);
+  const fetchIngredients = useIngredientStore((s) => s.fetchIngredients);
+  const priceItems = usePriceStore((s) => s.items);
+  const fetchPrices = usePriceStore((s) => s.fetchPrices);
+  const studentCount = useOrderPlanCalcStore((s) => s.studentCount);
 
-  const [ingredients, setIngredients] = useState<IngredientItem[] | null>(null);
+  const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [diets, setDiets] = useState<DietListItem[]>([]);
 
   const now = useMemo(() => new Date(), []);
 
-  // 발주 계획 목록
   useEffect(() => {
-    let alive = true;
-    getOrderPlans()
-      .then((data) => {
-        if (!alive) return;
-        setPlans(data);
-        if (data.length > 0) setSelectedPlanId((prev) => prev ?? data[0].id);
-      })
-      .catch(() => {
-        if (alive) setPlans([]);
-      });
-    return () => {
-      alive = false;
-    };
+    if (ingredients.length === 0) void fetchIngredients();
+    void fetchPrices();
+    getBudgets()
+      .then(setBudgets)
+      .catch(() => setBudgets([]));
+    getDiets()
+      .then(setDiets)
+      .catch(() => setDiets([]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 재고 목록 (지역농산물 리포트용)
-  useEffect(() => {
-    let alive = true;
-    getIngredientsApi()
-      .then((data) => {
-        if (alive) setIngredients(data);
-      })
-      .catch(() => {
-        if (alive) setIngredients([]);
-      });
-    return () => {
-      alive = false;
-    };
-  }, []);
-
-  // 선택된 발주 계획 상세
-  useEffect(() => {
-    if (selectedPlanId === null) return;
-    let alive = true;
-    getOrderPlanById(selectedPlanId)
-      .then((data) => {
-        if (alive) {
-          setOrderPlanDetail(data);
-          setOrderPlanError(false);
-        }
-      })
-      .catch(() => {
-        if (alive) {
-          setOrderPlanDetail(null);
-          setOrderPlanError(true);
-        }
-      });
-    return () => {
-      alive = false;
-    };
-  }, [selectedPlanId]);
-
-  const localStats = useMemo(
-    () => (ingredients ? computeLocalProduceStats(ingredients, now) : null),
-    [ingredients, now],
+  const orderPlanDetail: OrderPlanDetail = useMemo(
+    () => buildOrderPlanDetail(studentCount, ingredients, priceItems),
+    [studentCount, ingredients, priceItems],
   );
 
-  const orderLoading =
-    kind === "order-plan" &&
-    selectedPlanId !== null &&
-    !orderPlanError &&
-    (orderPlanDetail === null || orderPlanDetail.id !== selectedPlanId);
-  const localLoading = kind === "local-produce" && ingredients === null;
-  const previewLoading = kind === "order-plan" ? orderLoading : localLoading;
+  const localStats = useMemo(() => computeLocalProduceStats(ingredients, now), [ingredients, now]);
+
+  const activeBudget = useMemo(() => selectActiveBudget(budgets), [budgets]);
+  const budgetStats: BudgetExecutionStats | null = useMemo(
+    () =>
+      activeBudget
+        ? computeBudgetExecutionStats(activeBudget, orderPlanDetail, ingredients, priceItems)
+        : null,
+    [activeBudget, orderPlanDetail, ingredients, priceItems],
+  );
+
+  const allergyRows: AllergyNoticeRow[] = useMemo(() => buildAllergyNoticeRows(diets), [diets]);
 
   const exportDisabled =
     kind === "order-plan"
-      ? orderPlanDetail === null || orderPlanDetail.id !== selectedPlanId
-      : localStats === null || localStats.total === 0;
+      ? orderPlanDetail.items.length === 0
+      : kind === "local-produce"
+        ? localStats.total === 0
+        : kind === "budget-execution"
+          ? budgetStats === null
+          : allergyRows.length === 0;
 
   return (
     <div className="grid h-full grid-cols-5 gap-6">
       <div className="col-span-2 flex flex-col gap-4">
         <SurfaceCard>
           <p className="mb-4 text-sm font-semibold text-zinc-800">리포트 선택</p>
-          <ReportSelector
-            kind={kind}
-            onKindChange={setKind}
-            plans={plans}
-            selectedPlanId={selectedPlanId}
-            onSelectPlan={setSelectedPlanId}
-          />
+          <ReportSelector kind={kind} onKindChange={setKind} />
         </SurfaceCard>
         <SurfaceCard>
           <p className="mb-4 text-sm font-semibold text-zinc-800">내보내기 옵션</p>
@@ -122,6 +93,8 @@ export function ReportPanel() {
             kind={kind}
             orderPlanDetail={orderPlanDetail}
             localStats={localStats}
+            budgetStats={budgetStats}
+            allergyRows={allergyRows}
             schoolName={schoolName}
             disabled={exportDisabled}
           />
@@ -133,7 +106,9 @@ export function ReportPanel() {
           kind={kind}
           orderPlanDetail={orderPlanDetail}
           localStats={localStats}
-          loading={previewLoading}
+          budgetStats={budgetStats}
+          allergyRows={allergyRows}
+          loading={false}
           schoolName={schoolName}
           previewMode={previewMode}
           onPreviewModeChange={setPreviewMode}
