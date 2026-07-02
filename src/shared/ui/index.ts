@@ -4,6 +4,7 @@ export { Input } from "./Input";
 export { FloatingInput } from "./FloatingInput";
 export { BrandLogo } from "./BrandLogo";
 export { PageShell, SectionTitle, StatusBadge, SurfaceCard } from "./DesignSystem";
+export { FormulaHint } from "./FormulaHint";
 export * from "./icons";
 export { NxArea } from "./NxArea";
 export { NxDonut } from "./NxDonut";
