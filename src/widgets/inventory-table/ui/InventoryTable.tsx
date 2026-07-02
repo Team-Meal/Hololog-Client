@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { useIngredientStore } from "@/entities/ingredient";
+import { useIngredientStore, getInventoryBadges } from "@/entities/ingredient";
 import type { IngredientItem } from "@/entities/ingredient";
 import { IngredientFormModal } from "@/features/ingredient-actions";
 import { useInventoryFilterStore } from "@/features/inventory-filter";
@@ -14,6 +14,7 @@ import {
   PencilIcon,
   TrashIcon,
   ConfirmDialog,
+  StatusBadge,
 } from "@/shared/ui";
 import { BulkActionBar } from "./BulkActionBar";
 
@@ -43,9 +44,17 @@ function categoryInitial(category: string): string {
 }
 
 function downloadCSV(items: IngredientItem[]) {
-  const header = "이름,카테고리,수량,단위,유통기한";
+  const header = "이름,카테고리,수량,단위,원산지,공급처,유통기한";
   const rows = items.map((i) =>
-    [i.name, i.category, i.quantity, i.unit, i.expirationDate ? formatDate(i.expirationDate) : ""].join(","),
+    [
+      i.name,
+      i.category,
+      i.quantity,
+      i.unit,
+      i.origin ?? "",
+      i.supplier ?? "",
+      i.expirationDate ? formatDate(i.expirationDate) : "",
+    ].join(","),
   );
   const csv = [header, ...rows].join("\n");
   const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
@@ -74,6 +83,9 @@ export function InventoryTable() {
   const [deleteTarget, setDeleteTarget] = useState<IngredientItem | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
+
+  // 뱃지 계산 기준 시각 — 마운트 시 한 번 고정
+  const now = useMemo(() => new Date(), []);
 
   useEffect(() => {
     fetchIngredients();
@@ -215,6 +227,12 @@ export function InventoryTable() {
                     단위
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500">
+                    원산지
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500">
+                    공급처
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500">
                     유통기한
                   </th>
                   <th className="w-20 px-4 py-3" />
@@ -223,7 +241,7 @@ export function InventoryTable() {
               <tbody className="divide-y divide-zinc-100">
                 {filtered.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="py-12 text-center text-sm text-zinc-400">
+                    <td colSpan={8} className="py-12 text-center text-sm text-zinc-400">
                       {items.length === 0 ? "등록된 식자재가 없습니다." : "검색 결과가 없습니다."}
                     </td>
                   </tr>
@@ -250,8 +268,15 @@ export function InventoryTable() {
                             >
                               {categoryInitial(item.category)}
                             </div>
-                            <div>
-                              <p className="font-medium text-zinc-900">{item.name}</p>
+                            <div className="min-w-0">
+                              <div className="flex flex-wrap items-center gap-1.5">
+                                <p className="font-medium text-zinc-900">{item.name}</p>
+                                {getInventoryBadges(item, now).map((badge) => (
+                                  <StatusBadge key={badge.key} tone={badge.tone}>
+                                    {badge.label}
+                                  </StatusBadge>
+                                ))}
+                              </div>
                               <p className="text-xs text-zinc-400">{item.category}</p>
                             </div>
                           </div>
@@ -260,6 +285,8 @@ export function InventoryTable() {
                           {item.quantity}
                         </td>
                         <td className="px-4 py-3 text-zinc-500">{item.unit}</td>
+                        <td className="px-4 py-3 text-zinc-500">{item.origin || "—"}</td>
+                        <td className="px-4 py-3 text-zinc-500">{item.supplier || "—"}</td>
                         <td className="px-4 py-3 text-zinc-500">
                           {item.expirationDate ? formatDate(item.expirationDate) : "—"}
                         </td>
