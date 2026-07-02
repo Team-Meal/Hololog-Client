@@ -6,7 +6,7 @@ export function BudgetPage() {
     <PageShell
       eyebrow="예산 관리"
       title="예산 현황"
-      description="식자재 예산의 집행 현황을 확인하세요."
+      description="식자재 예산의 집행 현황을 확인하고 발주 예상비용을 검증하세요."
     >
       <BudgetContent />
     </PageShell>
