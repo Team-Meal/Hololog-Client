@@ -7,7 +7,7 @@ export function InventoryPage() {
     <PageShell
       eyebrow="재고 관리"
       title="식자재 재고"
-      description="전 사이트의 재고를 추적하고 안전 재고와 유통기한을 관리하세요."
+      description="식자재의 원산지·공급처·유통기한을 관리하고 지역·제철·임박 식자재를 한눈에 확인하세요."
       actions={<InventoryActions />}
     >
       <InventoryTable />

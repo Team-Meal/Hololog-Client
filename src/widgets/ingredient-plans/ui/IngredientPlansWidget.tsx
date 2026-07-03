@@ -57,7 +57,7 @@ export function IngredientPlansWidget() {
         {/* 헤더 */}
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs font-medium text-zinc-400">식자재 계획표</p>
+            <p className="text-xs font-medium text-zinc-400">농산물 발주 계획표</p>
             <h2 className="text-sm font-semibold text-zinc-800">계획표 목록</h2>
           </div>
           <button

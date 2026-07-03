@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PlusIcon, SlidersIcon, SparklesIcon, SurfaceCard, XIcon } from "@/shared/ui";
+import { useIngredientStore } from "@/entities/ingredient";
 import { useGeneratorStore } from "../model/generator.store";
 
 function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
@@ -70,6 +71,12 @@ export function ConditionsPanel() {
 
   const [ingInput, setIngInput] = useState("");
 
+  const ingredientCount = useIngredientStore((s) => s.items.length);
+  const fetchIngredients = useIngredientStore((s) => s.fetchIngredients);
+  useEffect(() => {
+    if (ingredientCount === 0) void fetchIngredients();
+  }, [ingredientCount, fetchIngredients]);
+
   const NUTRITION_OPTIONS = [
     "고단백",
     "저지방",
@@ -117,7 +124,7 @@ export function ConditionsPanel() {
             <div>
               <p className="text-sm font-medium text-zinc-800">가용 재고 반영</p>
               <p className="mt-0.5 text-xs text-zinc-500">
-                현재 재고 16종을 우선 활용해 폐기를 줄여요.
+                현재 재고 {ingredientCount}종을 우선 활용해 폐기를 줄여요.
               </p>
             </div>
             <Toggle value={conditions.useInventory} onChange={setUseInventory} />

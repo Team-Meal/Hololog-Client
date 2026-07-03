@@ -50,3 +50,4 @@ export {
   WEEKDAY_HEADERS,
 } from "./lib/calendar";
 export type { MonthRef, MonthGridDay } from "./lib/calendar";
+export { getAllergensForMenuName, ALLERGEN_DISCLAIMER } from "./lib/allergens";

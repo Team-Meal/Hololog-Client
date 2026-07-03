@@ -13,6 +13,7 @@ import { roleLabel, useMemberProfile } from "@/entities/member";
 import { BudgetSummary } from "@/widgets/budget-summary";
 import { StudentSuggestions } from "@/widgets/student-suggestions";
 import { TodayMeals } from "@/widgets/today-meals";
+import { DashboardMetricCards } from "@/widgets/dashboard-metrics";
 
 export function DashboardPage() {
   const router = useRouter();
@@ -47,13 +48,17 @@ export function DashboardPage() {
         </>
       }
     >
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <TodayMeals />
-        </div>
-        <div className="flex flex-col gap-6">
-          <BudgetSummary />
-          <StudentSuggestions />
+      <div className="flex flex-col gap-6">
+        <DashboardMetricCards />
+
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <TodayMeals />
+          </div>
+          <div className="flex flex-col gap-6">
+            <BudgetSummary />
+            <StudentSuggestions />
+          </div>
         </div>
       </div>
     </PageShell>

@@ -36,6 +36,8 @@ function IngredientFormContent({
   const [expirationDate, setExpirationDate] = useState(
     initialData?.expirationDate ? initialData.expirationDate.slice(0, 10) : "",
   );
+  const [origin, setOrigin] = useState(initialData?.origin ?? "");
+  const [supplier, setSupplier] = useState(initialData?.supplier ?? "");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -60,6 +62,8 @@ function IngredientFormContent({
       quantity: quantity !== "" ? Number(quantity) : undefined,
       unit,
       expirationDate: expirationDate ? `${expirationDate}T00:00:00` : undefined,
+      origin: origin.trim() || undefined,
+      supplier: supplier.trim() || undefined,
     };
 
     const ok = isEdit
@@ -184,6 +188,30 @@ function IngredientFormContent({
                 value={expirationDate}
                 onChange={(e) => setExpirationDate(e.target.value)}
                 className="h-10 w-full rounded-lg border border-zinc-200 px-3 text-sm text-zinc-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium text-zinc-700">원산지</label>
+              <input
+                maxLength={100}
+                value={origin}
+                onChange={(e) => setOrigin(e.target.value)}
+                placeholder="예: 전남 해남"
+                className="h-10 w-full rounded-lg border border-zinc-200 px-3 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium text-zinc-700">공급처</label>
+              <input
+                maxLength={100}
+                value={supplier}
+                onChange={(e) => setSupplier(e.target.value)}
+                placeholder="예: 지역 농협"
+                className="h-10 w-full rounded-lg border border-zinc-200 px-3 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
             </div>
           </div>

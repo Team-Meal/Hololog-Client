@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { SurfaceCard, PencilIcon, TrashIcon } from "@/shared/ui";
+import { SurfaceCard, SectionTitle, PencilIcon, TrashIcon } from "@/shared/ui";
 import { useIngredientPlanStore, PlanFormModal } from "@/features/ingredient-plan";
+import { OrderPlanCalcTable } from "@/features/order-plan-calc";
 
 interface IngredientPlanDetailWidgetProps {
   planId: number;
@@ -145,6 +146,14 @@ export function IngredientPlanDetailWidget({ planId }: IngredientPlanDetailWidge
               </dd>
             </div>
           </dl>
+        </SurfaceCard>
+
+        <SurfaceCard className="flex flex-col gap-4">
+          <SectionTitle
+            title="농산물 발주 계획표"
+            description="식단의 메뉴별 필요 농산물을 실제 재고·가격과 비교해 부족량·발주량·예상비용을 자동 계산합니다. 현재 재고를 바꾸면 즉시 재계산됩니다. (계획별 저장 항목이 아직 없어 전체 계획에 공통 데모 시나리오를 보여줍니다.)"
+          />
+          <OrderPlanCalcTable />
         </SurfaceCard>
       </div>
 

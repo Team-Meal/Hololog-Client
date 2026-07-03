@@ -2,8 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { useIngredientStore } from "@/entities/ingredient";
+import { useIngredientStore, getInventoryBadges } from "@/entities/ingredient";
 import type { IngredientItem } from "@/entities/ingredient";
+import { useOrderPlanItems } from "@/features/order-plan-calc";
 import { IngredientFormModal } from "@/features/ingredient-actions";
 import { useInventoryFilterStore } from "@/features/inventory-filter";
 import {
@@ -14,8 +15,11 @@ import {
   PencilIcon,
   TrashIcon,
   ConfirmDialog,
+  StatusBadge,
 } from "@/shared/ui";
 import { BulkActionBar } from "./BulkActionBar";
+import { getStatusLabel, isReferencedInOrderPlan } from "../lib/order-plan-signals";
+import type { OrderPlanItem } from "@/entities/order-plan";
 
 const CATEGORIES = ["전체", "곡물", "농산물", "축산", "수산", "가공"] as const;
 
@@ -42,10 +46,20 @@ function categoryInitial(category: string): string {
   return map[category] ?? category[0] ?? "식";
 }
 
-function downloadCSV(items: IngredientItem[]) {
-  const header = "이름,카테고리,수량,단위,유통기한";
+function downloadCSV(items: IngredientItem[], planItems: OrderPlanItem[]) {
+  const header = "이름,카테고리,수량,단위,원산지,공급처,유통기한,상태,AI 반영여부";
   const rows = items.map((i) =>
-    [i.name, i.category, i.quantity, i.unit, i.expirationDate ? formatDate(i.expirationDate) : ""].join(","),
+    [
+      i.name,
+      i.category,
+      i.quantity,
+      i.unit,
+      i.origin ?? "",
+      i.supplier ?? "",
+      i.expirationDate ? formatDate(i.expirationDate) : "",
+      getStatusLabel(i, planItems).label,
+      isReferencedInOrderPlan(i, planItems) ? "반영" : "—",
+    ].join(","),
   );
   const csv = [header, ...rows].join("\n");
   const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
@@ -59,6 +73,7 @@ function downloadCSV(items: IngredientItem[]) {
 
 export function InventoryTable() {
   const { items, isLoading, error, fetchIngredients, deleteIngredient } = useIngredientStore();
+  const { items: planItems } = useOrderPlanItems();
   const {
     search,
     categoryFilter,
@@ -74,6 +89,9 @@ export function InventoryTable() {
   const [deleteTarget, setDeleteTarget] = useState<IngredientItem | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
+
+  // 뱃지 계산 기준 시각 — 마운트 시 한 번 고정
+  const now = useMemo(() => new Date(), []);
 
   useEffect(() => {
     fetchIngredients();
@@ -139,7 +157,7 @@ export function InventoryTable() {
             </button>
             <button
               type="button"
-              onClick={() => downloadCSV(filtered)}
+              onClick={() => downloadCSV(filtered, planItems)}
               disabled={filtered.length === 0}
               className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-500 hover:bg-zinc-50 disabled:opacity-40"
             >
@@ -208,14 +226,20 @@ export function InventoryTable() {
                   <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500">
                     식자재
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-zinc-500">
-                    수량
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-zinc-500">수량</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500">단위</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500">
+                    원산지
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500">
-                    단위
+                    공급처
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500">
                     유통기한
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500">상태</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500">
+                    AI 반영여부
                   </th>
                   <th className="w-20 px-4 py-3" />
                 </tr>
@@ -223,7 +247,7 @@ export function InventoryTable() {
               <tbody className="divide-y divide-zinc-100">
                 {filtered.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="py-12 text-center text-sm text-zinc-400">
+                    <td colSpan={10} className="py-12 text-center text-sm text-zinc-400">
                       {items.length === 0 ? "등록된 식자재가 없습니다." : "검색 결과가 없습니다."}
                     </td>
                   </tr>
@@ -250,8 +274,15 @@ export function InventoryTable() {
                             >
                               {categoryInitial(item.category)}
                             </div>
-                            <div>
-                              <p className="font-medium text-zinc-900">{item.name}</p>
+                            <div className="min-w-0">
+                              <div className="flex flex-wrap items-center gap-1.5">
+                                <p className="font-medium text-zinc-900">{item.name}</p>
+                                {getInventoryBadges(item, now).map((badge) => (
+                                  <StatusBadge key={badge.key} tone={badge.tone}>
+                                    {badge.label}
+                                  </StatusBadge>
+                                ))}
+                              </div>
                               <p className="text-xs text-zinc-400">{item.category}</p>
                             </div>
                           </div>
@@ -260,8 +291,23 @@ export function InventoryTable() {
                           {item.quantity}
                         </td>
                         <td className="px-4 py-3 text-zinc-500">{item.unit}</td>
+                        <td className="px-4 py-3 text-zinc-500">{item.origin || "—"}</td>
+                        <td className="px-4 py-3 text-zinc-500">{item.supplier || "—"}</td>
                         <td className="px-4 py-3 text-zinc-500">
                           {item.expirationDate ? formatDate(item.expirationDate) : "—"}
+                        </td>
+                        <td className="px-4 py-3">
+                          {(() => {
+                            const status = getStatusLabel(item, planItems);
+                            return <StatusBadge tone={status.tone}>{status.label}</StatusBadge>;
+                          })()}
+                        </td>
+                        <td className="px-4 py-3">
+                          {isReferencedInOrderPlan(item, planItems) ? (
+                            <StatusBadge tone="blue">반영</StatusBadge>
+                          ) : (
+                            <span className="text-xs text-zinc-300">—</span>
+                          )}
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
