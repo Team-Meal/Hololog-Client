@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useIngredientStore, getInventoryBadges } from "@/entities/ingredient";
 import type { IngredientItem } from "@/entities/ingredient";
+import { useOrderPlanItems } from "@/features/order-plan-calc";
 import { IngredientFormModal } from "@/features/ingredient-actions";
 import { useInventoryFilterStore } from "@/features/inventory-filter";
 import {
@@ -17,6 +18,8 @@ import {
   StatusBadge,
 } from "@/shared/ui";
 import { BulkActionBar } from "./BulkActionBar";
+import { getStatusLabel, isReferencedInOrderPlan } from "../lib/order-plan-signals";
+import type { OrderPlanItem } from "@/entities/order-plan";
 
 const CATEGORIES = ["전체", "곡물", "농산물", "축산", "수산", "가공"] as const;
 
@@ -43,8 +46,8 @@ function categoryInitial(category: string): string {
   return map[category] ?? category[0] ?? "식";
 }
 
-function downloadCSV(items: IngredientItem[]) {
-  const header = "이름,카테고리,수량,단위,원산지,공급처,유통기한";
+function downloadCSV(items: IngredientItem[], planItems: OrderPlanItem[]) {
+  const header = "이름,카테고리,수량,단위,원산지,공급처,유통기한,상태,AI 반영여부";
   const rows = items.map((i) =>
     [
       i.name,
@@ -54,6 +57,8 @@ function downloadCSV(items: IngredientItem[]) {
       i.origin ?? "",
       i.supplier ?? "",
       i.expirationDate ? formatDate(i.expirationDate) : "",
+      getStatusLabel(i, planItems).label,
+      isReferencedInOrderPlan(i, planItems) ? "반영" : "—",
     ].join(","),
   );
   const csv = [header, ...rows].join("\n");
@@ -68,6 +73,7 @@ function downloadCSV(items: IngredientItem[]) {
 
 export function InventoryTable() {
   const { items, isLoading, error, fetchIngredients, deleteIngredient } = useIngredientStore();
+  const { items: planItems } = useOrderPlanItems();
   const {
     search,
     categoryFilter,
@@ -151,7 +157,7 @@ export function InventoryTable() {
             </button>
             <button
               type="button"
-              onClick={() => downloadCSV(filtered)}
+              onClick={() => downloadCSV(filtered, planItems)}
               disabled={filtered.length === 0}
               className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-500 hover:bg-zinc-50 disabled:opacity-40"
             >
@@ -220,12 +226,8 @@ export function InventoryTable() {
                   <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500">
                     식자재
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-zinc-500">
-                    수량
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500">
-                    단위
-                  </th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-zinc-500">수량</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500">단위</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500">
                     원산지
                   </th>
@@ -235,13 +237,17 @@ export function InventoryTable() {
                   <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500">
                     유통기한
                   </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500">상태</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500">
+                    AI 반영여부
+                  </th>
                   <th className="w-20 px-4 py-3" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
                 {filtered.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="py-12 text-center text-sm text-zinc-400">
+                    <td colSpan={10} className="py-12 text-center text-sm text-zinc-400">
                       {items.length === 0 ? "등록된 식자재가 없습니다." : "검색 결과가 없습니다."}
                     </td>
                   </tr>
@@ -289,6 +295,19 @@ export function InventoryTable() {
                         <td className="px-4 py-3 text-zinc-500">{item.supplier || "—"}</td>
                         <td className="px-4 py-3 text-zinc-500">
                           {item.expirationDate ? formatDate(item.expirationDate) : "—"}
+                        </td>
+                        <td className="px-4 py-3">
+                          {(() => {
+                            const status = getStatusLabel(item, planItems);
+                            return <StatusBadge tone={status.tone}>{status.label}</StatusBadge>;
+                          })()}
+                        </td>
+                        <td className="px-4 py-3">
+                          {isReferencedInOrderPlan(item, planItems) ? (
+                            <StatusBadge tone="blue">반영</StatusBadge>
+                          ) : (
+                            <span className="text-xs text-zinc-300">—</span>
+                          )}
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
