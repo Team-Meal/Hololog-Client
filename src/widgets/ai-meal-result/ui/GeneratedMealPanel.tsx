@@ -1,10 +1,14 @@
 "use client";
 
 import { CalendarIcon, SparklesIcon, SurfaceCard } from "@/shared/ui";
-import { useGeneratorStore } from "@/features/ai-meal-generator";
+import { useGeneratorStore, useMealScoring } from "@/features/ai-meal-generator";
+
+const TOP_N = 5;
 
 export function GeneratedMealPanel() {
   const { status, result } = useGeneratorStore();
+  const { scoredMenus } = useMealScoring();
+  const topMenus = [...scoredMenus].sort((a, b) => b.score - a.score).slice(0, TOP_N);
 
   return (
     <SurfaceCard className="flex flex-col overflow-hidden">
@@ -59,11 +63,40 @@ export function GeneratedMealPanel() {
               <div className="rounded-lg bg-blue-50 p-3 text-sm leading-relaxed text-blue-700">
                 AI가 식단을 생성했어요. 생성된 식단은 ‘식단 관리’에서 확인·수정할 수 있어요.
               </div>
+
+              <ReasonList topMenus={topMenus} />
             </>
           )}
         </div>
       )}
     </SurfaceCard>
+  );
+}
+
+function ReasonList({ topMenus }: { topMenus: ReturnType<typeof useMealScoring>["scoredMenus"] }) {
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="text-xs font-semibold text-zinc-600">추천 근거 (후보 품목 분석)</p>
+      <ul className="flex flex-col gap-2">
+        {topMenus.map((menu) => (
+          <li key={`${menu.menuName}-${menu.ingredientName}`} className="rounded-lg bg-zinc-50 p-3">
+            <div className="mb-1.5 flex items-center justify-between">
+              <span className="text-sm font-medium text-zinc-800">
+                {menu.menuName} · {menu.ingredientName}
+              </span>
+              <span className="text-xs font-semibold text-blue-600">{menu.score.toFixed(0)}점</span>
+            </div>
+            <ul className="flex flex-col gap-1">
+              {menu.reasons.map((reason, i) => (
+                <li key={i} className="text-xs leading-relaxed text-zinc-500">
+                  <span className="font-medium text-zinc-600">[{reason.source}]</span> {reason.text}
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
