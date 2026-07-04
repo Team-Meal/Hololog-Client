@@ -23,13 +23,9 @@ export interface SigninResponse {
   role: string;
 }
 
-// Status of a nutritionist signup request. New requests come back as PENDING.
+// Status of a legacy nutritionist signup request (admin page only — new
+// nutritionist signups no longer create requests).
 export type SignupRequestStatus = "PENDING" | "APPROVED" | "REJECTED";
-
-// Body for POST /auth/signup-requests — submitted by a PENDING_NUTRITIONIST.
-export interface SignupRequestPayload {
-  licenseNumber: string;
-}
 
 export interface SignupRequestResponse {
   requestId: number;

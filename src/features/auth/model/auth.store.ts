@@ -2,8 +2,8 @@
 
 import { create } from "zustand";
 import { setTokens, clearTokens } from "@/shared/api";
-import { loginApi, logoutApi, registerApi, submitSignupRequestApi } from "../api/auth.api";
-import type { LoginCredentials, RegisterCredentials, SignupRequestPayload } from "@/entities/auth";
+import { loginApi, logoutApi, registerApi } from "../api/auth.api";
+import type { LoginCredentials, RegisterCredentials } from "@/entities/auth";
 import { useMemberProfileStore } from "@/entities/member";
 
 interface AuthState {
@@ -12,7 +12,6 @@ interface AuthState {
   error: string | null;
   login: (credentials: LoginCredentials) => Promise<boolean>;
   register: (credentials: RegisterCredentials) => Promise<boolean>;
-  submitSignupRequest: (payload: SignupRequestPayload) => Promise<boolean>;
   logout: () => Promise<void>;
   clearError: () => void;
 }
@@ -51,20 +50,6 @@ export const useAuthStore = create<AuthState>((set) => ({
       return true;
     } catch (err: unknown) {
       const message = extractErrorMessage(err, "회원가입 중 오류가 발생했습니다.");
-      set({ error: message, isLoading: false });
-      return false;
-    }
-  },
-
-  // Requires a signed-in PENDING_NUTRITIONIST — call after login() so the token is set.
-  submitSignupRequest: async (payload) => {
-    set({ isLoading: true, error: null });
-    try {
-      await submitSignupRequestApi(payload);
-      set({ isLoading: false });
-      return true;
-    } catch (err: unknown) {
-      const message = extractErrorMessage(err, "영양사 가입 요청 중 오류가 발생했습니다.");
       set({ error: message, isLoading: false });
       return false;
     }
