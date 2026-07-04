@@ -1,7 +1,6 @@
-// Role values sent to POST /auth/signup. Nutritionists sign up as PENDING_NUTRITIONIST
-// and are promoted to NUTRITIONIST after submitting a license number (/auth/signup-requests)
-// and admin approval.
-export type UserRole = "STUDENT" | "TEACHER" | "PENDING_NUTRITIONIST";
+// Role values sent to POST /auth/signup. Nutritionists sign up directly as
+// NUTRITIONIST — no license submission or admin approval step.
+export type UserRole = "STUDENT" | "TEACHER" | "NUTRITIONIST";
 
 export interface LoginCredentials {
   email: string;
