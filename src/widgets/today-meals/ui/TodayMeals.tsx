@@ -15,9 +15,9 @@ const MEAL_CONFIG: {
   startHour: number;
   endHour: number;
 }[] = [
-  { type: "BREAKFAST", name: "조식", time: "08:00", startHour: 8, endHour: 9 },
-  { type: "LUNCH", name: "중식", time: "12:00", startHour: 12, endHour: 13 },
-  { type: "DINNER", name: "석식", time: "17:00", startHour: 17, endHour: 18 },
+  { type: "BREAKFAST", name: "조식", time: "07:30", startHour: 7.5, endHour: 8.5 },
+  { type: "LUNCH", name: "중식", time: "12:30", startHour: 12.5, endHour: 13.5 },
+  { type: "DINNER", name: "석식", time: "18:30", startHour: 18.5, endHour: 19.5 },
 ];
 
 const STATUS_META: Record<Status, { label: string; dot: string; tone: "blue" | "zinc" }> = {
@@ -27,7 +27,8 @@ const STATUS_META: Record<Status, { label: string; dot: string; tone: "blue" | "
 };
 
 function getStatus(startHour: number, endHour: number): Status {
-  const now = new Date().getHours();
+  const nowDate = new Date();
+  const now = nowDate.getHours() + nowDate.getMinutes() / 60;
   if (now >= endHour) return "done";
   if (now >= startHour) return "serving";
   return "scheduled";
