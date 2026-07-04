@@ -4,6 +4,5 @@ export type {
   RegisterCredentials,
   SigninResponse,
   SignupRequestStatus,
-  SignupRequestPayload,
   SignupRequestResponse,
 } from "./model/types";
