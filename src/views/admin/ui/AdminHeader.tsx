@@ -25,19 +25,15 @@ export function AdminHeader() {
     <>
       <header className="flex h-12 items-center justify-between border-b border-[#ebebeb] bg-[#fafafa] px-6">
         <div className="flex items-center gap-3">
-          <span className="text-[15px] font-semibold tracking-tight text-[#171717]">
-            Hololog
-          </span>
+          <span className="text-[15px] font-semibold tracking-tight text-[#171717]">Hololog</span>
           <span className="h-3.5 w-px bg-[#ebebeb]" />
-          <span className="font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-[#8f8f8f]">
+          <span className="font-mono text-[11px] font-medium tracking-[0.06em] text-[#8f8f8f] uppercase">
             Admin
           </span>
         </div>
 
         <div className="flex items-center gap-3">
-          {profile && (
-            <span className="text-sm text-[#4d4d4d]">{profile.name}</span>
-          )}
+          {profile && <span className="text-sm text-[#4d4d4d]">{profile.name}</span>}
           <button
             type="button"
             onClick={() => setConfirmOpen(true)}

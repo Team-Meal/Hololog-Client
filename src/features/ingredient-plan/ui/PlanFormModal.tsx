@@ -76,7 +76,10 @@ export function PlanFormModal() {
       className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center"
       onClick={(e) => e.target === e.currentTarget && closeForm()}
     >
-      <div className="flex w-full max-w-md flex-col overflow-hidden rounded-t-2xl bg-white shadow-2xl sm:rounded-2xl" style={{ maxHeight: "min(600px, 90dvh)" }}>
+      <div
+        className="flex w-full max-w-md flex-col overflow-hidden rounded-t-2xl bg-white shadow-2xl sm:rounded-2xl"
+        style={{ maxHeight: "min(600px, 90dvh)" }}
+      >
         {/* 헤더 */}
         <div className="flex shrink-0 items-center justify-between bg-zinc-50 px-5 py-4">
           <h2 className="text-sm font-semibold text-zinc-800">
@@ -92,10 +95,7 @@ export function PlanFormModal() {
         </div>
 
         {/* 폼 — 내용이 길면 스크롤 */}
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-1 flex-col overflow-y-auto"
-        >
+        <form onSubmit={handleSubmit} className="flex flex-1 flex-col overflow-y-auto">
           <div className="flex flex-col gap-4 px-5 py-5">
             {/* 계획표 이름 */}
             <div className="flex flex-col gap-1.5">
@@ -179,7 +179,7 @@ export function PlanFormModal() {
           </div>
 
           {/* 버튼 — 항상 하단 고정 */}
-          <div className="mt-auto shrink-0 flex gap-2 border-t border-zinc-100 px-5 py-4">
+          <div className="mt-auto flex shrink-0 gap-2 border-t border-zinc-100 px-5 py-4">
             <button
               type="button"
               onClick={closeForm}

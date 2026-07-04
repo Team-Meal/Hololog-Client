@@ -29,9 +29,7 @@ function SuggestionRow({
     <li className="flex items-start gap-3 py-3.5 first:pt-0 last:pb-0">
       <div className="min-w-0 flex-1">
         <p className="text-sm font-semibold text-zinc-950">{suggestion.title}</p>
-        {suggestion.content && (
-          <p className="mt-0.5 text-xs text-zinc-500">{suggestion.content}</p>
-        )}
+        {suggestion.content && <p className="mt-0.5 text-xs text-zinc-500">{suggestion.content}</p>}
       </div>
       {isPending ? (
         <div className="flex shrink-0 gap-1.5">

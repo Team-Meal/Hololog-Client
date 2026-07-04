@@ -12,7 +12,11 @@ type ParsedRow = CreateIngredientPayload;
 
 function parseSheet(data: unknown[][]): ParsedRow[] {
   if (!data.length) return [];
-  const headers = (data[0] as string[]).map((h) => String(h ?? "").trim().toLowerCase());
+  const headers = (data[0] as string[]).map((h) =>
+    String(h ?? "")
+      .trim()
+      .toLowerCase(),
+  );
   const nameIdx = headers.findIndex((h) => h === "이름" || h === "name");
   const catIdx = headers.findIndex((h) => h === "카테고리" || h === "category");
   const qtyIdx = headers.findIndex((h) => h === "수량" || h === "quantity");
@@ -122,17 +126,33 @@ export function InventoryActions() {
   return (
     <>
       <input ref={csvRef} type="file" accept=".csv" className="hidden" onChange={handleCSV} />
-      <input ref={xlsxRef} type="file" accept=".xlsx,.xls" className="hidden" onChange={handleExcel} />
+      <input
+        ref={xlsxRef}
+        type="file"
+        accept=".xlsx,.xls"
+        className="hidden"
+        onChange={handleExcel}
+      />
 
       <Button variant="ghost" size="sm" onClick={downloadTemplate}>
         <DownloadIcon size={14} />
         서식 다운로드
       </Button>
-      <Button variant="secondary" size="sm" disabled={uploading} onClick={() => xlsxRef.current?.click()}>
+      <Button
+        variant="secondary"
+        size="sm"
+        disabled={uploading}
+        onClick={() => xlsxRef.current?.click()}
+      >
         <UploadIcon size={14} />
         엑셀 업로드
       </Button>
-      <Button variant="secondary" size="sm" disabled={uploading} onClick={() => csvRef.current?.click()}>
+      <Button
+        variant="secondary"
+        size="sm"
+        disabled={uploading}
+        onClick={() => csvRef.current?.click()}
+      >
         <UploadIcon size={14} />
         CSV 업로드
       </Button>

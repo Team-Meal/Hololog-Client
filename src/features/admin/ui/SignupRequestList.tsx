@@ -9,8 +9,17 @@ import type { SignupRequestItem } from "../model/types";
 type PendingAction = { type: "approve" | "reject"; item: SignupRequestItem } | null;
 
 export function SignupRequestList() {
-  const { requests, page, totalPages, isLoading, actionLoading, error, fetchRequests, approve, reject } =
-    useAdminStore();
+  const {
+    requests,
+    page,
+    totalPages,
+    isLoading,
+    actionLoading,
+    error,
+    fetchRequests,
+    approve,
+    reject,
+  } = useAdminStore();
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
 
   useEffect(() => {
@@ -35,7 +44,7 @@ export function SignupRequestList() {
     <>
       {/* 대기 건수 */}
       {!isLoading && !error && (
-        <p className="mb-4 font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-[#f5a623]">
+        <p className="mb-4 font-mono text-[11px] font-medium tracking-[0.06em] text-[#f5a623] uppercase">
           대기 중 {pendingRequests.length}건
         </p>
       )}
@@ -46,7 +55,6 @@ export function SignupRequestList() {
           <div className="flex items-center justify-center rounded-xl border border-[#ebebeb] bg-white py-16">
             <span className="text-sm text-[#8f8f8f]">불러오는 중…</span>
           </div>
-
         ) : error ? (
           <div className="flex flex-col items-center gap-3 rounded-xl border border-[#ebebeb] bg-white py-16">
             <span className="text-sm text-[#4d4d4d]">{error}</span>
@@ -58,13 +66,11 @@ export function SignupRequestList() {
               다시 시도
             </button>
           </div>
-
         ) : pendingRequests.length === 0 ? (
           <div className="flex flex-col items-center gap-1.5 rounded-xl border border-[#ebebeb] bg-white py-16">
             <p className="text-sm font-medium text-[#171717]">처리 대기 중인 요청이 없습니다</p>
             <p className="text-xs text-[#8f8f8f]">모든 가입 요청이 처리되었습니다.</p>
           </div>
-
         ) : (
           pendingRequests.map((item) => (
             <div
@@ -79,9 +85,7 @@ export function SignupRequestList() {
 
               {/* 이름 + 면허번호 */}
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium tracking-[-0.01em] text-[#171717]">
-                  {item.name}
-                </p>
+                <p className="text-sm font-medium tracking-[-0.01em] text-[#171717]">{item.name}</p>
                 <p
                   className="mt-0.5 font-mono text-xs text-[#8f8f8f]"
                   style={{ fontVariantNumeric: "tabular-nums" }}
@@ -91,7 +95,7 @@ export function SignupRequestList() {
               </div>
 
               {/* 상태 */}
-              <span className="shrink-0 font-mono text-[11px] font-medium uppercase tracking-[0.04em] text-[#f5a623]">
+              <span className="shrink-0 font-mono text-[11px] font-medium tracking-[0.04em] text-[#f5a623] uppercase">
                 대기 중
               </span>
 

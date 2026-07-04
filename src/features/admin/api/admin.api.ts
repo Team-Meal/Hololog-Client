@@ -2,10 +2,7 @@ import { instance } from "@/shared/api";
 import type { SignupRequestResponse } from "@/entities/auth";
 import type { PageSignupRequestItem } from "../model/types";
 
-export async function getSignupRequestsApi(
-  page = 0,
-  size = 20,
-): Promise<PageSignupRequestItem> {
+export async function getSignupRequestsApi(page = 0, size = 20): Promise<PageSignupRequestItem> {
   const response = await instance.get<PageSignupRequestItem>("/admin/signup-requests", {
     params: { page, size },
     requiresAuth: true,
