@@ -161,9 +161,10 @@ export function MealMonthGrid({
                           {type ? MEAL_LABEL[type] : diet.name}
                         </span>
                         <div className="mt-0.5 flex flex-col gap-px">
-                          {(menuLines.length > 0 ? menuLines : [diet.name]).map((line) => (
+                          {/* Menu lines can repeat within one diet, so the key needs the index. */}
+                          {(menuLines.length > 0 ? menuLines : [diet.name]).map((line, index) => (
                             <span
-                              key={line}
+                              key={`${index}-${line}`}
                               className="block truncate text-[10px] leading-3.5 font-medium text-zinc-800"
                             >
                               {line}
