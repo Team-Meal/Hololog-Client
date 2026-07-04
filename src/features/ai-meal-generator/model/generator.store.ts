@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import { generateAiMealPlanApi } from "../api/generator.api";
+import { getDietsApi } from "@/entities/diet";
+import { generateAiMealPlanApi, getAiGenerationApi } from "../api/generator.api";
 import type { GeneratorStatus, GeneratorConditions, GeneratorResult } from "./types";
 
 function currentYearMonth(): string {
@@ -7,6 +8,23 @@ function currentYearMonth(): string {
   const mm = String(d.getMonth() + 1).padStart(2, "0");
   return `${d.getFullYear()}-${mm}`;
 }
+
+const POLL_INTERVAL_MS = 2_000;
+const POLL_MAX_ATTEMPTS = 45; // ~90s
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// The generation job never returns a summary — count the diets that landed in
+// the generated month instead.
+async function countDietsInMonth(month: string): Promise<number> {
+  const diets = await getDietsApi();
+  return diets.filter((diet) => diet.dietDate.startsWith(month)).length;
+}
+
+// Bumped on every generate()/reset() so a stale polling loop stops writing state.
+let generationSeq = 0;
 
 const INITIAL_CONDITIONS: GeneratorConditions = {
   month: currentYearMonth(),
@@ -39,16 +57,47 @@ export const useGeneratorStore = create<GeneratorState>((set, get) => ({
   result: null,
 
   generate: async () => {
+    const seq = ++generationSeq;
+    const month = get().conditions.month;
     set({ status: "loading", result: null });
+
+    const finish = (result: GeneratorResult) => {
+      if (seq === generationSeq) set({ status: "done", result });
+    };
+
     try {
-      const result = await generateAiMealPlanApi({ month: get().conditions.month });
-      set({ status: "done", result });
+      // POST returns the job id right away; poll until the job settles.
+      const job = await generateAiMealPlanApi({ month });
+
+      for (let attempt = 0; attempt < POLL_MAX_ATTEMPTS; attempt++) {
+        await sleep(POLL_INTERVAL_MS);
+        if (seq !== generationSeq) return; // reset or regenerated meanwhile
+
+        const { status } = await getAiGenerationApi(job.id);
+        if (status === "SUCCEEDED") {
+          finish({ month, totalMeals: await countDietsInMonth(month) });
+          return;
+        }
+        if (status === "FAILED") {
+          finish({ month, totalMeals: 0, error: "AI 식단 생성에 실패했어요. 다시 시도해 주세요." });
+          return;
+        }
+      }
+
+      finish({
+        month,
+        totalMeals: 0,
+        error: "식단 생성이 예상보다 오래 걸리고 있어요. 잠시 후 '식단 관리'에서 확인해 주세요.",
+      });
     } catch {
-      set({ status: "idle" });
+      finish({ month, totalMeals: 0, error: "식단 생성 요청에 실패했어요. 잠시 후 다시 시도해 주세요." });
     }
   },
 
-  reset: () => set({ status: "idle", result: null }),
+  reset: () => {
+    generationSeq++;
+    set({ status: "idle", result: null });
+  },
 
   setMonth: (value) => set((s) => ({ conditions: { ...s.conditions, month: value } })),
 
