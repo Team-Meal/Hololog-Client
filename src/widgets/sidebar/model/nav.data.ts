@@ -63,9 +63,7 @@ export const STUDENT_NAV_GROUPS: NavGroup[] = [
   {
     id: "student",
     label: "급식",
-    items: [
-      { id: "student", label: "오늘의 급식", href: "/student", icon: "Utensils" },
-    ],
+    items: [{ id: "student", label: "오늘의 급식", href: "/student", icon: "Utensils" }],
   },
 ];
 
@@ -73,9 +71,7 @@ export const ADMIN_NAV_GROUPS: NavGroup[] = [
   {
     id: "admin",
     label: "관리",
-    items: [
-      { id: "admin", label: "영양사 승인 관리", href: "/admin", icon: "ShieldCheck" },
-    ],
+    items: [{ id: "admin", label: "영양사 승인 관리", href: "/admin", icon: "ShieldCheck" }],
   },
 ];
 

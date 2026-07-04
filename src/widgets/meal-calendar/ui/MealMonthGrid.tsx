@@ -76,7 +76,11 @@ export function MealMonthGrid({
               <div
                 key={label}
                 className={`px-2 py-2 text-center text-xs font-bold ${
-                  label === "일" ? "text-red-500" : label === "토" ? "text-blue-500" : "text-zinc-500"
+                  label === "일"
+                    ? "text-red-500"
+                    : label === "토"
+                      ? "text-blue-500"
+                      : "text-zinc-500"
                 }`}
               >
                 {label}
@@ -97,8 +101,12 @@ export function MealMonthGrid({
               <div
                 key={cell.date}
                 ref={isToday ? todayCellRef : undefined}
-                className={`group/cell flex min-h-28 flex-col gap-1 border-b border-r border-zinc-100 p-1.5 ${
-                  isToday ? "bg-blue-50/60 ring-1 ring-inset ring-blue-300" : cell.inMonth ? "bg-white" : "bg-zinc-50/60"
+                className={`group/cell flex min-h-28 flex-col gap-1 border-r border-b border-zinc-100 p-1.5 ${
+                  isToday
+                    ? "bg-blue-50/60 ring-1 ring-blue-300 ring-inset"
+                    : cell.inMonth
+                      ? "bg-white"
+                      : "bg-zinc-50/60"
                 }`}
               >
                 <div className="flex items-center justify-between px-0.5">
@@ -122,7 +130,7 @@ export function MealMonthGrid({
                       type="button"
                       aria-label={`${cell.date} 식단 추가`}
                       onClick={() => onAddDate(cell.date)}
-                      className="rounded-md bg-zinc-100 p-0.5 text-zinc-400 transition-colors hover:bg-blue-100 hover:text-blue-600 group-hover/cell:bg-blue-50 group-hover/cell:text-blue-500"
+                      className="rounded-md bg-zinc-100 p-0.5 text-zinc-400 transition-colors group-hover/cell:bg-blue-50 group-hover/cell:text-blue-500 hover:bg-blue-100 hover:text-blue-600"
                     >
                       <PlusIcon size={13} />
                     </button>
@@ -149,14 +157,14 @@ export function MealMonthGrid({
                         onClick={() => onSelect(diet.id)}
                         className={`w-full rounded-md px-1.5 py-1 text-left transition-colors ${baseClass}`}
                       >
-                        <span className="block text-[9px] font-semibold leading-none opacity-70">
+                        <span className="block text-[9px] leading-none font-semibold opacity-70">
                           {type ? MEAL_LABEL[type] : diet.name}
                         </span>
                         <div className="mt-0.5 flex flex-col gap-px">
                           {(menuLines.length > 0 ? menuLines : [diet.name]).map((line) => (
                             <span
                               key={line}
-                              className="block truncate text-[10px] font-medium leading-3.5 text-zinc-800"
+                              className="block truncate text-[10px] leading-3.5 font-medium text-zinc-800"
                             >
                               {line}
                             </span>

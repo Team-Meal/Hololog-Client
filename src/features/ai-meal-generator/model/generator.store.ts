@@ -84,10 +84,7 @@ export const useGeneratorStore = create<GeneratorState>((set, get) => ({
     set((s) => ({
       conditions: {
         ...s.conditions,
-        nutritionCriteria: [
-          ...s.conditions.nutritionCriteria,
-          { id: crypto.randomUUID(), label },
-        ],
+        nutritionCriteria: [...s.conditions.nutritionCriteria, { id: crypto.randomUUID(), label }],
       },
     })),
 

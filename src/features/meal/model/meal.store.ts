@@ -26,10 +26,7 @@ interface MealState {
   fetchTodayMeals: () => Promise<void>;
   fetchSuggestions: () => Promise<void>;
   createSuggestion: (payload: CreateSuggestionPayload) => Promise<boolean>;
-  updateSuggestionStatus: (
-    id: number,
-    payload: UpdateSuggestionStatusPayload,
-  ) => Promise<boolean>;
+  updateSuggestionStatus: (id: number, payload: UpdateSuggestionStatusPayload) => Promise<boolean>;
 }
 
 function extractErrorMessage(err: unknown, fallback: string): string {

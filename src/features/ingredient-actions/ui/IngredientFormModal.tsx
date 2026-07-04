@@ -120,7 +120,7 @@ function IngredientFormContent({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="예: 친환경 백미"
-              className="h-10 w-full rounded-lg border border-zinc-200 px-3 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="h-10 w-full rounded-lg border border-zinc-200 px-3 text-sm text-zinc-900 outline-none placeholder:text-zinc-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             />
           </div>
 
@@ -177,7 +177,7 @@ function IngredientFormContent({
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
                 placeholder="0"
-                className="h-10 w-full rounded-lg border border-zinc-200 px-3 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="h-10 w-full rounded-lg border border-zinc-200 px-3 text-sm text-zinc-900 outline-none placeholder:text-zinc-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
             </div>
 
@@ -200,7 +200,7 @@ function IngredientFormContent({
                 value={origin}
                 onChange={(e) => setOrigin(e.target.value)}
                 placeholder="예: 전남 해남"
-                className="h-10 w-full rounded-lg border border-zinc-200 px-3 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="h-10 w-full rounded-lg border border-zinc-200 px-3 text-sm text-zinc-900 outline-none placeholder:text-zinc-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
             </div>
 
@@ -211,7 +211,7 @@ function IngredientFormContent({
                 value={supplier}
                 onChange={(e) => setSupplier(e.target.value)}
                 placeholder="예: 지역 농협"
-                className="h-10 w-full rounded-lg border border-zinc-200 px-3 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="h-10 w-full rounded-lg border border-zinc-200 px-3 text-sm text-zinc-900 outline-none placeholder:text-zinc-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
             </div>
           </div>
