@@ -23,6 +23,18 @@ async function countDietsInMonth(month: string): Promise<number> {
   return diets.filter((diet) => diet.dietDate.startsWith(month)).length;
 }
 
+function errorStatus(err: unknown): number | undefined {
+  return err instanceof Error && "response" in err
+    ? (err as { response?: { status?: number } }).response?.status
+    : undefined;
+}
+
+function extractErrorMessage(err: unknown, fallback: string): string {
+  return err instanceof Error && "response" in err
+    ? ((err as { response?: { data?: { message?: string } } }).response?.data?.message ?? fallback)
+    : fallback;
+}
+
 // Bumped on every generate()/reset() so a stale polling loop stops writing state.
 let generationSeq = 0;
 
@@ -89,8 +101,28 @@ export const useGeneratorStore = create<GeneratorState>((set, get) => ({
         totalMeals: 0,
         error: "식단 생성이 예상보다 오래 걸리고 있어요. 잠시 후 '식단 관리'에서 확인해 주세요.",
       });
-    } catch {
-      finish({ month, totalMeals: 0, error: "식단 생성 요청에 실패했어요. 잠시 후 다시 시도해 주세요." });
+    } catch (err: unknown) {
+      // 409 = this month is already generating or generated. If the diets are
+      // already in, show their summary instead of a dead-end error.
+      if (errorStatus(err) === 409) {
+        const totalMeals = await countDietsInMonth(month).catch(() => 0);
+        if (totalMeals > 0) {
+          finish({ month, totalMeals });
+          return;
+        }
+        finish({
+          month,
+          totalMeals: 0,
+          error: "이번 달 식단은 이미 생성 중이에요. 잠시 후 '식단 관리'에서 확인해 주세요.",
+        });
+        return;
+      }
+
+      finish({
+        month,
+        totalMeals: 0,
+        error: extractErrorMessage(err, "식단 생성 요청에 실패했어요. 잠시 후 다시 시도해 주세요."),
+      });
     }
   },
 
