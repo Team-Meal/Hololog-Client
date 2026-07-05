@@ -23,8 +23,14 @@ const STATUS_META: Record<MealSuggestionStatus, { label: string; tone: "blue" | 
 
 export function StudentPage() {
   const { profile } = useMemberProfile();
-  const { todayMeals, isTodayLoading, fetchTodayMeals, suggestions, fetchSuggestions, createSuggestion } =
-    useMealStore();
+  const {
+    todayMeals,
+    isTodayLoading,
+    fetchTodayMeals,
+    suggestions,
+    fetchSuggestions,
+    createSuggestion,
+  } = useMealStore();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -45,7 +51,10 @@ export function StudentPage() {
     e.preventDefault();
     if (!title.trim()) return;
     setSubmitting(true);
-    const ok = await createSuggestion({ title: title.trim(), content: content.trim() || undefined });
+    const ok = await createSuggestion({
+      title: title.trim(),
+      content: content.trim() || undefined,
+    });
     if (ok) {
       toast.success("추천이 등록되었습니다.");
       setTitle("");
@@ -72,7 +81,7 @@ export function StudentPage() {
       {/* 콘텐츠 */}
       <main className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
         <div className="mb-6">
-          <p className="text-xs font-semibold uppercase tracking-wide text-zinc-400">오늘의 급식</p>
+          <p className="text-xs font-semibold tracking-wide text-zinc-400 uppercase">오늘의 급식</p>
           <h1 className="mt-1 text-2xl font-bold text-zinc-950">
             {profile ? `안녕하세요, ${profile.name}님` : "안녕하세요"}
           </h1>
@@ -98,7 +107,9 @@ export function StudentPage() {
                   if (!meal) return null;
                   return (
                     <li key={type} className="flex items-start gap-4 py-4 first:pt-0 last:pb-0">
-                      <span className="w-12 shrink-0 text-sm font-medium text-zinc-400">{time}</span>
+                      <span className="w-12 shrink-0 text-sm font-medium text-zinc-400">
+                        {time}
+                      </span>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-semibold text-zinc-950">{name}</p>
                         <p className="mt-1 text-sm text-zinc-500">

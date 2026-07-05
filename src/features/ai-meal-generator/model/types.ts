@@ -40,12 +40,22 @@ export interface MealResultMetrics {
   nutritionMatchRatio: number; // 0~100
 }
 
-// Result of POST /meals/ai-generations. The backend returns a summary only —
-// the generated diets themselves are retrievable from the 식단 관리 화면.
+export type AiGenerationStatus = "PENDING" | "RUNNING" | "SUCCEEDED" | "FAILED";
+
+// Response of POST /meals/ai-generations and GET /meals/ai-generations/{id}.
+// The backend runs generation asynchronously and only ever returns the job
+// id/status — the generated diets land in /diets.
+export interface AiGenerationResponse {
+  id: number;
+  status: AiGenerationStatus;
+}
+
+// Summary assembled on the client once polling finishes: month comes from the
+// request conditions, totalMeals from counting /diets entries in that month.
 export interface GeneratorResult {
   month: string;
   totalMeals: number;
-  validationErrors: unknown[];
-  budgetInfo: Record<string, unknown>;
+  validationErrors?: unknown[];
+  budgetInfo?: Record<string, unknown>;
   error?: string;
 }

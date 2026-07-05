@@ -1,12 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  executionPercent,
-  getBudgets,
-  selectActiveBudget,
-  type Budget,
-} from "@/entities/budget";
+import { executionPercent, getBudgets, selectActiveBudget, type Budget } from "@/entities/budget";
 import { StatusBadge, SurfaceCard } from "@/shared/ui";
 
 const RADIUS = 42;

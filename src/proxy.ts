@@ -42,9 +42,7 @@ export function proxy(request: NextRequest) {
   if (token) {
     const role = getTokenRole(token);
     if (role === "STUDENT") {
-      const allowed = STUDENT_ALLOWED.some(
-        (p) => pathname === p || pathname.startsWith(p + "/"),
-      );
+      const allowed = STUDENT_ALLOWED.some((p) => pathname === p || pathname.startsWith(p + "/"));
       if (!allowed) {
         return NextResponse.redirect(new URL("/student", request.url));
       }

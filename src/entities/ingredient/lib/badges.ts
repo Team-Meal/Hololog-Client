@@ -53,7 +53,8 @@ export function isInSeason(name: string, month: number): boolean {
   );
 }
 
-const IMPORTED_PATTERN = /(수입|외국|중국|미국|호주|베트남|칠레|노르웨이|러시아|태국|필리핀|에콰도르)/;
+const IMPORTED_PATTERN =
+  /(수입|외국|중국|미국|호주|베트남|칠레|노르웨이|러시아|태국|필리핀|에콰도르)/;
 
 /** 원산지가 지역(국내)산인지 판별. 원산지 정보가 없으면 false. */
 export function isLocalOrigin(origin: string | undefined): boolean {

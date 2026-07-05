@@ -57,7 +57,10 @@ export const useDietStore = create<DietState>((set, get) => ({
       const data = await getDietsApi();
       set({ diets: data, isLoading: false });
     } catch (err: unknown) {
-      set({ error: extractErrorMessage(err, "식단 목록 조회 중 오류가 발생했습니다."), isLoading: false });
+      set({
+        error: extractErrorMessage(err, "식단 목록 조회 중 오류가 발생했습니다."),
+        isLoading: false,
+      });
     }
   },
 
@@ -67,7 +70,10 @@ export const useDietStore = create<DietState>((set, get) => ({
       const data = await getDietApi(dietId);
       set({ currentDiet: data, isLoading: false });
     } catch (err: unknown) {
-      set({ error: extractErrorMessage(err, "식단 조회 중 오류가 발생했습니다."), isLoading: false });
+      set({
+        error: extractErrorMessage(err, "식단 조회 중 오류가 발생했습니다."),
+        isLoading: false,
+      });
     }
   },
 
@@ -113,7 +119,10 @@ export const useDietStore = create<DietState>((set, get) => ({
       const data = await getLeftoversApi(dietId);
       set({ leftovers: data, isLoading: false });
     } catch (err: unknown) {
-      set({ error: extractErrorMessage(err, "잔반 데이터 조회 중 오류가 발생했습니다."), isLoading: false });
+      set({
+        error: extractErrorMessage(err, "잔반 데이터 조회 중 오류가 발생했습니다."),
+        isLoading: false,
+      });
     }
   },
 
