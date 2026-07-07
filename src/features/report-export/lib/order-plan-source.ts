@@ -10,7 +10,7 @@ import {
   EXPIRY_SOON_DAYS,
   type IngredientItem,
 } from "@/entities/ingredient";
-import { getSubstitutes, type PriceQuote } from "@/entities/price";
+import type { PriceQuote } from "@/entities/price";
 
 // report-export는 features/order-plan-calc(형제 feature)를 import할 수 없으므로,
 // 같은 entities/order-plan의 computeOrderPlanItems만 재사용하고 "어디서 재고/가격을
@@ -45,14 +45,6 @@ export function buildOrderPlanDetail(
     if (days !== null && days <= EXPIRY_SOON_DAYS) return "유통기한 임박 재고 우선";
 
     if (isInSeason(ctx.recipe.ingredientName, month)) return `${month}월 제철`;
-
-    const quote = priceItems.find((q) => q.itemName === ctx.recipe.ingredientName);
-    if (quote?.isSpiking) {
-      const substitutes = getSubstitutes(ctx.recipe.ingredientName);
-      return substitutes.length > 0
-        ? `KAMIS 가격 급등 — ${substitutes.join("·")} 대체 검토`
-        : "KAMIS 가격 급등";
-    }
 
     return ctx.orderQuantity === 0 ? "재고 충분" : "발주 필요";
   };

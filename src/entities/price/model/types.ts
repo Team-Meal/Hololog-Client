@@ -15,7 +15,6 @@ export interface PriceQuoteRaw {
 export interface PriceQuote extends PriceQuoteRaw {
   changeRatePercent: number; // (price - baselinePrice) / baselinePrice * 100
   isSpiking: boolean;
-  substituteItems: string[];
   source: PriceSource;
 }
 

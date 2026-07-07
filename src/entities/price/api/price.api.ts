@@ -1,4 +1,3 @@
-import { getSubstitutes } from "../lib/substitutes";
 import { computeChangeRatePercent, isSpiking } from "../lib/spike";
 import type { PriceListResponse, PriceQuote, PriceQuoteRaw, PriceSource } from "../model/types";
 
@@ -8,7 +7,6 @@ function enrich(raw: PriceQuoteRaw, source: PriceSource): PriceQuote {
     ...raw,
     changeRatePercent,
     isSpiking: isSpiking(changeRatePercent),
-    substituteItems: getSubstitutes(raw.itemName),
     source,
   };
 }
