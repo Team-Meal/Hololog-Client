@@ -77,6 +77,10 @@ export const useGeneratorStore = create<GeneratorState>((set, get) => ({
       if (seq === generationSeq) set({ status: "done", result });
     };
 
+    // Snapshot the month's diet count so the summary reports only what the
+    // job newly created — pre-existing (e.g. manual) diets must not count.
+    const beforeCount = await countDietsInMonth(month).catch(() => 0);
+
     try {
       // POST returns the job id right away; poll until the job settles.
       const job = await generateAiMealPlanApi({ month });
@@ -87,7 +91,17 @@ export const useGeneratorStore = create<GeneratorState>((set, get) => ({
 
         const { status } = await getAiGenerationApi(job.id);
         if (status === "SUCCEEDED") {
-          finish({ month, totalMeals: await countDietsInMonth(month) });
+          const created = Math.max(0, (await countDietsInMonth(month)) - beforeCount);
+          if (created === 0) {
+            finish({
+              month,
+              totalMeals: 0,
+              error:
+                "생성 작업은 완료됐지만 새로 저장된 식단이 없어요. 서버(백엔드) 생성 작업 확인이 필요해요.",
+            });
+            return;
+          }
+          finish({ month, totalMeals: created });
           return;
         }
         if (status === "FAILED") {
@@ -107,7 +121,12 @@ export const useGeneratorStore = create<GeneratorState>((set, get) => ({
       if (errorStatus(err) === 409) {
         const totalMeals = await countDietsInMonth(month).catch(() => 0);
         if (totalMeals > 0) {
-          finish({ month, totalMeals });
+          finish({
+            month,
+            totalMeals,
+            notice:
+              "이번 달 식단은 이미 생성되어 있어요. 아래 요약은 이전에 생성된 식단 기준이에요. '식단 관리'에서 확인·수정할 수 있어요.",
+          });
           return;
         }
         finish({

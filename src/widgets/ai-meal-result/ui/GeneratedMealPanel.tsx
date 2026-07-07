@@ -58,10 +58,14 @@ export function GeneratedMealPanel() {
             <>
               <div className="grid grid-cols-2 gap-2">
                 <Stat label="생성 월" value={result.month || "-"} />
-                <Stat label="생성된 식단 수" value={`${result.totalMeals}건`} />
+                <Stat
+                  label={result.notice ? "생성된 식단 수" : "새로 생성된 식단 수"}
+                  value={`${result.totalMeals}건`}
+                />
               </div>
               <div className="rounded-lg bg-blue-50 p-3 text-sm leading-relaxed text-blue-700">
-                AI가 식단을 생성했어요. 생성된 식단은 ‘식단 관리’에서 확인·수정할 수 있어요.
+                {result.notice ??
+                  "AI가 식단을 새로 생성했어요. 생성된 식단은 ‘식단 관리’에서 확인·수정할 수 있어요."}
               </div>
 
               <ReasonList topMenus={topMenus} />
