@@ -75,7 +75,7 @@ export function AuthLayout({
           </ul>
         </div>
 
-        <p className="relative z-10 text-xs text-white/25">© 2026 Hololog. All rights reserved.</p>
+        <p className="relative z-10 text-xs text-white/25">© 2026 hororog. All rights reserved.</p>
       </div>
 
       <div className="flex flex-1 flex-col items-center justify-center bg-white px-6 py-12">
