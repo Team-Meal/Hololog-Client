@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarIcon, SparklesIcon, SurfaceCard } from "@/shared/ui";
+import { CalendarIcon, InfoIcon, SparklesIcon, SurfaceCard } from "@/shared/ui";
 import { useGeneratorStore, useMealScoring } from "@/features/ai-meal-generator";
 
 const TOP_N = 5;
@@ -81,6 +81,13 @@ function ReasonList({ topMenus }: { topMenus: ReturnType<typeof useMealScoring>[
   return (
     <div className="flex flex-col gap-2">
       <p className="text-xs font-semibold text-zinc-600">추천 근거 (후보 품목 분석)</p>
+      <div className="flex items-start gap-1.5 rounded-lg bg-amber-50 p-2.5 text-xs leading-relaxed text-amber-700">
+        <InfoIcon size={13} className="mt-0.5 shrink-0" />
+        <span>
+          이 분석은 샘플 메뉴 8개를 기준으로 한 예시이며, 실제로 생성된 식단과는 무관해요. 실제
+          레시피 연동 전까지의 임시 데이터예요.
+        </span>
+      </div>
       <ul className="flex flex-col gap-2">
         {topMenus.map((menu) => (
           <li key={`${menu.menuName}-${menu.ingredientName}`} className="rounded-lg bg-zinc-50 p-3">
