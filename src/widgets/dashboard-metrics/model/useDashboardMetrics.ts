@@ -2,16 +2,21 @@
 
 import { useEffect, useMemo } from "react";
 import { useIngredientStore } from "@/entities/ingredient";
-import { usePriceStore } from "@/entities/price";
+import { usePriceStore, type PriceSource } from "@/entities/price";
 import { useOrderPlanItems } from "@/features/order-plan-calc";
 import { computeDashboardMetrics, type DashboardMetrics } from "../lib/metrics";
 
-export function useDashboardMetrics(): { metrics: DashboardMetrics; isLoading: boolean } {
+export function useDashboardMetrics(): {
+  metrics: DashboardMetrics;
+  isLoading: boolean;
+  priceSource: PriceSource | null;
+} {
   const ingredients = useIngredientStore((s) => s.items);
   const fetchIngredients = useIngredientStore((s) => s.fetchIngredients);
   const ingredientLoading = useIngredientStore((s) => s.isLoading);
 
   const priceItems = usePriceStore((s) => s.items);
+  const priceSource = usePriceStore((s) => s.source);
   const fetchPrices = usePriceStore((s) => s.fetchPrices);
 
   const { items: orderPlanItems, isLoading: orderPlanLoading } = useOrderPlanItems();
@@ -27,5 +32,5 @@ export function useDashboardMetrics(): { metrics: DashboardMetrics; isLoading: b
     [ingredients, orderPlanItems, priceItems],
   );
 
-  return { metrics, isLoading: ingredientLoading || orderPlanLoading };
+  return { metrics, isLoading: ingredientLoading || orderPlanLoading, priceSource };
 }

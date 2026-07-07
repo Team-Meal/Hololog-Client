@@ -1,3 +1,4 @@
+import { priceSourceLabel, type PriceSource } from "@/entities/price";
 import { FormulaHint } from "@/shared/ui";
 import type { BudgetKpis } from "../lib/budget-kpis";
 
@@ -6,9 +7,10 @@ const won = (value: number) => `₩${Math.round(value).toLocaleString("ko-KR")}`
 interface Props {
   kpis: BudgetKpis;
   savingsWon: number | null;
+  priceSource: PriceSource | null;
 }
 
-export function BudgetKpiExtras({ kpis, savingsWon }: Props) {
+export function BudgetKpiExtras({ kpis, savingsWon, priceSource }: Props) {
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
       <Tile
@@ -26,6 +28,7 @@ export function BudgetKpiExtras({ kpis, savingsWon }: Props) {
       <Tile
         label="예산 절감 예상액"
         value={savingsWon !== null ? won(savingsWon) : "연동 대기"}
+        note={savingsWon !== null ? priceSourceLabel(priceSource) : undefined}
         formulaTitle="예산 절감 예상액"
         formulaLines={["예산 절감 예상액 = Σ(가격 급등 품목 대체로 줄인 비용)"]}
       />
@@ -36,11 +39,13 @@ export function BudgetKpiExtras({ kpis, savingsWon }: Props) {
 function Tile({
   label,
   value,
+  note,
   formulaTitle,
   formulaLines,
 }: {
   label: string;
   value: string;
+  note?: string;
   formulaTitle: string;
   formulaLines: string[];
 }) {
@@ -51,6 +56,7 @@ function Tile({
         <FormulaHint title={formulaTitle} lines={formulaLines} />
       </div>
       <p className="mt-1 text-lg font-bold text-zinc-900">{value}</p>
+      {note && <p className="mt-0.5 text-[11px] text-zinc-400">{note}</p>}
     </div>
   );
 }

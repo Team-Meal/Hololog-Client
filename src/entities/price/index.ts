@@ -6,3 +6,4 @@ export { SUBSTITUTE_MAP, getSubstitutes } from "./lib/substitutes";
 export { SPIKE_THRESHOLD_PERCENT, computeChangeRatePercent, isSpiking } from "./lib/spike";
 export { computeSubstitutionSavings, totalSubstitutionSavings } from "./lib/savings";
 export type { CostLine, SubstitutionSaving } from "./lib/savings";
+export { priceSourceLabel } from "./lib/source-label";

@@ -33,6 +33,7 @@ export function BudgetValidationPanel({ budget }: Props) {
 
   const ingredients = useIngredientStore((s) => s.items);
   const priceItems = usePriceStore((s) => s.items);
+  const priceSource = usePriceStore((s) => s.source);
 
   const result = useMemo(
     () => (budget ? validateOrderAgainstBudget(budget, totalEstimatedCost) : null),
@@ -79,8 +80,9 @@ export function BudgetValidationPanel({ budget }: Props) {
             <BudgetKpiExtras
               kpis={kpis}
               savingsWon={priceItems.length > 0 ? spikeSummary.totalSavings : null}
+              priceSource={priceSource}
             />
-            <PriceSpikePanel substitutions={spikeSummary.substitutions} />
+            <PriceSpikePanel substitutions={spikeSummary.substitutions} priceSource={priceSource} />
           </div>
         ) : (
           <Empty text="예산 정보를 계산할 수 없습니다." />

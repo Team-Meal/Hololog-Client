@@ -1,5 +1,6 @@
 "use client";
 
+import { priceSourceLabel } from "@/entities/price";
 import { SurfaceCard } from "@/shared/ui";
 import { useDashboardMetrics } from "../model/useDashboardMetrics";
 import { KpiCard } from "./KpiCard";
@@ -7,7 +8,7 @@ import { KpiCard } from "./KpiCard";
 const won = (value: number) => `₩${Math.round(value).toLocaleString("ko-KR")}`;
 
 export function DashboardMetricCards() {
-  const { metrics, isLoading } = useDashboardMetrics();
+  const { metrics, isLoading, priceSource } = useDashboardMetrics();
 
   if (isLoading) {
     return (
@@ -65,7 +66,11 @@ export function DashboardMetricCards() {
         value={
           metrics.substitutionSavings !== null ? won(metrics.substitutionSavings) : "연동 대기"
         }
-        sub="가격 급등 품목 대체 기준"
+        sub={
+          metrics.substitutionSavings !== null
+            ? priceSourceLabel(priceSource)
+            : "가격 급등 품목 대체 기준"
+        }
         formulaTitle="예산 절감 예상액"
         formulaLines={["예산 절감 예상액 = Σ(가격 급등 품목 대체로 줄인 비용)"]}
       />
