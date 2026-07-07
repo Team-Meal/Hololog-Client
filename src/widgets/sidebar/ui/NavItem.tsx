@@ -49,18 +49,35 @@ export function NavItem({ item }: Props) {
     pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href + "/"));
   const Icon = ICON_MAP[item.icon] ?? LayoutDashboardIcon;
 
+  const linkClass = item.highlight
+    ? isActive
+      ? "bg-gradient-to-r from-violet-600 to-blue-600 text-white shadow-sm"
+      : "bg-gradient-to-r from-violet-50 to-blue-50 text-violet-700 hover:from-violet-100 hover:to-blue-100"
+    : isActive
+      ? "bg-blue-50 text-blue-600"
+      : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800";
+
+  const iconClass = item.highlight
+    ? isActive
+      ? "text-white"
+      : "text-violet-600"
+    : isActive
+      ? "text-blue-600"
+      : "text-zinc-400";
+
+  const textBadgeClass =
+    item.highlight && isActive
+      ? "rounded-md bg-white/25 px-1.5 py-0.5 text-[11px] font-bold text-white"
+      : item.highlight
+        ? "rounded-md bg-violet-600 px-1.5 py-0.5 text-[11px] font-bold text-white"
+        : "rounded-md bg-blue-600 px-1.5 py-0.5 text-[11px] font-bold text-white";
+
   return (
     <Link
       href={item.href}
-      className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium ${
-        isActive ? "bg-blue-50 text-blue-600" : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800"
-      }`}
+      className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium ${linkClass}`}
     >
-      <Icon
-        size={18}
-        strokeWidth={isActive ? 2 : 1.5}
-        className={isActive ? "text-blue-600" : "text-zinc-400"}
-      />
+      <Icon size={18} strokeWidth={isActive || item.highlight ? 2 : 1.5} className={iconClass} />
       <span className="flex-1">{item.label}</span>
       {item.badge &&
         (item.badge.type === "count" ? (
@@ -74,9 +91,7 @@ export function NavItem({ item }: Props) {
             </span>
           )
         ) : (
-          <span className="rounded-md bg-blue-600 px-1.5 py-0.5 text-[11px] font-bold text-white">
-            {item.badge.value}
-          </span>
+          <span className={textBadgeClass}>{item.badge.value}</span>
         ))}
     </Link>
   );

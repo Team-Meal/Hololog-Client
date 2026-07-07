@@ -8,6 +8,8 @@ export interface NavItem {
   href: string;
   icon: string;
   badge?: NavBadge;
+  /** AI 등 강조가 필요한 메뉴 — 항상 눈에 띄는 스타일로 렌더링 */
+  highlight?: boolean;
 }
 
 export interface NavGroup {
@@ -28,6 +30,7 @@ export const NAV_GROUPS: NavGroup[] = [
         label: "식자재 계획표",
         href: "/ingredient-plans",
         icon: "ClipboardList",
+        badge: { type: "text", value: "NEW" },
       },
       {
         id: "inventory",
@@ -42,7 +45,13 @@ export const NAV_GROUPS: NavGroup[] = [
     label: "분석",
     items: [
       { id: "budget", label: "예산 관리", href: "/budget", icon: "Wallet" },
-      { id: "export", label: "내보내기", href: "/export", icon: "FileOutput" },
+      {
+        id: "export",
+        label: "내보내기",
+        href: "/export",
+        icon: "FileOutput",
+        badge: { type: "text", value: "NEW" },
+      },
     ],
   },
   {
@@ -54,6 +63,8 @@ export const NAV_GROUPS: NavGroup[] = [
         label: "AI 식단 생성",
         href: "/ai-meal",
         icon: "Sparkles",
+        badge: { type: "text", value: "NEW" },
+        highlight: true,
       },
     ],
   },
