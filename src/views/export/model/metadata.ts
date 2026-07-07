@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "내보내기 센터 | 호로록",
+  title: "내보내기 센터 | hororog",
   description: "급식 식단표를 PDF·엑셀로 내보내거나 인쇄합니다.",
 };

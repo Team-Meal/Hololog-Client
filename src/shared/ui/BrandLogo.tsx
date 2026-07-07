@@ -14,7 +14,7 @@ export function BrandLogo({ compact = false, dark = false }: BrandLogoProps) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={color}
-      aria-label="Hololog"
+      aria-label="hororog"
     >
       <mask
         id="hololog-logo-mask"

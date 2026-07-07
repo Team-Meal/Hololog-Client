@@ -16,7 +16,7 @@ const PAGE_TITLES: Record<string, string> = {
 export function PageTitle() {
   const pathname = usePathname();
   const { profile } = useMemberProfile();
-  const title = PAGE_TITLES[pathname] ?? "Hololog";
+  const title = PAGE_TITLES[pathname] ?? "hororog";
 
   return (
     <div className="min-w-0">
