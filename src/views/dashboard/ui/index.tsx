@@ -15,7 +15,6 @@ import { StudentSuggestions } from "@/widgets/student-suggestions";
 import { TodayMeals } from "@/widgets/today-meals";
 import { DashboardMetricCards } from "@/widgets/dashboard-metrics";
 import { AiMealBanner } from "./AiMealBanner";
-import { WhatsNewSection } from "./WhatsNewSection";
 
 export function DashboardPage() {
   const router = useRouter();
@@ -68,8 +67,6 @@ export function DashboardPage() {
             <StudentSuggestions />
           </div>
         </div>
-
-        <WhatsNewSection />
       </div>
     </PageShell>
   );
