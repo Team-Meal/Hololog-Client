@@ -13,12 +13,7 @@ export function AiMealBanner() {
             <SparklesIcon size={24} className="text-white" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-lg font-bold sm:text-xl">AI 식단 생성</h2>
-              <span className="rounded-md bg-white/25 px-1.5 py-0.5 text-[11px] font-bold">
-                NEW
-              </span>
-            </div>
+            <h2 className="text-lg font-bold sm:text-xl">AI 식단 생성</h2>
             <p className="mt-1 max-w-2xl text-sm leading-6 text-blue-100">
               재고·예산·선호도·영양 기준만 입력하면 AI가 한 달 식단을 설계하고, 왜 이 식단인지
               점수와 근거까지 보여드려요.

@@ -4,7 +4,6 @@ import {
   FileOutputIcon,
   SectionTitle,
   SparklesIcon,
-  StatusBadge,
   WalletIcon,
 } from "@/shared/ui";
 
@@ -68,11 +67,8 @@ export function WhatsNewSection() {
             href={href}
             className="group rounded-2xl bg-white p-5 shadow-(--shadow-card) transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
           >
-            <div className="flex items-center justify-between">
-              <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${iconClass}`}>
-                <Icon size={20} />
-              </div>
-              <StatusBadge tone="blue">NEW</StatusBadge>
+            <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${iconClass}`}>
+              <Icon size={20} />
             </div>
             <h3 className="mt-3 text-sm font-semibold text-zinc-950 group-hover:text-blue-600">
               {title}

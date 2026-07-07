@@ -65,13 +65,6 @@ export function NavItem({ item }: Props) {
       ? "text-blue-600"
       : "text-zinc-400";
 
-  const textBadgeClass =
-    item.highlight && isActive
-      ? "rounded-md bg-white/25 px-1.5 py-0.5 text-[11px] font-bold text-white"
-      : item.highlight
-        ? "rounded-md bg-violet-600 px-1.5 py-0.5 text-[11px] font-bold text-white"
-        : "rounded-md bg-blue-600 px-1.5 py-0.5 text-[11px] font-bold text-white";
-
   return (
     <Link
       href={item.href}
@@ -91,7 +84,9 @@ export function NavItem({ item }: Props) {
             </span>
           )
         ) : (
-          <span className={textBadgeClass}>{item.badge.value}</span>
+          <span className="rounded-md bg-blue-600 px-1.5 py-0.5 text-[11px] font-bold text-white">
+            {item.badge.value}
+          </span>
         ))}
     </Link>
   );
