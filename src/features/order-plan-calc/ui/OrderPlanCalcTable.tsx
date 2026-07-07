@@ -1,6 +1,7 @@
 "use client";
 
 import { useOrderPlanCalcStore } from "@/entities/order-plan";
+import { priceSourceLabel } from "@/entities/price";
 import { FormulaHint } from "@/shared/ui";
 import { useOrderPlanItems } from "../lib/use-order-plan-items";
 
@@ -46,12 +47,7 @@ export function OrderPlanCalcTable() {
 
         {priceSource && (
           <span className="ml-auto text-xs text-zinc-400">
-            단가 출처:{" "}
-            {priceSource === "kamis"
-              ? "KAMIS 실시간"
-              : priceSource === "mixed"
-                ? "KAMIS + 캐시"
-                : "캐시 스냅샷"}
+            단가 출처: {priceSourceLabel(priceSource)}
           </span>
         )}
       </div>
