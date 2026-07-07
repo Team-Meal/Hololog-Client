@@ -5,12 +5,11 @@ const won = (value: number) => `₩${Math.round(value).toLocaleString("ko-KR")}`
 
 interface Props {
   kpis: BudgetKpis;
-  savingsWon: number | null;
 }
 
-export function BudgetKpiExtras({ kpis, savingsWon }: Props) {
+export function BudgetKpiExtras({ kpis }: Props) {
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       <Tile
         label="1인당 예상 단가"
         value={won(kpis.perPersonCost)}
@@ -22,12 +21,6 @@ export function BudgetKpiExtras({ kpis, savingsWon }: Props) {
         value={`${kpis.localUsageRatioPercent.toFixed(1)}%`}
         formulaTitle="지역 농산물 사용률"
         formulaLines={["지역 농산물 사용률 = (지역 농산물 식재료비 ÷ 전체 식재료비) × 100"]}
-      />
-      <Tile
-        label="예산 절감 예상액"
-        value={savingsWon !== null ? won(savingsWon) : "연동 대기"}
-        formulaTitle="예산 절감 예상액"
-        formulaLines={["예산 절감 예상액 = Σ(가격 급등 품목 대체로 줄인 비용)"]}
       />
     </div>
   );

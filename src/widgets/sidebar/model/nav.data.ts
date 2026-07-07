@@ -8,6 +8,8 @@ export interface NavItem {
   href: string;
   icon: string;
   badge?: NavBadge;
+  /** AI 등 강조가 필요한 메뉴 — 항상 눈에 띄는 스타일로 렌더링 */
+  highlight?: boolean;
 }
 
 export interface NavGroup {
@@ -54,6 +56,7 @@ export const NAV_GROUPS: NavGroup[] = [
         label: "AI 식단 생성",
         href: "/ai-meal",
         icon: "Sparkles",
+        highlight: true,
       },
     ],
   },

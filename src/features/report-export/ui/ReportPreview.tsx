@@ -280,11 +280,6 @@ function BudgetExecutionDoc({
           value={won(stats.localCost)}
           sub={`집행 비중 ${stats.localCostRate.toFixed(1)}%`}
         />
-        <StatCard
-          label="예산 절감 예상액"
-          value={stats.estimatedSavings !== null ? won(stats.estimatedSavings) : "연동 대기"}
-          sub="가격 급등 품목 대체 기준"
-        />
       </div>
     </>
   );

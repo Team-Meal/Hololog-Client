@@ -63,10 +63,8 @@ export function ReportPanel() {
   const activeBudget = useMemo(() => selectActiveBudget(budgets), [budgets]);
   const budgetStats: BudgetExecutionStats | null = useMemo(
     () =>
-      activeBudget
-        ? computeBudgetExecutionStats(activeBudget, orderPlanDetail, ingredients, priceItems)
-        : null,
-    [activeBudget, orderPlanDetail, ingredients, priceItems],
+      activeBudget ? computeBudgetExecutionStats(activeBudget, orderPlanDetail, ingredients) : null,
+    [activeBudget, orderPlanDetail, ingredients],
   );
 
   const allergyRows: AllergyNoticeRow[] = useMemo(() => buildAllergyNoticeRows(diets), [diets]);

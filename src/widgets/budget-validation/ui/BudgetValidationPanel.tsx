@@ -3,13 +3,11 @@
 import { useMemo } from "react";
 import type { Budget } from "@/entities/budget";
 import { useIngredientStore } from "@/entities/ingredient";
-import { usePriceStore } from "@/entities/price";
 import { useOrderPlanCalcStore, useOrderPlanItems } from "@/features/order-plan-calc";
 import { SectionTitle, StatusBadge, SurfaceCard } from "@/shared/ui";
 import { validateOrderAgainstBudget, type BudgetVerdict } from "../lib/validate";
-import { buildBudgetKpis, buildSpikeSubstitutions } from "../lib/budget-kpis";
+import { buildBudgetKpis } from "../lib/budget-kpis";
 import { BudgetKpiExtras } from "./BudgetKpiExtras";
-import { PriceSpikePanel } from "./PriceSpikePanel";
 
 const won = (value: number) => `₩${Math.round(value).toLocaleString()}`;
 
@@ -32,7 +30,6 @@ export function BudgetValidationPanel({ budget }: Props) {
   const { items, totalEstimatedCost, isLoading } = useOrderPlanItems();
 
   const ingredients = useIngredientStore((s) => s.items);
-  const priceItems = usePriceStore((s) => s.items);
 
   const result = useMemo(
     () => (budget ? validateOrderAgainstBudget(budget, totalEstimatedCost) : null),
@@ -42,11 +39,6 @@ export function BudgetValidationPanel({ budget }: Props) {
   const kpis = useMemo(
     () => buildBudgetKpis(items, studentCount, ingredients),
     [items, studentCount, ingredients],
-  );
-
-  const spikeSummary = useMemo(
-    () => buildSpikeSubstitutions(priceItems, items),
-    [priceItems, items],
   );
 
   return (
@@ -76,11 +68,7 @@ export function BudgetValidationPanel({ budget }: Props) {
         ) : result ? (
           <div className="flex flex-col gap-4">
             <Result result={result} />
-            <BudgetKpiExtras
-              kpis={kpis}
-              savingsWon={priceItems.length > 0 ? spikeSummary.totalSavings : null}
-            />
-            <PriceSpikePanel substitutions={spikeSummary.substitutions} />
+            <BudgetKpiExtras kpis={kpis} />
           </div>
         ) : (
           <Empty text="예산 정보를 계산할 수 없습니다." />

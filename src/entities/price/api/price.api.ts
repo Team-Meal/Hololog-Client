@@ -1,5 +1,3 @@
-import { FALLBACK_PRICE_SNAPSHOT } from "../lib/fallback-snapshot";
-import { getSubstitutes } from "../lib/substitutes";
 import { computeChangeRatePercent, isSpiking } from "../lib/spike";
 import type { PriceListResponse, PriceQuote, PriceQuoteRaw, PriceSource } from "../model/types";
 
@@ -9,7 +7,6 @@ function enrich(raw: PriceQuoteRaw, source: PriceSource): PriceQuote {
     ...raw,
     changeRatePercent,
     isSpiking: isSpiking(changeRatePercent),
-    substituteItems: getSubstitutes(raw.itemName),
     source,
   };
 }
@@ -24,9 +21,7 @@ export async function getPricesApi(): Promise<{ items: PriceQuote[]; source: Pri
     const data = (await response.json()) as PriceListResponse;
     return { items: data.items.map((item) => enrich(item, data.source)), source: data.source };
   } catch {
-    return {
-      items: FALLBACK_PRICE_SNAPSHOT.map((item) => enrich(item, "fallback")),
-      source: "fallback",
-    };
+    // 서버 응답을 받지 못하면 빈 목록을 반환한다 — 대체 데이터는 만들지 않는다.
+    return { items: [], source: "unavailable" };
   }
 }

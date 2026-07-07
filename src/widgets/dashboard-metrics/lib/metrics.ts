@@ -7,7 +7,6 @@ import {
   type IngredientItem,
 } from "@/entities/ingredient";
 import type { OrderPlanItem } from "@/entities/order-plan";
-import { totalSubstitutionSavings, type PriceQuote } from "@/entities/price";
 
 export interface DashboardMetrics {
   localUsageRatePercent: number;
@@ -16,13 +15,11 @@ export interface DashboardMetrics {
   seasonalRateBasis: "발주 기준" | "재고 기준";
   expiringSoonCount: number;
   localOrderCost: number; // 지역 농가 발주 예정액
-  substitutionSavings: number | null; // null이면 가격 데이터 미연동
 }
 
 export function computeDashboardMetrics(
   ingredients: IngredientItem[],
   orderPlanItems: OrderPlanItem[],
-  priceItems: PriceQuote[],
   now: Date,
 ): DashboardMetrics {
   const costLines = orderPlanItems.map((i) => ({
@@ -45,12 +42,6 @@ export function computeDashboardMetrics(
     return days !== null && days <= EXPIRY_SOON_DAYS;
   }).length;
 
-  const lines = orderPlanItems.map((i) => ({
-    ingredientName: i.ingredientName,
-    quantity: i.orderQuantity,
-    unitPrice: i.unitPrice,
-  }));
-
   return {
     localUsageRatePercent: localSplit.localCostRate,
     localUsageBasis: hasOrderPlan ? "발주 기준" : "재고 기준",
@@ -58,6 +49,5 @@ export function computeDashboardMetrics(
     seasonalRateBasis: hasOrderPlan ? "발주 기준" : "재고 기준",
     expiringSoonCount,
     localOrderCost: localSplit.localCost,
-    substitutionSavings: priceItems.length > 0 ? totalSubstitutionSavings(lines, priceItems) : null,
   };
 }

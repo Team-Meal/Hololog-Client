@@ -2,7 +2,6 @@ import * as XLSX from "xlsx";
 import { executionPercent, type Budget } from "@/entities/budget";
 import { splitLocalCost, type IngredientItem } from "@/entities/ingredient";
 import type { OrderPlanDetail } from "@/entities/order-plan";
-import { totalSubstitutionSavings, type PriceQuote } from "@/entities/price";
 import { escapeHtml, openPrintWindow, won } from "./html";
 
 export interface BudgetExecutionStats {
@@ -13,27 +12,19 @@ export interface BudgetExecutionStats {
   executionPercentValue: number;
   localCost: number;
   localCostRate: number;
-  estimatedSavings: number | null;
 }
 
-/** 예산 집행 리포트 통계 — entities/budget·entities/ingredient·entities/price의 순수함수를 재사용. */
+/** 예산 집행 리포트 통계 — entities/budget·entities/ingredient의 순수함수를 재사용. */
 export function computeBudgetExecutionStats(
   budget: Budget,
   orderPlanDetail: OrderPlanDetail,
   ingredients: IngredientItem[],
-  priceItems: PriceQuote[],
 ): BudgetExecutionStats {
   const costLines = orderPlanDetail.items.map((i) => ({
     ingredientName: i.ingredientName,
     estimatedCost: i.estimatedCost,
   }));
   const localSplit = splitLocalCost(costLines, ingredients);
-
-  const savingsLines = orderPlanDetail.items.map((i) => ({
-    ingredientName: i.ingredientName,
-    quantity: i.orderQuantity,
-    unitPrice: i.unitPrice,
-  }));
 
   return {
     budgetTitle: budget.title,
@@ -43,8 +34,6 @@ export function computeBudgetExecutionStats(
     executionPercentValue: executionPercent(budget.usedAmount, budget.totalAmount),
     localCost: localSplit.localCost,
     localCostRate: localSplit.localCostRate,
-    estimatedSavings:
-      priceItems.length > 0 ? totalSubstitutionSavings(savingsLines, priceItems) : null,
   };
 }
 
@@ -59,7 +48,6 @@ export function exportBudgetExecutionExcel(stats: BudgetExecutionStats): void {
     ["집행률(%)", stats.executionPercentValue],
     ["지역 농산물 발주 예정액", stats.localCost],
     ["지역 농산물 집행 비중(%)", Number(stats.localCostRate.toFixed(1))],
-    ["예산 절감 예상액", stats.estimatedSavings ?? "연동 대기"],
   ];
   const ws = XLSX.utils.aoa_to_sheet(rows);
   ws["!cols"] = [{ wch: 22 }, { wch: 16 }];
@@ -106,7 +94,6 @@ export function buildBudgetExecutionPdfHtml(
     ${card("집행률", `${stats.executionPercentValue}%`)}
     ${card("지역 농산물 발주 예정액", won(stats.localCost))}
     ${card("지역 농산물 집행 비중", `${stats.localCostRate.toFixed(1)}%`)}
-    ${card("예산 절감 예상액", stats.estimatedSavings !== null ? won(stats.estimatedSavings) : "연동 대기")}
   </div>
   <script>window.onload = () => { window.print(); window.onafterprint = () => window.close(); };<\/script>
 </body>

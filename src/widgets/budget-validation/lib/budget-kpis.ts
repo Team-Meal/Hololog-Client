@@ -1,12 +1,6 @@
 import { perPersonCost, localUsageRatio } from "@/entities/budget";
 import { isLocalOrigin, type IngredientItem } from "@/entities/ingredient";
 import type { OrderPlanItem } from "@/entities/order-plan";
-import {
-  computeSubstitutionSavings,
-  totalSubstitutionSavings,
-  type PriceQuote,
-  type SubstitutionSaving,
-} from "@/entities/price";
 
 export interface BudgetKpis {
   perPersonCost: number;
@@ -31,27 +25,5 @@ export function buildBudgetKpis(
   return {
     perPersonCost: perPersonCost(totalCost, studentCount),
     localUsageRatioPercent: localUsageRatio(entries),
-  };
-}
-
-export interface SpikeSubstitutionSummary {
-  substitutions: SubstitutionSaving[];
-  totalSavings: number;
-}
-
-/** 발주표 항목 중 가격 급등 품목에 대한 대체 추천/절감액 — entities/price의 순수함수 재사용. */
-export function buildSpikeSubstitutions(
-  priceQuotes: PriceQuote[],
-  items: OrderPlanItem[],
-): SpikeSubstitutionSummary {
-  const lines = items.map((item) => ({
-    ingredientName: item.ingredientName,
-    quantity: item.orderQuantity,
-    unitPrice: item.unitPrice,
-  }));
-
-  return {
-    substitutions: computeSubstitutionSavings(lines, priceQuotes),
-    totalSavings: totalSubstitutionSavings(lines, priceQuotes),
   };
 }

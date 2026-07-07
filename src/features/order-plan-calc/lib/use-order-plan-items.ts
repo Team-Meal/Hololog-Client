@@ -7,7 +7,7 @@ import {
   daysUntilExpiry,
   EXPIRY_SOON_DAYS,
 } from "@/entities/ingredient";
-import { usePriceStore, getSubstitutes, type PriceSource } from "@/entities/price";
+import { usePriceStore, type PriceSource } from "@/entities/price";
 import {
   computeOrderPlanItems,
   useOrderPlanCalcStore,
@@ -65,14 +65,6 @@ export function useOrderPlanItems(recipesOverride?: RecipeIngredient[]): UseOrde
       if (days !== null && days <= EXPIRY_SOON_DAYS) return "유통기한 임박 재고 우선";
 
       if (isInSeason(recipe.ingredientName, month)) return `${month}월 제철`;
-
-      const quote = priceItems.find((q) => q.itemName === recipe.ingredientName);
-      if (quote?.isSpiking) {
-        const substitutes = getSubstitutes(recipe.ingredientName);
-        return substitutes.length > 0
-          ? `KAMIS 가격 급등 — ${substitutes.join("·")} 대체 검토`
-          : "KAMIS 가격 급등";
-      }
 
       return orderQuantity === 0 ? "재고 충분" : "발주 필요";
     };
