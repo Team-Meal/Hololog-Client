@@ -2,9 +2,12 @@ import type { NextConfig } from "next";
 
 // Same-origin app served behind /api/backend + /api/neis + /api/kamis proxies — no
 // client fetch ever targets a third-party origin, so a same-origin CSP is safe here.
+// 'unsafe-eval' is added only in dev — Next/React's dev-mode tooling (Turbopack HMR,
+// stack-trace reconstruction) calls eval(); production React never does.
+const isDev = process.env.NODE_ENV !== "production";
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
