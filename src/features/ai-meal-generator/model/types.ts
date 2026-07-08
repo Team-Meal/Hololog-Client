@@ -51,11 +51,14 @@ export interface AiGenerationResponse {
 }
 
 // Summary assembled on the client once polling finishes: month comes from the
-// request conditions, totalMeals from counting /diets entries in that month.
+// request conditions, totalMeals from diffing the /diets count in that month
+// before and after the job (409 path: the pre-existing count instead).
 export interface GeneratorResult {
   month: string;
   totalMeals: number;
   validationErrors?: unknown[];
   budgetInfo?: Record<string, unknown>;
   error?: string;
+  // Non-error context shown with the summary (e.g. "이미 생성된 월" 안내).
+  notice?: string;
 }

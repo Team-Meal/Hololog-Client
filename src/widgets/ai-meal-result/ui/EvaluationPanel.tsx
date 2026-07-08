@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { FormulaHint, SurfaceCard, TriangleAlertIcon, WalletIcon } from "@/shared/ui";
+import { FormulaHint, InfoIcon, SurfaceCard, TriangleAlertIcon, WalletIcon } from "@/shared/ui";
 import { useGeneratorStore, useMealScoring } from "@/features/ai-meal-generator";
 import { useOrderPlanItems } from "@/features/order-plan-calc";
 import { DEMO_RECIPES } from "@/entities/recipe";
@@ -54,6 +54,13 @@ export function EvaluationPanel() {
 
       {status === "done" && result && (
         <div className="flex flex-1 flex-col gap-4 overflow-y-auto">
+          <div className="flex items-start gap-1.5 rounded-lg bg-amber-50 p-2.5 text-xs leading-relaxed text-amber-700">
+            <InfoIcon size={13} className="mt-0.5 shrink-0" />
+            <span>
+              아래 지표는 샘플 메뉴 8개 기준 예시이며, 실제로 생성된 식단과는 무관해요. 실제 레시피
+              연동 전까지의 임시 데이터예요.
+            </span>
+          </div>
           <div className="grid grid-cols-2 gap-2">
             <Metric
               label="지역 농산물 활용률"

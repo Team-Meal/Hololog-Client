@@ -11,16 +11,29 @@ import type {
   UpdateDietRequest,
 } from "../model/types";
 
+// The calendar matches diets to day cells by exact "YYYY-MM-DD" string equality,
+// but the server may serialize dietDate as a datetime ("2026-07-07T00:00:00") or
+// without zero padding ("2026-7-7") — normalize at the API boundary.
+function normalizeDietDate(value: string): string {
+  const match = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(value);
+  if (!match) return value;
+  return `${match[1]}-${match[2].padStart(2, "0")}-${match[3].padStart(2, "0")}`;
+}
+
+function withNormalizedDate<T extends { dietDate: string }>(diet: T): T {
+  return { ...diet, dietDate: normalizeDietDate(diet.dietDate) };
+}
+
 // GET /diets — 식단 목록 조회.
 export async function getDiets(): Promise<DietListItem[]> {
   const response = await instance.get<DietListItem[]>("/diets", { requiresAuth: true });
-  return Array.isArray(response.data) ? response.data : [];
+  return Array.isArray(response.data) ? response.data.map(withNormalizedDate) : [];
 }
 
 // GET /diets/{dietId} — 식단 단건 조회.
 export async function getDiet(dietId: number): Promise<Diet> {
   const response = await instance.get<Diet>(`/diets/${dietId}`, { requiresAuth: true });
-  return response.data;
+  return withNormalizedDate(response.data);
 }
 
 // POST /diets — 식단 작성. Returns 204 (or 201 on the AI-callback path); refetch after.
@@ -33,7 +46,7 @@ export async function updateDiet(dietId: number, payload: UpdateDietRequest): Pr
   const response = await instance.patch<Diet>(`/diets/${dietId}`, payload, {
     requiresAuth: true,
   });
-  return response.data;
+  return withNormalizedDate(response.data);
 }
 
 // DELETE /diets/{dietId} — 식단 삭제. Returns 204.

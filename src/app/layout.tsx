@@ -10,9 +10,25 @@ const geist = Geist({
   variable: "--font-geist-sans",
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
 export const metadata: Metadata = {
-  title: "Hololog",
-  description: "Hololog 급식 운영 관리 플랫폼",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "hororog",
+    template: "%s | hororog",
+  },
+  description: "hororog 급식 운영 관리 플랫폼",
+  robots: {
+    index: false,
+    follow: false,
+  },
+  openGraph: {
+    title: "hororog",
+    description: "hororog 급식 운영 관리 플랫폼",
+    locale: "ko_KR",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

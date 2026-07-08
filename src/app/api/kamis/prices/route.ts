@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { FALLBACK_PRICE_SNAPSHOT } from "@/entities/price/lib/fallback-snapshot";
 import type { PriceListResponse, PriceQuoteRaw, PriceSource } from "@/entities/price/model/types";
 
 const KAMIS_BASE_URL = "http://www.kamis.or.kr/service/price/xml.do";
@@ -63,13 +62,9 @@ async function fetchKamisItem(
     const price = Number(raw?.price ?? raw?.dpr1);
     if (!raw || !Number.isFinite(price) || price <= 0) return null;
 
-    const fallback = FALLBACK_PRICE_SNAPSHOT.find((item) => item.itemName === itemName);
-    return {
-      itemName,
-      unit: "kg",
-      price,
-      baselinePrice: fallback?.baselinePrice ?? price,
-    };
+    // 기간별(전주 대비) 조회는 아직 붙이지 않아 실제 이력값이 없다 — price를 그대로
+    // baselinePrice로 채워 "변동 없음"으로 나오게 한다. 가짜 증감률을 만들지 않기 위함.
+    return { itemName, unit: "kg", price, baselinePrice: price };
   } catch {
     return null;
   } finally {
@@ -83,29 +78,24 @@ export async function GET() {
 
   if (!certKey || !certId) {
     return NextResponse.json<PriceListResponse>({
-      items: FALLBACK_PRICE_SNAPSHOT,
-      source: "fallback",
+      items: [],
+      source: "unavailable",
       fetchedAt: new Date().toISOString(),
     });
   }
 
+  const itemNames = Object.keys(KAMIS_ITEM_CODE_MAP);
   const results = await Promise.all(
-    FALLBACK_PRICE_SNAPSHOT.map((fallbackItem) =>
-      fetchKamisItem(fallbackItem.itemName, certKey, certId),
-    ),
+    itemNames.map((itemName) => fetchKamisItem(itemName, certKey, certId)),
   );
 
-  let liveCount = 0;
-  const items: PriceQuoteRaw[] = results.map((result, index) => {
-    if (result) {
-      liveCount += 1;
-      return result;
-    }
-    return FALLBACK_PRICE_SNAPSHOT[index];
-  });
+  // 서버가 실제로 응답한 품목만 내려준다 — 조회 실패 품목은 목록에서 제외(대체값 없음).
+  const items: PriceQuoteRaw[] = results.filter(
+    (result): result is PriceQuoteRaw => result !== null,
+  );
 
   const source: PriceSource =
-    liveCount === 0 ? "fallback" : liveCount === items.length ? "kamis" : "mixed";
+    items.length === 0 ? "unavailable" : items.length === itemNames.length ? "kamis" : "partial";
 
   return NextResponse.json<PriceListResponse>({
     items,
